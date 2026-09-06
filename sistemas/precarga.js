@@ -2,9 +2,11 @@
 // 🖼️ GAMERPRO GAME — PRECARGA
 // =====================================================
 
-export function precargarImagenes(recursos) {
+export function precargarImagenes(recursos, actualizarCarga) {
 
     const nombres = Object.keys(recursos);
+
+    let cargadas = 0;
 
     const cargas = nombres.map((nombre) => {
 
@@ -13,6 +15,18 @@ export function precargarImagenes(recursos) {
             const imagen = new Image();
 
             imagen.onload = () => {
+
+                cargadas++;
+
+                if (actualizarCarga) {
+                    actualizarCarga(
+                        cargadas,
+                        nombres.length,
+                        nombre,
+                        true
+                    );
+                }
+
                 resolve({
                     nombre: nombre,
                     imagen: imagen
@@ -20,6 +34,20 @@ export function precargarImagenes(recursos) {
             };
 
             imagen.onerror = () => {
+
+                console.error(
+                    `❌ FALLÓ LA IMAGEN: ${nombre}`
+                );
+
+                if (actualizarCarga) {
+                    actualizarCarga(
+                        cargadas,
+                        nombres.length,
+                        nombre,
+                        false
+                    );
+                }
+
                 reject(
                     new Error(
                         `No se pudo cargar: ${recursos[nombre]}`
@@ -37,9 +65,10 @@ export function precargarImagenes(recursos) {
             const imagenes = {};
 
             resultados.forEach((resultado) => {
-                imagenes[resultado.nombre] = resultado.imagen;
+                imagenes[resultado.nombre] =
+                    resultado.imagen;
             });
 
             return imagenes;
         });
-                          }
+                               }
