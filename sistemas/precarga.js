@@ -1,5 +1,5 @@
 // =====================================================
-// 🖼️ GAMERPRO GAME — PRECARGA
+// 🖼️ GAMERPRO GAME — SISTEMA DE PRECARGA
 // =====================================================
 
 export function precargarImagenes(recursos, actualizarCarga) {
@@ -28,8 +28,8 @@ export function precargarImagenes(recursos, actualizarCarga) {
                 }
 
                 resolve({
-                    nombre: nombre,
-                    imagen: imagen
+                    nombre,
+                    imagen
                 });
             };
 
@@ -65,8 +65,10 @@ export function precargarImagenes(recursos, actualizarCarga) {
             const imagenes = {};
 
             resultados.forEach((resultado) => {
+
                 imagenes[resultado.nombre] =
                     resultado.imagen;
+
             });
 
             return imagenes;
