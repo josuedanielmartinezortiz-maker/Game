@@ -1,3 +1,4 @@
+import { moverPersonajes } from "../mecanicas/movimiento.js";
 
 // =====================================================
 // 🌾 GAMERPRO GAME — ESCENA 1
@@ -14,7 +15,6 @@ export function iniciarEscena1(game, imagenes) {
     const ctx = canvas.getContext("2d");
 
     // =================================================
-    // =================================================
     // 📍 POSICIONES INICIALES
     // =================================================
 
@@ -22,19 +22,20 @@ export function iniciarEscena1(game, imagenes) {
         x: 0.44,
         y: 0.82,
         escala: 1.0
-      };
+    };
 
-   const MICAELA = {
-       x: 0.56,
-       y: 0.82,
-       escala: 1.0
-     };
+    const MICAELA = {
+        x: 0.56,
+        y: 0.82,
+        escala: 1.0
+    };
 
     // =================================================
     // 📐 TAMAÑO BASE
     // =================================================
 
     const TAMANO_BASE = 180;
+
     // =================================================
     // 🧑👩 DIBUJAR PERSONAJE
     // =================================================
@@ -76,7 +77,6 @@ export function iniciarEscena1(game, imagenes) {
             canvas.height
         );
 
-        // 🌾 Fondo
         ctx.drawImage(
             imagenes.escena1,
             0,
@@ -85,13 +85,11 @@ export function iniciarEscena1(game, imagenes) {
             canvas.height
         );
 
-        // 🧑 Mike
         dibujarPersonaje(
             imagenes.mike,
             MIKE
         );
 
-        // 👩 Micaela
         dibujarPersonaje(
             imagenes.micaela,
             MICAELA
@@ -116,4 +114,38 @@ export function iniciarEscena1(game, imagenes) {
         "resize",
         ajustarCanvas
     );
-}
+
+    // =================================================
+    // 🚶 PRUEBA DE MOVIMIENTO
+    // =================================================
+
+    setTimeout(() => {
+
+        moverPersonajes(
+            [MIKE, MICAELA],
+
+            [
+                {
+                    x: MIKE.x,
+                    y: 0.65
+                },
+                {
+                    x: MICAELA.x,
+                    y: 0.65
+                }
+            ],
+
+            1500
+        );
+
+        const animar = () => {
+
+            dibujarEscena();
+
+            requestAnimationFrame(animar);
+        };
+
+        animar();
+
+    }, 1000);
+            }
