@@ -133,8 +133,12 @@ function dibujarPersonaje(imagen, posicion) {
     const x = posicion.x * canvas.width;
     const y = posicion.y * canvas.height;
 
-    const ancho = imagen.naturalWidth * posicion.escala;
-    const alto = imagen.naturalHeight * posicion.escala;
+    // 📏 Tamaño base controlado por el juego
+    const TAMANO_BASE = 180;
+
+    const alto = TAMANO_BASE * posicion.escala;
+    const proporcion = imagen.naturalWidth / imagen.naturalHeight;
+    const ancho = alto * proporcion;
 
     ctx.drawImage(
         imagen,
@@ -143,7 +147,7 @@ function dibujarPersonaje(imagen, posicion) {
         ancho,
         alto
     );
-}
+} 
 
 // =====================================================
 // 🌾 ESCENA 1
