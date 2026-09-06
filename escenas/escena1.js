@@ -13,17 +13,18 @@ export function iniciarEscena1(game, imagenes) {
     const ctx = canvas.getContext("2d");
 
     // =================================================
+    // =================================================
     // 📍 POSICIONES INICIALES
     // =================================================
 
     const MIKE = {
-        x: 0.47,
+        x: 0.42,
         y: 0.82,
         escala: 1.0
     };
 
     const MICAELA = {
-        x: 0.53,
+        x: 0.58,
         y: 0.82,
         escala: 1.0
     };
@@ -33,7 +34,6 @@ export function iniciarEscena1(game, imagenes) {
     // =================================================
 
     const TAMANO_BASE = 180;
-
     // =================================================
     // 🧑👩 DIBUJAR PERSONAJE
     // =================================================
