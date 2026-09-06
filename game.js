@@ -10,7 +10,9 @@ const game = document.getElementById("game");
 const recursos = {
     escena1: "./assets/escena1.png",
     mike: "./assets/mike.png",
-    micaela: "./assets/micaela.png"
+    micaela: "./assets/micaela.png",
+    mikeespalda: "./assets/mikeespalda.png",
+    micaelaespalda: "./assets/micaelaespalda.png"
 };
 
 precargarImagenes(
