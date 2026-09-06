@@ -83,7 +83,32 @@ const HUEVO = {
     y: 0.58,
     escala: 0.12
 };
+// =====================================================
+// 🚶 MOVIMIENTO DE MIKE Y MICAELA
+// =====================================================
 
+let etapa = 0;
+
+function actualizarMovimiento() {
+
+    if (etapa === 0) {
+        // ADELANTE
+        dibujarPersonaje(mike, MIKE_ADELANTE);
+        dibujarPersonaje(micaela, MICAELA_ADELANTE);
+    }
+
+    if (etapa === 1) {
+        // MITAD
+        dibujarPersonaje(mike, MIKE_MITAD);
+        dibujarPersonaje(micaela, MICAELA_MITAD);
+    }
+
+    if (etapa === 2) {
+        // ATRÁS
+        dibujarPersonaje(mike, MIKE_ATRAS);
+        dibujarPersonaje(micaela, MICAELA_ATRAS);
+    }
+}
 // =====================================================
 // 📐 TAMAÑO DEL CANVAS
 // =====================================================
@@ -128,7 +153,7 @@ function dibujarEscena() {
 
     if (!escena1.complete || !escena1.naturalWidth) return;
 
-    // Fondo
+    // 🌾 Fondo
     ctx.drawImage(
         escena1,
         0,
@@ -137,18 +162,13 @@ function dibujarEscena() {
         canvas.height
     );
 
-    // Mike
+    // 🧑 Mike y 👩 Micaela empiezan ADELANTE
     dibujarPersonaje(mike, MIKE_ADELANTE);
-
-    // Micaela
     dibujarPersonaje(micaela, MICAELA_ADELANTE);
 
-    // 🥚 Huevo
-    dibujarPersonaje(huevo, HUEVO);
-
-    // 🐔 El Pollo Noob todavía NO aparece.
+    // 🐔 Pollo Noob todavía no aparece
+    // 🥚 Huevo todavía no aparece
 }
-
 // =====================================================
 // 🚀 CARGAR ESCENA
 // =====================================================
