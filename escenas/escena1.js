@@ -1,8 +1,8 @@
-import { moverPersonajes } from "../mecanicas/movimiento.js";
-
 // =====================================================
 // 🌾 GAMERPRO GAME — ESCENA 1
 // =====================================================
+
+import { moverPersonajes } from "../mecanicas/movimiento.js";
 
 export function iniciarEscena1(game, imagenes) {
 
@@ -42,8 +42,11 @@ export function iniciarEscena1(game, imagenes) {
 
     function dibujarPersonaje(imagen, posicion) {
 
-        const x = posicion.x * canvas.width;
-        const y = posicion.y * canvas.height;
+        const x =
+            posicion.x * canvas.width;
+
+        const y =
+            posicion.y * canvas.height;
 
         const alto =
             TAMANO_BASE * posicion.escala;
@@ -77,6 +80,7 @@ export function iniciarEscena1(game, imagenes) {
             canvas.height
         );
 
+        // 🌾 Fondo
         ctx.drawImage(
             imagenes.escena1,
             0,
@@ -85,11 +89,13 @@ export function iniciarEscena1(game, imagenes) {
             canvas.height
         );
 
+        // 🧑 Mike
         dibujarPersonaje(
             imagenes.mike,
             MIKE
         );
 
+        // 👩 Micaela
         dibujarPersonaje(
             imagenes.micaela,
             MICAELA
@@ -102,8 +108,11 @@ export function iniciarEscena1(game, imagenes) {
 
     function ajustarCanvas() {
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.width =
+            window.innerWidth;
+
+        canvas.height =
+            window.innerHeight;
 
         dibujarEscena();
     }
@@ -116,10 +125,15 @@ export function iniciarEscena1(game, imagenes) {
     );
 
     // =================================================
-    // 🚶 PRUEBA DE MOVIMIENTO
+    // ⏸️ PAUSA INICIAL
     // =================================================
 
     setTimeout(() => {
+
+        // =================================================
+        // 🚶 AVANZAR HACIA LA MITAD
+        // 📉 Y HACERSE MÁS PEQUEÑOS
+        // =================================================
 
         moverPersonajes(
             [MIKE, MICAELA],
@@ -127,25 +141,31 @@ export function iniciarEscena1(game, imagenes) {
             [
                 {
                     x: MIKE.x,
-                    y: 0.65
+                    y: 0.65,
+                    escala: 0.7
                 },
                 {
                     x: MICAELA.x,
-                    y: 0.65
+                    y: 0.65,
+                    escala: 0.7
                 }
             ],
 
-            1500
+            1800
         );
 
-        const animar = () => {
+    }, 2000);
 
-            dibujarEscena();
+    // =================================================
+    // 🎬 BUCLE DE RENDER
+    // =================================================
 
-            requestAnimationFrame(animar);
-        };
+    function actualizar() {
 
-        animar();
+        dibujarEscena();
 
-    }, 1000);
+        requestAnimationFrame(actualizar);
+    }
+
+    actualizar();
             }
