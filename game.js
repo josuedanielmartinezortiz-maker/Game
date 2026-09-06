@@ -19,11 +19,13 @@ const escena1 = new Image();
 const mike = new Image();
 const micaela = new Image();
 const pollonoob = new Image();
+const huevo = new Image();
 
 escena1.src = "./escena1.png";
 mike.src = "./mike.jpg";
 micaela.src = "./micaela.jpg";
 pollonoob.src = "./pollonoob.jpg";
+huevo.src = "./noob.jpg";
 
 // =====================================================
 // 📍 POSICIONES
@@ -75,6 +77,13 @@ const POLLO_NOOB = {
     escala: 0.25
 };
 
+// 🥚 HUEVO
+const HUEVO = {
+    x: 0.45,
+    y: 0.58,
+    escala: 0.12
+};
+
 // =====================================================
 // 📐 TAMAÑO DEL CANVAS
 // =====================================================
@@ -93,6 +102,7 @@ window.addEventListener("resize", ajustarCanvas);
 // =====================================================
 
 function dibujarPersonaje(imagen, posicion) {
+
     if (!imagen.complete || !imagen.naturalWidth) return;
 
     const x = posicion.x * canvas.width;
@@ -133,7 +143,10 @@ function dibujarEscena() {
     // Micaela
     dibujarPersonaje(micaela, MICAELA_ADELANTE);
 
-    // El Pollo Noob todavía NO aparece.
+    // 🥚 Huevo
+    dibujarPersonaje(huevo, HUEVO);
+
+    // 🐔 El Pollo Noob todavía NO aparece.
 }
 
 // =====================================================
@@ -146,7 +159,8 @@ const imagenes = [
     escena1,
     mike,
     micaela,
-    pollonoob
+    pollonoob,
+    huevo
 ];
 
 imagenes.forEach((imagen) => {
