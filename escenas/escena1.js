@@ -1,5 +1,5 @@
 // =====================================================
-// 🌾 GAMERPRO GAME — ESCENA 1
+// 🌲 GAMERPRO GAME — ESCENA 1
 // =====================================================
 
 import { moverPersonajes } from "../mecanicas/movimiento.js";
@@ -37,10 +37,48 @@ export function iniciarEscena1(game, imagenes) {
     const TAMANO_BASE = 180;
 
     // =================================================
+    // 🔄 DIRECCIÓN DE LOS PERSONAJES
+    // =================================================
+
+    let imagenMike = imagenes.mike;
+    let imagenMicaela = imagenes.micaela;
+
+    // =================================================
+    // 💬 DIÁLOGOS
+    // =================================================
+
+    const DIALOGOS = [
+        {
+            personaje: "MICAELA",
+            texto: "¿Qué hacemos aquí, Mike?"
+        },
+        {
+            personaje: "MIKE",
+            texto: "No sé..."
+        },
+        {
+            personaje: "SONIDO",
+            texto: "Pío... pío..."
+        },
+        {
+            personaje: "MICAELA",
+            texto: "¿Qué es eso?"
+        },
+        {
+            personaje: "MIKE",
+            texto: "No sé, vamos a averiguarlo."
+        }
+    ];
+
+    let dialogoActual = 0;
+
+    // =================================================
     // 🧑👩 DIBUJAR PERSONAJE
     // =================================================
 
     function dibujarPersonaje(imagen, posicion) {
+
+        if (!imagen) return;
 
         const x =
             posicion.x * canvas.width;
@@ -80,7 +118,7 @@ export function iniciarEscena1(game, imagenes) {
             canvas.height
         );
 
-        // 🌾 Fondo
+        // 🌲 Fondo
         ctx.drawImage(
             imagenes.escena1,
             0,
@@ -91,13 +129,13 @@ export function iniciarEscena1(game, imagenes) {
 
         // 🧑 Mike
         dibujarPersonaje(
-            imagenes.mike,
+            imagenMike,
             MIKE
         );
 
         // 👩 Micaela
         dibujarPersonaje(
-            imagenes.micaela,
+            imagenMicaela,
             MICAELA
         );
     }
@@ -125,36 +163,77 @@ export function iniciarEscena1(game, imagenes) {
     );
 
     // =================================================
-    // ⏸️ PAUSA INICIAL
+    // 🎬 MOSTRAR DIÁLOGO
     // =================================================
 
-    setTimeout(() => {
+    function siguienteDialogo() {
 
-        // =================================================
-        // 🚶 AVANZAR HACIA LA MITAD
-        // 📉 Y HACERSE MÁS PEQUEÑOS
-        // =================================================
+        if (dialogoActual >= DIALOGOS.length) {
+            iniciarCaminata();
+            return;
+        }
+
+        const dialogo =
+            DIALOGOS[dialogoActual];
+
+        console.log(
+            `${dialogo.personaje}: ${dialogo.texto}`
+        );
+
+        dialogoActual++;
+
+        // ⏱️ Tiempo para leer el diálogo
+        setTimeout(
+            siguienteDialogo,
+            2500
+        );
+    }
+
+    // =================================================
+    // 🚶 CAMINATA
+    // =================================================
+
+    function iniciarCaminata() {
+
+        console.log(
+            "🚶 Mike y Micaela comienzan a caminar."
+        );
+
+        // Después de un momento,
+        // pasan de frente a espalda.
+        setTimeout(() => {
+
+            imagenMike =
+                imagenes.mikeespalda;
+
+            imagenMicaela =
+                imagenes.micaelaespalda;
+
+            console.log(
+                "🔄 Ahora caminan de espaldas."
+            );
+
+        }, 2500);
 
         moverPersonajes(
             [MIKE, MICAELA],
 
             [
                 {
-                    x: MIKE.x,
-                    y: 0.65,
-                    escala: 0.7
+                    x: 0.49,
+                    y: 0.48,
+                    escala: 0.35
                 },
                 {
-                    x: MICAELA.x,
-                    y: 0.65,
-                    escala: 0.7
+                    x: 0.51,
+                    y: 0.48,
+                    escala: 0.35
                 }
             ],
 
-            1800
+            10000
         );
-
-    }, 2000);
+    }
 
     // =================================================
     // 🎬 BUCLE DE RENDER
@@ -164,8 +243,20 @@ export function iniciarEscena1(game, imagenes) {
 
         dibujarEscena();
 
-        requestAnimationFrame(actualizar);
+        requestAnimationFrame(
+            actualizar
+        );
     }
 
     actualizar();
-            }
+
+    // =================================================
+    // ⏸️ PAUSA INICIAL
+    // =================================================
+
+    setTimeout(() => {
+
+        siguienteDialogo();
+
+    }, 2000);
+    }
