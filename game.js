@@ -27,19 +27,60 @@ const recursos = {
 // 🚀 PRECARGAR TODO
 // =====================================================
 
-precargarImagenes(recursos)
-    .then((imagenes) => {
+// =====================================================
+// 🎮 GAMERPRO GAME — BASE PRINCIPAL
+// =====================================================
 
-        console.log("✅ Todas las imágenes están cargadas.");
+import { precargarImagenes } from "./sistemas/precarga.js";
+import { iniciarEscena1 } from "./escenas/escena1.js";
 
-        iniciarEscena1(game, imagenes);
+const game = document.getElementById("game");
 
-    })
-    .catch((error) => {
+// =====================================================
+// 🖼️ RECURSOS
+// =====================================================
 
-        console.error(
-            "❌ Error al cargar los recursos:",
-            error
-        );
+const recursos = {
+    escena1: "./assets/escena1.png",
+    mike: "./assets/mike.png",
+    micaela: "./assets/micaela.png",
+    pollonoob: "./assets/pollonoob.png",
+    huevo: "./assets/noob.png"
+};
 
-    });
+// =====================================================
+// ⏳ PRECARGA
+// =====================================================
+
+precargarImagenes(
+    recursos,
+    (cargadas, total, nombre, correcta) => {
+
+        if (correcta) {
+
+            console.log(
+                `✅ Cargada: ${nombre} (${cargadas}/${total})`
+            );
+
+        } else {
+
+            console.error(
+                `❌ FALLÓ: ${nombre}`
+            );
+        }
+    }
+)
+.then((imagenes) => {
+
+    console.log("🎮 ¡TODAS LAS IMÁGENES ESTÁN CARGADAS!");
+
+    iniciarEscena1(game, imagenes);
+
+})
+.catch((error) => {
+
+    console.error(
+        "🚨 LA PRECARGA SE DETUVO:",
+        error.message
+    );
+});
