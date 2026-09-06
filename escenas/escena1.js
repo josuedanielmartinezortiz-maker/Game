@@ -4,10 +4,6 @@
 
 export function iniciarEscena1(game, imagenes) {
 
-    // =================================================
-    // 🎨 CANVAS
-    // =================================================
-
     const canvas = document.createElement("canvas");
 
     canvas.id = "escenaCanvas";
@@ -102,7 +98,7 @@ export function iniciarEscena1(game, imagenes) {
     }
 
     // =================================================
-    // 📱 TAMAÑO DEL CANVAS
+    // 📱 AJUSTAR CANVAS
     // =================================================
 
     function ajustarCanvas() {
@@ -113,18 +109,10 @@ export function iniciarEscena1(game, imagenes) {
         dibujarEscena();
     }
 
-    // =================================================
-    // 🚀 INICIAR
-    // =================================================
-
     ajustarCanvas();
-
-    // =================================================
-    // 🔄 REDIMENSIONAR
-    // =================================================
 
     window.addEventListener(
         "resize",
         ajustarCanvas
     );
-            }
+}
