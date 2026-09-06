@@ -22,8 +22,8 @@ const pollonoob = new Image();
 const huevo = new Image();
 
 escena1.src = "./escena1.png";
-mike.src = "./mike.jpg";
-micaela.src = "./micaela.jpg";
+mike.src = "./mike.png";
+micaela.src = "./micaela.png";
 pollonoob.src = "./pollonoob.jpg";
 huevo.src = "./noob.jpg";
 
