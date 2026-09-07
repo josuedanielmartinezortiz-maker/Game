@@ -4,9 +4,10 @@
 
 import { moverPersonajes } from "../mecanicas/movimiento.js";
 
-export function iniciarEscena1(game, imagenes) {
+export function iniciarEscena1(game, imagenes, alTerminar) {
 
     const canvas = document.createElement("canvas");
+
     canvas.id = "escenaCanvas";
 
     game.appendChild(canvas);
@@ -36,7 +37,7 @@ export function iniciarEscena1(game, imagenes) {
     const TAMANO_BASE = 180;
 
     // =================================================
-    // 🔄 DIRECCIÓN
+    // 🔄 DIRECCIÓN DE LOS PERSONAJES
     // =================================================
 
     let imagenMike = imagenes.mike;
@@ -79,8 +80,11 @@ export function iniciarEscena1(game, imagenes) {
 
         if (!imagen) return;
 
-        const x = posicion.x * canvas.width;
-        const y = posicion.y * canvas.height;
+        const x =
+            posicion.x * canvas.width;
+
+        const y =
+            posicion.y * canvas.height;
 
         const alto =
             TAMANO_BASE * posicion.escala;
@@ -142,8 +146,11 @@ export function iniciarEscena1(game, imagenes) {
 
     function ajustarCanvas() {
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.width =
+            window.innerWidth;
+
+        canvas.height =
+            window.innerHeight;
 
         dibujarEscena();
     }
@@ -162,7 +169,9 @@ export function iniciarEscena1(game, imagenes) {
     function siguienteDialogo() {
 
         if (dialogoActual >= DIALOGOS.length) {
+
             iniciarCaminata();
+
             return;
         }
 
@@ -191,8 +200,7 @@ export function iniciarEscena1(game, imagenes) {
             "🚶 Mike y Micaela comienzan a caminar."
         );
 
-        // 🔄 Después de un rato comienzan
-        // a caminar de espaldas.
+        // 🔄 Cambiar a vista de espalda
         setTimeout(() => {
 
             imagenMike =
@@ -208,7 +216,7 @@ export function iniciarEscena1(game, imagenes) {
         }, 2500);
 
         // =================================================
-        // 📍 PUNTO DE TRANSICIÓN
+        // 📍 DESTINO — SALIDA DEL BOSQUE
         // =================================================
 
         moverPersonajes(
@@ -229,6 +237,52 @@ export function iniciarEscena1(game, imagenes) {
 
             10000
         );
+
+        // =================================================
+        // 🌑 TRANSICIÓN A ESCENA 2
+        // =================================================
+
+        setTimeout(() => {
+
+            const fundido =
+                document.createElement("div");
+
+            fundido.style.position = "fixed";
+            fundido.style.top = "0";
+            fundido.style.left = "0";
+            fundido.style.width = "100vw";
+            fundido.style.height = "100vh";
+            fundido.style.background = "black";
+            fundido.style.opacity = "0";
+            fundido.style.transition =
+                "opacity 1s ease";
+            fundido.style.zIndex = "9999";
+            fundido.style.pointerEvents = "none";
+
+            document.body.appendChild(fundido);
+
+            // 🌑 Fundido a negro
+            requestAnimationFrame(() => {
+                fundido.style.opacity = "1";
+            });
+
+            // 🏡 Cambiar a Escena 2
+            setTimeout(() => {
+
+                game.innerHTML = "";
+
+                alTerminar();
+
+                // 🌅 Fundido de entrada
+                fundido.style.opacity = "0";
+
+                setTimeout(() => {
+                    fundido.remove();
+                }, 1000);
+
+            }, 1000);
+
+        }, 10000);
     }
 
     // =================================================
@@ -247,7 +301,7 @@ export function iniciarEscena1(game, imagenes) {
     actualizar();
 
     // =================================================
-    // ⏸️ INICIO DE LA ESCENA
+    // ⏸️ INICIO
     // =================================================
 
     setTimeout(() => {
@@ -256,3 +310,4 @@ export function iniciarEscena1(game, imagenes) {
 
     }, 2000);
 }
+
