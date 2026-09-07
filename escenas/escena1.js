@@ -1,7 +1,7 @@
 // =====================================================
 // 🌲 GAMERPRO GAME — ESCENA 1
 // =====================================================
-
+import { hablarSuave } from "../mecanicas/voces.js";
 import { moverPersonajes } from "../mecanicas/movimiento.js";
 
 export function iniciarEscena1(game, imagenes, alTerminar) {
