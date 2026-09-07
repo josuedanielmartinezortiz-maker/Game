@@ -9,7 +9,7 @@ const game = document.getElementById("game");
 
 const recursos = {
     escena1: "./assets/escena1.png",
-    escena2: "./assets/escena2.png"
+    escena2: "./assets/escena2.png",
     mike: "./assets/mike.png",
     micaela: "./assets/micaela.png",
     mikeespalda: "./assets/mikeespalda.png",
