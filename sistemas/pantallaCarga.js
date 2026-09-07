@@ -1,8 +1,9 @@
 // =====================================================
 // 🎮 GAMERPRO GAME — PANTALLA DE CARGA
+// 📱 OPTIMIZADA PARA MÓVIL
 // =====================================================
 
-export function iniciarPantallaCarga(game) {
+export function crearPantallaCarga(game) {
 
     return new Promise((resolver) => {
 
@@ -10,23 +11,28 @@ export function iniciarPantallaCarga(game) {
 
         pantalla.id = "pantallaCarga";
 
-        pantalla.style.position = "fixed";
-        pantalla.style.top = "0";
-        pantalla.style.left = "0";
-        pantalla.style.width = "100vw";
-        pantalla.style.height = "100vh";
-        pantalla.style.background = "#000";
-        pantalla.style.display = "flex";
-        pantalla.style.flexDirection = "column";
-        pantalla.style.justifyContent = "center";
-        pantalla.style.alignItems = "center";
-        pantalla.style.zIndex = "10000";
-        pantalla.style.color = "white";
-        pantalla.style.fontFamily = "Arial, sans-serif";
+        Object.assign(pantalla.style, {
+            position: "fixed",
+            inset: "0",
+            width: "100%",
+            height: "100%",
+            background: "#000",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: "10000",
+            color: "#fff",
+            fontFamily: "Arial, sans-serif",
+            textAlign: "center",
+            touchAction: "manipulation",
+            userSelect: "none",
+            WebkitUserSelect: "none"
+        });
 
         pantalla.innerHTML = `
             <div style="
-                font-size: 42px;
+                font-size: clamp(30px, 8vw, 42px);
                 font-weight: bold;
                 margin-bottom: 30px;
             ">
@@ -41,7 +47,7 @@ export function iniciarPantallaCarga(game) {
             </div>
 
             <div style="
-                width: 70%;
+                width: 75%;
                 max-width: 500px;
                 height: 20px;
                 border: 2px solid white;
@@ -56,21 +62,22 @@ export function iniciarPantallaCarga(game) {
                 "></div>
             </div>
 
-            <button id="botonIniciar" style="
+            <button id="botonIniciar" type="button" style="
                 margin-top: 35px;
-                padding: 15px 35px;
+                padding: 16px 30px;
                 font-size: 20px;
                 font-weight: bold;
                 border: none;
-                border-radius: 10px;
+                border-radius: 12px;
                 cursor: pointer;
                 display: none;
+                touch-action: manipulation;
             ">
                 👆 TOCA PARA INICIAR
             </button>
         `;
 
-        document.body.appendChild(pantalla);
+        game.appendChild(pantalla);
 
         const textoCarga =
             pantalla.querySelector("#textoCarga");
@@ -83,10 +90,12 @@ export function iniciarPantallaCarga(game) {
 
 
         // =================================================
-        // 📊 ACTUALIZAR PROGRESO
+        // 📊 ACTUALIZAR CARGA
         // =================================================
 
         function actualizarCarga(cargadas, total) {
+
+            if (total <= 0) return;
 
             const porcentaje =
                 Math.round((cargadas / total) * 100);
@@ -100,43 +109,88 @@ export function iniciarPantallaCarga(game) {
 
 
         // =================================================
-        // 🔊 ACTIVAR AUDIO
+        // ✅ MOSTRAR BOTÓN
         // =================================================
 
-        botonIniciar.addEventListener("click", async () => {
+        function mostrarBotonIniciar() {
+
+            textoCarga.textContent =
+                "¡Todo listo!";
+
+            barraCarga.style.width =
+                "100%";
+
+            botonIniciar.style.display =
+                "block";
+        }
+
+
+        // =================================================
+        // 🔊 ACTIVAR AUDIO DESDE EL TOQUE
+        // =================================================
+
+        async function iniciarJuego(evento) {
+
+            evento.preventDefault();
+
+            // Evitar doble ejecución
+            if (botonIniciar.dataset.iniciado === "true") {
+                return;
+            }
+
+            botonIniciar.dataset.iniciado = "true";
+
+            console.log("👆 Inicio del juego");
+
+
+            // ---------------------------------------------
+            // 🔊 CREAR CONTEXTO DE AUDIO
+            // ---------------------------------------------
 
             try {
 
-                // Creamos un audio silencioso.
-                // El navegador recibe la interacción
-                // directamente desde el jugador.
+                const AudioContext =
+                    window.AudioContext ||
+                    window.webkitAudioContext;
 
-                const audio = new Audio();
+                if (AudioContext) {
 
-                audio.src =
-                    "data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAA";
+                    const contexto =
+                        new AudioContext();
 
-                audio.volume = 0;
+                    if (contexto.state === "suspended") {
+                        await contexto.resume();
+                    }
 
-                await audio.play();
+                    console.log(
+                        "🔊 Audio del navegador activado"
+                    );
 
-                audio.pause();
-
-                console.log("🔊 AUDIO ACTIVADO");
+                    // Mantener referencia para voces.js
+                    window.gamerproAudioContext =
+                        contexto;
+                }
 
             } catch (error) {
 
                 console.warn(
-                    "⚠️ No se pudo activar el audio:",
+                    "⚠️ No se pudo activar AudioContext:",
                     error
                 );
 
             }
 
+
+            // ---------------------------------------------
+            // 🌑 TRANSICIÓN
+            // ---------------------------------------------
+
             pantalla.style.transition =
                 "opacity 0.5s ease";
 
-            pantalla.style.opacity = "0";
+            pantalla.style.opacity =
+                "0";
+
 
             setTimeout(() => {
 
@@ -145,27 +199,40 @@ export function iniciarPantallaCarga(game) {
                 resolver();
 
             }, 500);
-
-        });
+        }
 
 
         // =================================================
-        // ⏳ MOSTRAR BOTÓN CUANDO TERMINE LA CARGA
+        // 📱 MÓVIL + PC
         // =================================================
 
-        pantalla.actualizarCarga = actualizarCarga;
+        botonIniciar.addEventListener(
+            "touchstart",
+            iniciarJuego,
+            {
+                passive: false,
+                once: true
+            }
+        );
 
-        pantalla.mostrarBoton = () => {
+        botonIniciar.addEventListener(
+            "click",
+            iniciarJuego,
+            {
+                once: true
+            }
+        );
 
-            textoCarga.textContent =
-                "¡Todo listo!";
 
-            barraCarga.style.width = "100%";
+        // =================================================
+        // 📦 EXPONER FUNCIONES
+        // =================================================
 
-            botonIniciar.style.display = "block";
+        pantalla.actualizarCarga =
+            actualizarCarga;
 
-        };
+        pantalla.mostrarBotonIniciar =
+            mostrarBotonIniciar;
 
     });
-
-                       }
+}
