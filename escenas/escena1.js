@@ -8,9 +8,7 @@ import { moverPersonajes } from "../mecanicas/movimiento.js";
 export function iniciarEscena1(game, imagenes, alTerminar) {
 
     const canvas = document.createElement("canvas");
-
     canvas.id = "escenaCanvas";
-
     game.appendChild(canvas);
 
     const ctx = canvas.getContext("2d");
@@ -38,7 +36,7 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
     const TAMANO_BASE = 180;
 
     // =================================================
-    // 🔄 DIRECCIÓN DE LOS PERSONAJES
+    // 🔄 DIRECCIÓN
     // =================================================
 
     let imagenMike = imagenes.mike;
@@ -49,49 +47,40 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
     // =================================================
 
     const DIALOGOS = [
-
         {
             personaje: "MICAELA",
             texto: "¿Qué hacemos aquí, Mike?"
         },
-
         {
             personaje: "MIKE",
-            texto: "No sé..."
+            texto: "No sé…"
         },
-
         {
             personaje: "SONIDO",
-            texto: "Pío... pío..."
+            texto: "Pío… pío…"
         },
-
         {
             personaje: "MICAELA",
             texto: "¿Qué es eso?"
         },
-
         {
             personaje: "MIKE",
-            texto: "No sé, vamos a averiguarlo."
+            texto: "No sé… vamos a averiguarlo."
         }
-
     ];
 
     let dialogoActual = 0;
 
     // =================================================
-    // 🧑👩 DIBUJAR PERSONAJE
+    // 🧑 DIBUJAR PERSONAJE
     // =================================================
 
     function dibujarPersonaje(imagen, posicion) {
 
         if (!imagen) return;
 
-        const x =
-            posicion.x * canvas.width;
-
-        const y =
-            posicion.y * canvas.height;
+        const x = posicion.x * canvas.width;
+        const y = posicion.y * canvas.height;
 
         const alto =
             TAMANO_BASE * posicion.escala;
@@ -125,7 +114,6 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
             canvas.height
         );
 
-        // 🌲 Fondo
         ctx.drawImage(
             imagenes.escena1,
             0,
@@ -134,13 +122,11 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
             canvas.height
         );
 
-        // 🧑 Mike
         dibujarPersonaje(
             imagenMike,
             MIKE
         );
 
-        // 👩 Micaela
         dibujarPersonaje(
             imagenMicaela,
             MICAELA
@@ -153,11 +139,8 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
 
     function ajustarCanvas() {
 
-        canvas.width =
-            window.innerWidth;
-
-        canvas.height =
-            window.innerHeight;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
         dibujarEscena();
     }
@@ -176,16 +159,13 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
     function siguienteDialogo() {
 
         if (dialogoActual >= DIALOGOS.length) {
-
             iniciarCaminata();
-
             return;
         }
 
         const dialogo =
             DIALOGOS[dialogoActual];
 
-        // 🎙️ VOZ DE MICAELA
         if (dialogo.personaje === "MICAELA") {
 
             hablarSuave(
@@ -193,7 +173,6 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
                 true
             );
 
-        // 🎙️ VOZ DE MIKE
         } else if (dialogo.personaje === "MIKE") {
 
             hablarSuave(
@@ -201,7 +180,6 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
                 false
             );
 
-        // 🐔 SONIDO DEL POLLO
         } else if (dialogo.personaje === "SONIDO") {
 
             hablarSuave(
@@ -219,7 +197,7 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
     }
 
     // =================================================
-    // 🚶 CAMINATA HACIA LA GRANJA
+    // 🚶 CAMINATA
     // =================================================
 
     function iniciarCaminata() {
@@ -229,6 +207,7 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
         );
 
         // 🔄 Cambiar a vista de espalda
+
         setTimeout(() => {
 
             imagenMike =
@@ -237,38 +216,31 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
             imagenMicaela =
                 imagenes.micaelaespalda;
 
-            console.log(
-                "🔄 Mike y Micaela ahora caminan de espaldas."
-            );
-
         }, 2500);
 
         // =================================================
-        // 📍 DESTINO — SALIDA DEL BOSQUE
+        // 📍 DESTINO
         // =================================================
 
         moverPersonajes(
             [MIKE, MICAELA],
-
             [
                 {
                     x: 0.49,
                     y: 0.70,
                     escala: 0.65
                 },
-
                 {
                     x: 0.51,
                     y: 0.70,
                     escala: 0.65
                 }
             ],
-
             10000
         );
 
         // =================================================
-        // 🌑 TRANSICIÓN A ESCENA 2
+        // 🌑 TRANSICIÓN
         // =================================================
 
         setTimeout(() => {
@@ -286,31 +258,27 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
             fundido.style.transition =
                 "opacity 1s ease";
             fundido.style.zIndex = "9999";
-            fundido.style.pointerEvents = "none";
+            fundido.style.pointerEvents =
+                "none";
 
-            document.body.appendChild(fundido);
+            document.body.appendChild(
+                fundido
+            );
 
-            // 🌑 Fundido a negro
             requestAnimationFrame(() => {
-
                 fundido.style.opacity = "1";
-
             });
 
-            // 🏡 Cambiar a Escena 2
             setTimeout(() => {
 
                 game.innerHTML = "";
 
                 alTerminar();
 
-                // 🌅 Fundido de entrada
                 fundido.style.opacity = "0";
 
                 setTimeout(() => {
-
                     fundido.remove();
-
                 }, 1000);
 
             }, 1000);
@@ -342,4 +310,4 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
         siguienteDialogo();
 
     }, 2000);
-                }
+            }
