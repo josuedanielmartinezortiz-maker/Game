@@ -1,10 +1,7 @@
-// =====================================================
-// 🎮 GAMERPRO GAME — BASE PRINCIPAL
-// =====================================================
-
 import { precargarImagenes } from "./sistemas/precarga.js";
 import { iniciarEscena1 } from "./escenas/escena1.js";
 import { iniciarEscena2 } from "./escenas/escena2.js";
+
 const game = document.getElementById("game");
 
 const recursos = {
@@ -31,9 +28,13 @@ precargarImagenes(
 )
 .then((imagenes) => {
 
-    console.log("🎮 ¡ESCENA 1 LISTA!");
+    console.log("🎮 ¡JUEGO LISTO!");
 
-    iniciarEscena2(game, imagenes);
+    iniciarEscena1(
+        game,
+        imagenes,
+        () => iniciarEscena2(game, imagenes)
+    );
 
 })
 .catch((error) => {
