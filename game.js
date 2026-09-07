@@ -33,7 +33,7 @@ precargarImagenes(
 
     console.log("🎮 ¡ESCENA 1 LISTA!");
 
-    iniciarEscena1(game, imagenes);
+    iniciarEscena2(game, imagenes);
 
 })
 .catch((error) => {
