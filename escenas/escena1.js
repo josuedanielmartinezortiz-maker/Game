@@ -1,6 +1,7 @@
 // =====================================================
 // 🌲 GAMERPRO GAME — ESCENA 1
 // =====================================================
+
 import { hablarSuave } from "../mecanicas/voces.js";
 import { moverPersonajes } from "../mecanicas/movimiento.js";
 
@@ -48,26 +49,32 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
     // =================================================
 
     const DIALOGOS = [
+
         {
             personaje: "MICAELA",
             texto: "¿Qué hacemos aquí, Mike?"
         },
+
         {
             personaje: "MIKE",
             texto: "No sé..."
         },
+
         {
             personaje: "SONIDO",
             texto: "Pío... pío..."
         },
+
         {
             personaje: "MICAELA",
             texto: "¿Qué es eso?"
         },
+
         {
             personaje: "MIKE",
             texto: "No sé, vamos a averiguarlo."
         }
+
     ];
 
     let dialogoActual = 0;
@@ -178,9 +185,30 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
         const dialogo =
             DIALOGOS[dialogoActual];
 
-        console.log(
-            `${dialogo.personaje}: ${dialogo.texto}`
-        );
+        // 🎙️ VOZ DE MICAELA
+        if (dialogo.personaje === "MICAELA") {
+
+            hablarSuave(
+                dialogo.texto,
+                true
+            );
+
+        // 🎙️ VOZ DE MIKE
+        } else if (dialogo.personaje === "MIKE") {
+
+            hablarSuave(
+                dialogo.texto,
+                false
+            );
+
+        // 🐔 SONIDO DEL POLLO
+        } else if (dialogo.personaje === "SONIDO") {
+
+            hablarSuave(
+                dialogo.texto,
+                false
+            );
+        }
 
         dialogoActual++;
 
@@ -228,6 +256,7 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
                     y: 0.70,
                     escala: 0.65
                 },
+
                 {
                     x: 0.51,
                     y: 0.70,
@@ -263,7 +292,9 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
 
             // 🌑 Fundido a negro
             requestAnimationFrame(() => {
+
                 fundido.style.opacity = "1";
+
             });
 
             // 🏡 Cambiar a Escena 2
@@ -277,7 +308,9 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
                 fundido.style.opacity = "0";
 
                 setTimeout(() => {
+
                     fundido.remove();
+
                 }, 1000);
 
             }, 1000);
@@ -309,5 +342,4 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
         siguienteDialogo();
 
     }, 2000);
-}
-
+                }
