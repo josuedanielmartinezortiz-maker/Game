@@ -7,7 +7,6 @@ import { moverPersonajes } from "../mecanicas/movimiento.js";
 export function iniciarEscena1(game, imagenes) {
 
     const canvas = document.createElement("canvas");
-
     canvas.id = "escenaCanvas";
 
     game.appendChild(canvas);
@@ -37,7 +36,7 @@ export function iniciarEscena1(game, imagenes) {
     const TAMANO_BASE = 180;
 
     // =================================================
-    // 🔄 DIRECCIÓN DE LOS PERSONAJES
+    // 🔄 DIRECCIÓN
     // =================================================
 
     let imagenMike = imagenes.mike;
@@ -80,11 +79,8 @@ export function iniciarEscena1(game, imagenes) {
 
         if (!imagen) return;
 
-        const x =
-            posicion.x * canvas.width;
-
-        const y =
-            posicion.y * canvas.height;
+        const x = posicion.x * canvas.width;
+        const y = posicion.y * canvas.height;
 
         const alto =
             TAMANO_BASE * posicion.escala;
@@ -146,11 +142,8 @@ export function iniciarEscena1(game, imagenes) {
 
     function ajustarCanvas() {
 
-        canvas.width =
-            window.innerWidth;
-
-        canvas.height =
-            window.innerHeight;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
         dibujarEscena();
     }
@@ -163,7 +156,7 @@ export function iniciarEscena1(game, imagenes) {
     );
 
     // =================================================
-    // 🎬 MOSTRAR DIÁLOGO
+    // 💬 SISTEMA DE DIÁLOGO
     // =================================================
 
     function siguienteDialogo() {
@@ -182,7 +175,6 @@ export function iniciarEscena1(game, imagenes) {
 
         dialogoActual++;
 
-        // ⏱️ Tiempo para leer el diálogo
         setTimeout(
             siguienteDialogo,
             2500
@@ -190,7 +182,7 @@ export function iniciarEscena1(game, imagenes) {
     }
 
     // =================================================
-    // 🚶 CAMINATA
+    // 🚶 CAMINATA HACIA LA GRANJA
     // =================================================
 
     function iniciarCaminata() {
@@ -199,8 +191,8 @@ export function iniciarEscena1(game, imagenes) {
             "🚶 Mike y Micaela comienzan a caminar."
         );
 
-        // Después de un momento,
-        // pasan de frente a espalda.
+        // 🔄 Después de un rato comienzan
+        // a caminar de espaldas.
         setTimeout(() => {
 
             imagenMike =
@@ -210,10 +202,14 @@ export function iniciarEscena1(game, imagenes) {
                 imagenes.micaelaespalda;
 
             console.log(
-                "🔄 Ahora caminan de espaldas."
+                "🔄 Mike y Micaela ahora caminan de espaldas."
             );
 
         }, 2500);
+
+        // =================================================
+        // 📍 PUNTO DE TRANSICIÓN
+        // =================================================
 
         moverPersonajes(
             [MIKE, MICAELA],
@@ -221,13 +217,13 @@ export function iniciarEscena1(game, imagenes) {
             [
                 {
                     x: 0.49,
-                    y: 0.48,
-                    escala: 0.35
+                    y: 0.70,
+                    escala: 0.65
                 },
                 {
                     x: 0.51,
-                    y: 0.48,
-                    escala: 0.35
+                    y: 0.70,
+                    escala: 0.65
                 }
             ],
 
@@ -251,7 +247,7 @@ export function iniciarEscena1(game, imagenes) {
     actualizar();
 
     // =================================================
-    // ⏸️ PAUSA INICIAL
+    // ⏸️ INICIO DE LA ESCENA
     // =================================================
 
     setTimeout(() => {
@@ -259,4 +255,4 @@ export function iniciarEscena1(game, imagenes) {
         siguienteDialogo();
 
     }, 2000);
-    }
+}
