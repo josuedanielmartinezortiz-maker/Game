@@ -8,21 +8,11 @@ export function hablarSuave(texto, esMicaela = false) {
 
     if (esMicaela) {
         voz.pitch = 1.35;
-        voz.rate = 0.85;
+        voz.rate = 0.70; // 👧 más lenta
     } else {
         voz.pitch = 1.05;
-        voz.rate = 0.8;
-    }
-
-    const voces = speechSynthesis.getVoices();
-
-    const vozEspanol = voces.find(v =>
-        v.lang.toLowerCase().startsWith("es")
-    );
-
-    if (vozEspanol) {
-        voz.voice = vozEspanol;
+        voz.rate = 0.70; // 🧑 más lento
     }
 
     speechSynthesis.speak(voz);
-                                  }
+}
