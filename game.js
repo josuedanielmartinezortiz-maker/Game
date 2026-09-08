@@ -1,6 +1,5 @@
 // =====================================================
 // 🎮 GAMERPRO GAME — GAME.JS
-// 🧪 DIAGNÓSTICO DE INICIO
 // =====================================================
 
 import { precargarImagenes }
@@ -17,7 +16,7 @@ import { iniciarEscena2 }
 
 
 // =====================================================
-// 🎮 CONTENEDOR
+// 🎮 CONTENEDOR DEL JUEGO
 // =====================================================
 
 const game =
@@ -25,7 +24,7 @@ const game =
 
 
 // =====================================================
-// 🧪 PANEL DE DIAGNÓSTICO
+// 🧪 DIAGNÓSTICO VISIBLE
 // =====================================================
 
 const diagnostico =
@@ -41,12 +40,12 @@ Object.assign(
 
         width: "calc(100vw - 20px)",
 
-        padding: "15px",
+        padding: "12px",
 
         boxSizing: "border-box",
 
         background:
-            "rgba(0,0,0,0.95)",
+            "rgba(0,0,0,0.92)",
 
         color:
             "#00ff66",
@@ -54,18 +53,18 @@ Object.assign(
         fontFamily:
             "monospace",
 
-        fontSize: "17px",
+        fontSize: "15px",
 
-        lineHeight: "1.5",
+        lineHeight: "1.4",
 
         border:
-            "3px solid #00ff66",
+            "2px solid #00ff66",
 
         borderRadius:
-            "12px",
+            "10px",
 
         zIndex:
-            "99999",
+            "9000",
 
         whiteSpace:
             "pre-wrap",
@@ -76,7 +75,7 @@ Object.assign(
 );
 
 diagnostico.textContent =
-    "🧪 GAMERPRO DIAGNÓSTICO\nPreparando...";
+    "🧪 GAMERPRO\nPreparando...";
 
 document.body.appendChild(
     diagnostico
@@ -84,7 +83,7 @@ document.body.appendChild(
 
 
 // =====================================================
-// 🧪 FUNCIÓN DIAGNÓSTICO
+// 🧪 DIAGNÓSTICO
 // =====================================================
 
 function diagnosticar(
@@ -120,6 +119,8 @@ const recursos = {
     micaelaespalda:
         "./assets/micaelaespalda.png",
 
+    // 🐔 POLLOS
+
     pollonoob:
         "./assets/pollonoob.png",
 
@@ -151,20 +152,19 @@ function iniciarJuego() {
         "🔥 BOTÓN PRESIONADO"
     );
 
-
     diagnosticar(
-        "🚀 INICIANDO JUEGO..."
+        "🚀 INICIANDO GAMERPRO GAME..."
     );
 
 
     // ================================================
-    // 🔍 COMPROBAR IMÁGENES
+    // 🖼️ COMPROBAR RECURSOS
     // ================================================
 
     if (!imagenes) {
 
         diagnosticar(
-            "🔴 ERROR: IMÁGENES = NULL"
+            "🔴 ERROR: LAS IMÁGENES NO ESTÁN LISTAS"
         );
 
         return;
@@ -172,35 +172,16 @@ function iniciarJuego() {
 
 
     diagnosticar(
-        "🖼️ IMÁGENES DISPONIBLES"
+        "✅ IMÁGENES DISPONIBLES"
     );
 
 
     // ================================================
-    // 🔍 COMPROBAR ESCENA 1
-    // ================================================
-
-    if (!imagenes.escena1) {
-
-        diagnosticar(
-            "🔴 ERROR: escena1.png NO EXISTE"
-        );
-
-        return;
-    }
-
-
-    diagnosticar(
-        "✅ escena1.png ENCONTRADA"
-    );
-
-
-    // ================================================
-    // 🎬 LLAMAR ESCENA 1
+    // 🎬 ESCENA 1
     // ================================================
 
     diagnosticar(
-        "🎬 LLAMANDO iniciarEscena1()..."
+        "🎬 INICIANDO ESCENA 1..."
     );
 
 
@@ -215,12 +196,12 @@ function iniciarJuego() {
             () => {
 
                 diagnosticar(
-                    "✅ ESCENA 1 TERMINÓ"
+                    "✅ ESCENA 1 TERMINADA"
                 );
 
 
                 diagnosticar(
-                    "🎬 LLAMANDO ESCENA 2..."
+                    "🎬 INICIANDO ESCENA 2..."
                 );
 
 
@@ -250,7 +231,7 @@ function iniciarJuego() {
 
 
         diagnosticar(
-            "✅ iniciarEscena1() EJECUTADO"
+            "✅ ESCENA 1 EJECUTADA"
         );
 
     } catch (error) {
@@ -288,7 +269,7 @@ diagnosticar(
 
 
 // =====================================================
-// 📥 PRECARGAR
+// 📥 CARGAR RECURSOS
 // =====================================================
 
 diagnosticar(
@@ -324,7 +305,7 @@ precargarImagenes(
 
 
 // =====================================================
-// ✅ TODO CARGADO
+// ✅ RECURSOS LISTOS
 // =====================================================
 
 .then(
