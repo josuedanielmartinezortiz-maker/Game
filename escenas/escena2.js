@@ -2,23 +2,25 @@
 // 🐔 GAMERPRO GAME — ESCENA 2
 // =====================================================
 
-import { iniciarEscena3 } from "./escena3.js";
-
-export function iniciarEscena2(game, imagenes) {
+export function iniciarEscena2(
+    game,
+    imagenes,
+    alTerminar
+) {
 
     const canvas =
         document.createElement("canvas");
 
-    canvas.id = "escenaCanvas";
+    canvas.id =
+        "escenaCanvas";
 
     game.appendChild(canvas);
 
     const ctx =
         canvas.getContext("2d");
 
-
     // =================================================
-    // 👦👧 PERSONAJES
+    // 👥 PERSONAJES
     // =================================================
 
     const MIKE = {
@@ -33,12 +35,15 @@ export function iniciarEscena2(game, imagenes) {
         escala: 0.65
     };
 
+    // =================================================
+    // 🐔 POLLO
+    // =================================================
+
     const POLLO = {
         x: 0.50,
         y: 0.76,
         escala: 0.45
     };
-
 
     // =================================================
     // 🥚 HUEVO
@@ -65,11 +70,6 @@ export function iniciarEscena2(game, imagenes) {
         tiempoImpacto: 0
     };
 
-
-    // =================================================
-    // 🖼️ IMÁGENES
-    // =================================================
-
     const imagenMike =
         imagenes.mike;
 
@@ -82,9 +82,7 @@ export function iniciarEscena2(game, imagenes) {
     const imagenHuevo =
         imagenes.noob;
 
-
     const TAMANO_BASE = 180;
-
 
     // =================================================
     // 🎨 DIBUJAR ELEMENTO
@@ -104,7 +102,8 @@ export function iniciarEscena2(game, imagenes) {
             posicion.y * canvas.height;
 
         const alto =
-            TAMANO_BASE * posicion.escala;
+            TAMANO_BASE *
+            posicion.escala;
 
         const proporcion =
             imagen.naturalWidth /
@@ -114,14 +113,19 @@ export function iniciarEscena2(game, imagenes) {
             alto * proporcion;
 
         ctx.drawImage(
+
             imagen,
+
             x - ancho / 2,
+
             y - alto / 2,
+
             ancho,
+
             alto
+
         );
     }
-
 
     // =================================================
     // 💥 EXPLOSIÓN
@@ -129,7 +133,8 @@ export function iniciarEscena2(game, imagenes) {
 
     function dibujarExplosion() {
 
-        if (!HUEVO.impacto) return;
+        if (!HUEVO.impacto)
+            return;
 
         const transcurrido =
             performance.now() -
@@ -137,22 +142,32 @@ export function iniciarEscena2(game, imagenes) {
 
         const duracion = 600;
 
-        if (transcurrido >= duracion) {
-            HUEVO.impacto = false;
+        if (
+            transcurrido >=
+            duracion
+        ) {
+
+            HUEVO.impacto =
+                false;
+
             return;
         }
 
         const progreso =
-            transcurrido / duracion;
+            transcurrido /
+            duracion;
 
         const x =
-            HUEVO.x * canvas.width;
+            HUEVO.x *
+            canvas.width;
 
         const y =
-            HUEVO.suelo * canvas.height;
+            HUEVO.suelo *
+            canvas.height;
 
         const radio =
-            25 + progreso * 90;
+            25 +
+            progreso * 90;
 
         ctx.save();
 
@@ -170,13 +185,13 @@ export function iniciarEscena2(game, imagenes) {
         );
 
         ctx.lineWidth =
-            10 * (1 - progreso);
+            10 *
+            (1 - progreso);
 
         ctx.strokeStyle =
             "#FFD21F";
 
         ctx.stroke();
-
 
         for (
             let i = 0;
@@ -185,7 +200,8 @@ export function iniciarEscena2(game, imagenes) {
         ) {
 
             const angulo =
-                (Math.PI * 2 / 8) * i;
+                (Math.PI * 2 / 8) *
+                i;
 
             const inicio =
                 radio * 0.6;
@@ -196,6 +212,7 @@ export function iniciarEscena2(game, imagenes) {
             ctx.beginPath();
 
             ctx.moveTo(
+
                 x +
                 Math.cos(angulo) *
                 inicio,
@@ -203,9 +220,11 @@ export function iniciarEscena2(game, imagenes) {
                 y +
                 Math.sin(angulo) *
                 inicio
+
             );
 
             ctx.lineTo(
+
                 x +
                 Math.cos(angulo) *
                 fin,
@@ -213,6 +232,7 @@ export function iniciarEscena2(game, imagenes) {
                 y +
                 Math.sin(angulo) *
                 fin
+
             );
 
             ctx.lineWidth = 5;
@@ -226,13 +246,16 @@ export function iniciarEscena2(game, imagenes) {
         ctx.restore();
     }
 
-
     // =================================================
-    // 🥚 ACTUALIZACIÓN
+    // ⏱️ TIEMPO
     // =================================================
 
     let ultimoTiempo =
         performance.now();
+
+    // =================================================
+    // 🥚 FÍSICA DEL HUEVO
+    // =================================================
 
     function actualizarHuevo(
         tiempoActual
@@ -253,7 +276,6 @@ export function iniciarEscena2(game, imagenes) {
         ultimoTiempo =
             tiempoActual;
 
-
         HUEVO.velocidad +=
             HUEVO.gravedad *
             delta;
@@ -262,8 +284,10 @@ export function iniciarEscena2(game, imagenes) {
             HUEVO.velocidad *
             delta;
 
-
+        // =================================================
         // 💥 IMPACTO
+        // =================================================
+
         if (
             HUEVO.y >=
             HUEVO.suelo
@@ -289,19 +313,26 @@ export function iniciarEscena2(game, imagenes) {
             // 🎬 PASAR A ESCENA 3
             // =================================================
 
-            setTimeout(() => {
+            setTimeout(
+                function() {
 
-                game.innerHTML = "";
+                    if (
+                        typeof alTerminar ===
+                        "function"
+                    ) {
 
-                iniciarEscena3(
-                    game,
-                    imagenes
-                );
+                        game.innerHTML = "";
 
-            }, 700);
+                        alTerminar();
+
+                    }
+
+                },
+
+                800
+            );
         }
     }
-
 
     // =================================================
     // 🎬 DIBUJAR ESCENA
@@ -317,11 +348,15 @@ export function iniciarEscena2(game, imagenes) {
         );
 
         ctx.drawImage(
+
             imagenes.escena2,
+
             0,
             0,
+
             canvas.width,
             canvas.height
+
         );
 
         dibujarElemento(
@@ -347,9 +382,8 @@ export function iniciarEscena2(game, imagenes) {
         dibujarExplosion();
     }
 
-
     // =================================================
-    // 📱 CANVAS
+    // 📐 CANVAS
     // =================================================
 
     function ajustarCanvas() {
@@ -369,7 +403,6 @@ export function iniciarEscena2(game, imagenes) {
         "resize",
         ajustarCanvas
     );
-
 
     // =================================================
     // 🔄 BUCLE
@@ -394,25 +427,31 @@ export function iniciarEscena2(game, imagenes) {
         actualizar
     );
 
-
     // =================================================
-    // ⏱️ ENTRADA DEL HUEVO
+    // 🥚 APARECER HUEVO
     // =================================================
 
-    setTimeout(() => {
+    setTimeout(
+        function() {
 
-        HUEVO.cayendo = true;
+            HUEVO.cayendo =
+                true;
 
-        HUEVO.velocidad = 0;
+            HUEVO.velocidad =
+                0;
 
-        HUEVO.y = -0.15;
+            HUEVO.y =
+                -0.15;
 
-        ultimoTiempo =
-            performance.now();
+            ultimoTiempo =
+                performance.now();
 
-        console.log(
-            "☁️🥚 ¡EL HUEVO APARECE!"
-        );
+            console.log(
+                "☁️🥚 ¡EL HUEVO APARECE!"
+            );
 
-    }, 1000);
+        },
+
+        1000
+    );
             }
