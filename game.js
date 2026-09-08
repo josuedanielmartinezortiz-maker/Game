@@ -3,6 +3,7 @@ import { iniciarPantallaCarga } from "./sistemas/pantallaCarga.js";
 
 import { iniciarEscena1 } from "./escenas/escena1.js";
 import { iniciarEscena2 } from "./escenas/escena2.js";
+import { iniciarEscena3 } from "./escenas/escena3.js";
 
 const game = document.getElementById("game");
 
@@ -22,12 +23,12 @@ const recursos = {
     mikeespalda: "./assets/mikeespalda.png",
     micaelaespalda: "./assets/micaelaespalda.png",
 
-    // 🐔 ESCENA 2
+    // 🐔 POLLOS
     pollonoob: "./assets/pollonoob.png",
-    noob: "./assets/noob.png"
+    noob: "./assets/noob.png",
+    pollozombie: "./assets/pollo zombie.png",
+    pollitonoob: "./assets/pollitonoob.png"
 };
-pollozombie: "./assets/pollo zombie.png",
-pollitonoob: "./assets/pollitonoob.png"
 
 
 // =====================================================
@@ -81,7 +82,14 @@ promesaRecursos
         iniciarEscena1(
             game,
             imagenes,
-            () => iniciarEscena2(game, imagenes)
+            () => {
+
+                iniciarEscena2(
+                    game,
+                    imagenes
+                );
+
+            }
         );
 
     })
