@@ -71,7 +71,7 @@ export function iniciarPantallaCarga(game) {
         // 👆 PRIMER TOQUE
         // =================================================
 
-        function iniciar() {
+        async function iniciar() {
 
             if (boton.dataset.iniciado === "true") {
                 return;
@@ -85,7 +85,7 @@ export function iniciarPantallaCarga(game) {
 
 
             // =================================================
-            // 🔊 INTENTAR ACTIVAR AUDIO
+            // 🔊 ACTIVAR AUDIO DURANTE EL TOQUE
             // =================================================
 
             try {
@@ -96,24 +96,66 @@ export function iniciarPantallaCarga(game) {
 
                 if (AudioContext) {
 
+                    // Crear UN SOLO contexto para todo el juego
                     const audioContext =
                         new AudioContext();
+
+                    window.gamerproAudioContext =
+                        audioContext;
+
+
+                    // -----------------------------------------
+                    // 🔓 DESBLOQUEAR AUDIO
+                    // -----------------------------------------
 
                     if (
                         audioContext.state ===
                         "suspended"
                     ) {
-                        audioContext.resume();
+
+                        await audioContext.resume();
+
                     }
 
-                    window.gamerproAudioContext =
-                        audioContext;
+
+                    console.log(
+                        "🔊 AudioContext:",
+                        audioContext.state
+                    );
+
+
+                    // -----------------------------------------
+                    // 🔇 PEQUEÑO BUFFER SILENCIOSO
+                    // -----------------------------------------
+
+                    const buffer =
+                        audioContext.createBuffer(
+                            1,
+                            1,
+                            audioContext.sampleRate
+                        );
+
+                    const fuente =
+                        audioContext.createBufferSource();
+
+                    fuente.buffer = buffer;
+
+                    fuente.connect(
+                        audioContext.destination
+                    );
+
+                    fuente.start(0);
+
+
+                    console.log(
+                        "🔓 AUDIO DESBLOQUEADO"
+                    );
                 }
 
             } catch (error) {
 
                 console.warn(
-                    "⚠️ Audio:",
+                    "⚠️ No se pudo desbloquear el audio:",
                     error
                 );
             }
@@ -148,4 +190,4 @@ export function iniciarPantallaCarga(game) {
         );
 
     });
-}
+            }
