@@ -1,95 +1,210 @@
+// =====================================================
+// 🎙️ GAMERPRO GAME — SISTEMA DE AUDIO
+// =====================================================
 
 // =====================================================
-// 🎙️ GAMERPRO GAME — AUDIO DE DIAGNÓSTICO
+// 🔊 CACHÉ DE AUDIOS
 // =====================================================
 
-export function reproducirVoz(ruta, personaje) {
+const audiosCargados = new Map();
 
-    let aviso = document.getElementById("avisoAudio");
 
-    if (!aviso) {
-        aviso = document.createElement("div");
+// =====================================================
+// 📥 CARGAR Y DECODIFICAR MP3
+// =====================================================
 
-        aviso.id = "avisoAudio";
+async function cargarAudio(ruta) {
 
-        Object.assign(aviso.style, {
-            position: "fixed",
-            top: "20px",
-            left: "20px",
-            right: "20px",
-            padding: "15px",
-            background: "rgba(0,0,0,0.9)",
-            color: "white",
-            fontFamily: "Arial, sans-serif",
-            fontSize: "16px",
-            textAlign: "center",
-            borderRadius: "10px",
-            zIndex: "99999"
-        });
+    // Si ya está cargado, reutilizarlo
+    if (audiosCargados.has(ruta)) {
 
-        document.body.appendChild(aviso);
+        return audiosCargados.get(ruta);
     }
 
-    aviso.textContent =
-        `🔊 Intentando reproducir ${personaje}...`;
 
-    const audio = new Audio();
+    const audioContext =
+        window.gamerproAudioContext;
 
-    audio.preload = "auto";
-    audio.volume = 1.0;
+    if (!audioContext) {
 
-    audio.addEventListener("loadeddata", () => {
-
-        aviso.textContent =
-            `📦 Archivo cargado: ${personaje}`;
-
-    });
-
-    audio.addEventListener("canplaythrough", () => {
-
-        aviso.textContent =
-            `✅ Audio listo: ${personaje}`;
-
-    });
-
-    audio.addEventListener("error", () => {
-
-        aviso.textContent =
-            `❌ ERROR AL CARGAR: ${ruta}`;
-
-    });
-
-    audio.src = ruta;
-
-    const promesa = audio.play();
-
-    if (promesa) {
-
-        promesa
-            .then(() => {
-
-                aviso.textContent =
-                    `▶️ REPRODUCIENDO: ${personaje}`;
-
-                setTimeout(() => {
-
-                    if (aviso) {
-                        aviso.remove();
-                    }
-
-                }, 1500);
-
-            })
-            .catch((error) => {
-
-                console.error(error);
-
-                aviso.textContent =
-                    `🚫 EL NAVEGADOR BLOQUEÓ EL AUDIO`;
-
-            });
-
+        throw new Error(
+            "No existe gamerproAudioContext"
+        );
     }
 
-    return audio;
+
+    console.log(
+        `📥 Cargando voz: ${ruta}`
+    );
+
+
+    const respuesta =
+        await fetch(ruta);
+
+    if (!respuesta.ok) {
+
+        throw new Error(
+            `No se encontró el audio: ${ruta}`
+        );
+    }
+
+
+    const datos =
+        await respuesta.arrayBuffer();
+
+
+    const buffer =
+        await audioContext.decodeAudioData(
+            datos
+        );
+
+
+    // Guardar en caché
+    audiosCargados.set(
+        ruta,
+        buffer
+    );
+
+
+    console.log(
+        `✅ Audio cargado: ${ruta}`
+    );
+
+
+    return buffer;
 }
+
+
+// =====================================================
+// ▶️ REPRODUCIR VOZ
+// =====================================================
+
+export async function reproducirVoz(
+    ruta,
+    personaje
+) {
+
+    const audioContext =
+        window.gamerproAudioContext;
+
+
+    // =================================================
+    // 🚨 VERIFICAR AUDIO
+    // =================================================
+
+    if (!audioContext) {
+
+        console.error(
+            "❌ No existe AudioContext."
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // 🔓 ASEGURAR QUE ESTÉ ACTIVO
+    // =================================================
+
+    if (
+        audioContext.state ===
+        "suspended"
+    ) {
+
+        try {
+
+            await audioContext.resume();
+
+        } catch (error) {
+
+            console.error(
+                "❌ No se pudo activar el audio:",
+                error
+            );
+
+            return;
+        }
+    }
+
+
+    try {
+
+        // =================================================
+        // 📥 CARGAR MP3
+        // =================================================
+
+        const buffer =
+            await cargarAudio(ruta);
+
+
+        // =================================================
+        // 🎵 CREAR REPRODUCTOR
+        // =================================================
+
+        const fuente =
+            audioContext.createBufferSource();
+
+        fuente.buffer =
+            buffer;
+
+
+        // =================================================
+        // 🔊 VOLUMEN
+        // =================================================
+
+        const volumen =
+            audioContext.createGain();
+
+        volumen.gain.value = 1.0;
+
+
+        // =================================================
+        // 🔌 CONECTAR
+        // =================================================
+
+        fuente.connect(
+            volumen
+        );
+
+        volumen.connect(
+            audioContext.destination
+        );
+
+
+        // =================================================
+        // ▶️ REPRODUCIR
+        // =================================================
+
+        fuente.start(0);
+
+
+        console.log(
+            `▶️ Reproduciendo ${personaje}: ${ruta}`
+        );
+
+
+        // =================================================
+        // 🧹 LIMPIAR AL TERMINAR
+        // =================================================
+
+        fuente.addEventListener(
+            "ended",
+            () => {
+
+                fuente.disconnect();
+
+                volumen.disconnect();
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            `❌ Error reproduciendo ${personaje}:`,
+            error
+        );
+
+    }
+                }
