@@ -2,7 +2,10 @@
 // 🎮 GAMERPRO GAME — PANTALLA DE CARGA
 // =====================================================
 
-export function iniciarPantallaCarga(game) {
+export function iniciarPantallaCarga(
+    game,
+    alIniciar
+) {
 
     // =================================================
     // 🖥️ CREAR PANTALLA
@@ -47,11 +50,6 @@ export function iniciarPantallaCarga(game) {
         }
     );
 
-
-    // =================================================
-    // 🧱 CONTENIDO
-    // =================================================
-
     pantalla.innerHTML = `
 
         <div style="
@@ -61,7 +59,6 @@ export function iniciarPantallaCarga(game) {
         ">
             GAMERPRO GAME
         </div>
-
 
         <div
             id="textoCarga"
@@ -73,19 +70,13 @@ export function iniciarPantallaCarga(game) {
             ⏳ Cargando...
         </div>
 
-
         <div style="
             width: min(80%, 500px);
             height: 22px;
-
             background: #222;
-
             border: 2px solid #555;
-
             border-radius: 20px;
-
             overflow: hidden;
-
             margin-bottom: 15px;
         ">
 
@@ -94,16 +85,12 @@ export function iniciarPantallaCarga(game) {
                 style="
                     width: 0%;
                     height: 100%;
-
                     background: #fff;
-
-                    transition:
-                        width 0.2s ease;
+                    transition: width 0.2s ease;
                 "
             ></div>
 
         </div>
-
 
         <div
             id="porcentajeCarga"
@@ -115,82 +102,54 @@ export function iniciarPantallaCarga(game) {
             0%
         </div>
 
-
         <div
             id="recursoCarga"
             style="
                 font-size: 15px;
                 color: #aaa;
-
                 min-height: 22px;
-
                 max-width: 80%;
-
                 overflow-wrap: break-word;
             "
         >
             Preparando recursos...
         </div>
 
-
         <div
             id="errorCarga"
             style="
                 display: none;
-
                 margin-top: 25px;
-
                 padding: 15px;
-
                 max-width: 80%;
-
                 background: #250000;
-
                 border: 2px solid #ff3333;
-
                 border-radius: 10px;
-
                 color: #ff6666;
-
                 font-size: 16px;
             "
         ></div>
 
-
         <button
             id="botonIniciar"
-
             type="button"
-
             disabled
-
             style="
                 display: none;
-
                 margin-top: 30px;
-
                 padding: 16px 30px;
-
                 font-size: 20px;
-
                 font-weight: bold;
-
                 border: none;
-
                 border-radius: 12px;
-
                 cursor: pointer;
-
-                touch-action:
-                    manipulation;
-
+                touch-action: manipulation;
                 user-select: none;
             "
         >
             👆 TOCA PARA INICIAR
         </button>
     `;
-
 
     game.appendChild(
         pantalla
@@ -244,23 +203,6 @@ export function iniciarPantallaCarga(game) {
 
 
     // =================================================
-    // 🤝 PROMESA DE INICIO
-    // =================================================
-
-    let resolverInicio;
-
-    const promesaInicio =
-        new Promise(
-            (resolver) => {
-
-                resolverInicio =
-                    resolver;
-
-            }
-        );
-
-
-    // =================================================
     // 📊 ACTUALIZAR CARGA
     // =================================================
 
@@ -274,11 +216,9 @@ export function iniciarPantallaCarga(game) {
         const porcentaje =
             total > 0
                 ? Math.round(
-                    (cargadas / total) *
-                    100
+                    (cargadas / total) * 100
                 )
                 : 0;
-
 
         barraCarga.style.width =
             `${porcentaje}%`;
@@ -286,10 +226,6 @@ export function iniciarPantallaCarga(game) {
         porcentajeCarga.textContent =
             `${porcentaje}%`;
 
-
-        // =============================================
-        // ❌ ERROR
-        // =============================================
 
         if (!correcta) {
 
@@ -318,10 +254,6 @@ export function iniciarPantallaCarga(game) {
         }
 
 
-        // =============================================
-        // ⏳ CARGANDO
-        // =============================================
-
         textoCarga.textContent =
             "⏳ Cargando...";
 
@@ -331,7 +263,7 @@ export function iniciarPantallaCarga(game) {
 
 
     // =================================================
-    // ✅ TODO CARGADO
+    // ✅ CARGA COMPLETA
     // =================================================
 
     function marcarCargaCompleta() {
@@ -363,10 +295,32 @@ export function iniciarPantallaCarga(game) {
 
 
     // =================================================
-    // 🔊 DESBLOQUEAR AUDIO
+    // 👆 BOTÓN INICIAR
     // =================================================
 
-    async function desbloquearAudio() {
+    async function iniciar() {
+
+        if (!cargaCompleta) {
+            return;
+        }
+
+        if (iniciado) {
+            return;
+        }
+
+        iniciado =
+            true;
+
+        boton.disabled =
+            true;
+
+        boton.textContent =
+            "🚀 INICIANDO...";
+
+
+        // =================================================
+        // 🔊 DESBLOQUEAR AUDIO
+        // =================================================
 
         try {
 
@@ -374,121 +328,61 @@ export function iniciarPantallaCarga(game) {
                 window.AudioContext ||
                 window.webkitAudioContext;
 
+            if (AudioContext) {
 
-            if (!AudioContext) {
+                let audioContext =
+                    window.gamerproAudioContext;
 
-                return;
+                if (!audioContext) {
 
-            }
+                    audioContext =
+                        new AudioContext();
 
+                    window.gamerproAudioContext =
+                        audioContext;
+                }
 
-            let audioContext =
-                window.gamerproAudioContext;
+                if (
+                    audioContext.state ===
+                    "suspended"
+                ) {
 
+                    await audioContext.resume();
 
-            if (!audioContext) {
+                }
 
-                audioContext =
-                    new AudioContext();
+                const buffer =
+                    audioContext.createBuffer(
+                        1,
+                        1,
+                        audioContext.sampleRate
+                    );
 
-                window.gamerproAudioContext =
-                    audioContext;
+                const fuente =
+                    audioContext.createBufferSource();
 
-            }
+                fuente.buffer =
+                    buffer;
 
-
-            if (
-                audioContext.state ===
-                "suspended"
-            ) {
-
-                await audioContext.resume();
-
-            }
-
-
-            // Pequeño sonido silencioso
-            // para desbloquear audio móvil
-
-            const buffer =
-                audioContext.createBuffer(
-                    1,
-                    1,
-                    audioContext.sampleRate
+                fuente.connect(
+                    audioContext.destination
                 );
 
-
-            const fuente =
-                audioContext.createBufferSource();
-
-            fuente.buffer =
-                buffer;
-
-            fuente.connect(
-                audioContext.destination
-            );
-
-            fuente.start(0);
-
+                fuente.start(0);
+            }
 
         } catch (error) {
 
             console.warn(
-                "⚠️ No se pudo desbloquear el audio:",
+                "⚠️ Audio:",
                 error
             );
-
-        }
-    }
-
-
-    // =================================================
-    // 👆 INICIAR JUEGO
-    // =================================================
-
-    async function iniciar() {
-
-        // No permitir iniciar
-        // si algo falló
-
-        if (!cargaCompleta) {
-
-            return;
-
         }
 
 
-        // Evitar doble toque
-
-        if (iniciado) {
-
-            return;
-
-        }
-
-
-        iniciado =
-            true;
-
-
-        boton.disabled =
-            true;
-
-
-        boton.textContent =
-            "🚀 INICIANDO...";
-
-
-        // =============================================
-        // 🔊 AUDIO
-        // =============================================
-
-        await desbloquearAudio();
-
-
-        // =============================================
+        // =================================================
         // 🎬 OCULTAR PANTALLA
-        // =============================================
+        // =================================================
 
         pantalla.style.transition =
             "opacity 0.5s ease";
@@ -497,25 +391,29 @@ export function iniciarPantallaCarga(game) {
             "0";
 
 
-        setTimeout(
-            () => {
+        setTimeout(() => {
 
-                pantalla.remove();
+            pantalla.remove();
 
-                // =====================================
-                // 🔥 ESTA ES LA PARTE IMPORTANTE
-                // =====================================
+            // =================================================
+            // 🚀 INICIO DIRECTO
+            // =================================================
 
-                resolverInicio();
+            if (
+                typeof alIniciar ===
+                "function"
+            ) {
 
-            },
-            500
-        );
+                alIniciar();
+
+            }
+
+        }, 500);
     }
 
 
     // =================================================
-    // 👆 EVENTOS DEL BOTÓN
+    // 👆 EVENTOS
     // =================================================
 
     boton.addEventListener(
@@ -531,12 +429,10 @@ export function iniciarPantallaCarga(game) {
 
 
     // =================================================
-    // 📤 DEVOLVER SISTEMA
+    // 📤 DEVOLVER FUNCIONES
     // =================================================
 
     return {
-
-        promesaInicio,
 
         actualizarCarga,
 
