@@ -38,6 +38,11 @@ const recursos = {
     mikeespalda:
         "./assets/mikeespalda.png",
 
+    micaelaespalda:
+        "./assets/micaelaespalda.png",
+
+    // 🐔 POLLOS
+
     pollonoob:
         "./assets/pollonoob.png",
 
@@ -59,81 +64,99 @@ const pantallaCarga =
     iniciarPantallaCarga(game);
 
 // =====================================================
-// 📥 CARGAR RECURSOS
+// 📥 PRECARGAR RECURSOS
 // =====================================================
 
-precargarImagenes(
+const promesaRecursos =
+    precargarImagenes(
 
-    recursos,
+        recursos,
 
-    (
-        cargadas,
-        total,
-        nombre,
-        correcta
-    ) => {
-
-        pantallaCarga.actualizarCarga(
+        (
             cargadas,
             total,
             nombre,
             correcta
-        );
-    }
+        ) => {
 
-)
-
-.then(async (imagenes) => {
-
-    console.log(
-        "✅ TODOS LOS RECURSOS CARGADOS"
-    );
-
-    pantallaCarga.marcarCargaCompleta();
-
-    // Esperar a que el jugador toque
-    // "TOCA PARA INICIAR"
-    await pantallaCarga.promesaInicio;
-
-    console.log(
-        "🚀 BOTÓN PRESIONADO"
-    );
-
-    // =================================================
-    // 🎬 ESCENA 1
-    // =================================================
-
-    iniciarEscena1(
-
-        game,
-
-        imagenes,
-
-        () => {
-
-            console.log(
-                "➡️ ESCENA 1 TERMINADA"
+            pantallaCarga.actualizarCarga(
+                cargadas,
+                total,
+                nombre,
+                correcta
             );
-
-            // =================================================
-            // 🎬 ESCENA 2
-            // =================================================
-
-            iniciarEscena2(
-                game,
-                imagenes
-            );
-
         }
     );
 
-})
+// =====================================================
+// 🎮 CUANDO TODO ESTÉ CARGADO
+// =====================================================
 
-.catch((error) => {
+promesaRecursos
 
-    console.error(
-        "🚨 ERROR AL CARGAR GAMERPRO GAME:",
-        error
-    );
+    .then(async (imagenes) => {
 
-});
+        console.log(
+            "✅ TODOS LOS RECURSOS CARGADOS"
+        );
+
+        pantallaCarga
+            .marcarCargaCompleta();
+
+        // =================================================
+        // 👆 ESPERAR BOTÓN
+        // =================================================
+
+        await pantallaCarga
+            .promesaInicio;
+
+        console.log(
+            "🔥 PASÓ EL BOTÓN"
+        );
+
+        // =================================================
+        // 🎬 INICIAR ESCENA 1
+        // =================================================
+
+        console.log(
+            "🎬 INTENTANDO INICIAR ESCENA 1"
+        );
+
+        iniciarEscena1(
+
+            game,
+
+            imagenes,
+
+            () => {
+
+                console.log(
+                    "➡️ ESCENA 1 TERMINADA"
+                );
+
+                // =================================================
+                // 🎬 INICIAR ESCENA 2
+                // =================================================
+
+                console.log(
+                    "🎬 INICIANDO ESCENA 2"
+                );
+
+                iniciarEscena2(
+                    game,
+                    imagenes
+                );
+
+            }
+        );
+
+    })
+
+    .catch((error) => {
+
+        console.error(
+            "🚨 ERROR AL CARGAR GAMERPRO GAME:",
+            error
+        );
+
+    });
