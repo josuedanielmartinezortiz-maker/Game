@@ -3,7 +3,6 @@ import { iniciarPantallaCarga } from "./sistemas/pantallaCarga.js";
 
 import { iniciarEscena1 } from "./escenas/escena1.js";
 import { iniciarEscena2 } from "./escenas/escena2.js";
-import { iniciarEscena3 } from "./escenas/escena3.js";
 
 const game = document.getElementById("game");
 
@@ -46,43 +45,86 @@ const promesaPantalla =
 const promesaRecursos =
     precargarImagenes(
         recursos,
-        (cargadas, total, nombre, correcta) => {
+        (
+            cargadas,
+            total,
+            nombre,
+            correcta
+        ) => {
 
-            if (correcta) {
+            console.log(
+                `${correcta ? "✅" : "❌"} ${nombre} (${cargadas}/${total})`
+            );
 
-                console.log(
-                    `✅ Cargada: ${nombre} (${cargadas}/${total})`
+
+            // 📊 ACTUALIZAR PANTALLA
+
+            if (
+                typeof window.gamerproActualizarCarga ===
+                "function"
+            ) {
+
+                window.gamerproActualizarCarga(
+                    cargadas,
+                    total,
+                    nombre,
+                    correcta
                 );
-
-            } else {
-
-                console.error(
-                    `❌ FALLÓ: ${nombre}`
-                );
-
             }
-
         }
     );
 
 
 // =====================================================
-// 🎮 CUANDO TODO ESTÉ LISTO
+// 🎮 CUANDO TODO ESTÉ CARGADO
 // =====================================================
 
 promesaRecursos
     .then(async (imagenes) => {
 
-        console.log("🎮 ¡RECURSOS LISTOS!");
+        console.log(
+            "🎮 ¡TODOS LOS RECURSOS ESTÁN LISTOS!"
+        );
+
+
+        // =================================================
+        // ✅ AVISAR A LA PANTALLA
+        // =================================================
+
+        if (
+            typeof window.gamerproCargaCompleta ===
+            "function"
+        ) {
+
+            window.gamerproCargaCompleta();
+        }
+
+
+        // =================================================
+        // 👆 ESPERAR AL BOTÓN
+        // =================================================
 
         await promesaPantalla;
 
-        console.log("🔊 AUDIO DESBLOQUEADO");
+
+        console.log(
+            "🔊 AUDIO DESBLOQUEADO"
+        );
+
+
+        // =================================================
+        // 🎬 ESCENA 1
+        // =================================================
 
         iniciarEscena1(
             game,
             imagenes,
+
             () => {
+
+                // =================================================
+                // 🎬 ESCENA 2
+                // =================================================
 
                 iniciarEscena2(
                     game,
@@ -93,6 +135,12 @@ promesaRecursos
         );
 
     })
+
+
+    // =====================================================
+    // ❌ ERROR DE CARGA
+    // =====================================================
+
     .catch((error) => {
 
         console.error(
