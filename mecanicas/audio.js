@@ -1,82 +1,61 @@
 // =====================================================
-// 🎙️ GAMERPRO GAME — SISTEMA DE AUDIO
-// =====================================================
-
-// =====================================================
-// 🔊 CACHÉ DE AUDIOS
+// 🎙️ GAMERPRO GAME — AUDIO
 // =====================================================
 
 const audiosCargados = new Map();
 
 
 // =====================================================
-// 📥 CARGAR Y DECODIFICAR MP3
+// 📥 CARGAR MP3
 // =====================================================
 
 async function cargarAudio(ruta) {
 
-    // Si ya está cargado, reutilizarlo
     if (audiosCargados.has(ruta)) {
-
         return audiosCargados.get(ruta);
     }
-
 
     const audioContext =
         window.gamerproAudioContext;
 
     if (!audioContext) {
-
         throw new Error(
-            "No existe gamerproAudioContext"
+            "NO EXISTE AUDIOCONTEXT"
         );
     }
 
-
-    console.log(
-        `📥 Cargando voz: ${ruta}`
+    mostrarMensaje(
+        "📥 Cargando: " + ruta
     );
-
 
     const respuesta =
         await fetch(ruta);
 
     if (!respuesta.ok) {
-
         throw new Error(
-            `No se encontró el audio: ${ruta}`
+            "MP3 NO ENCONTRADO: " + ruta
         );
     }
 
-
     const datos =
         await respuesta.arrayBuffer();
-
 
     const buffer =
         await audioContext.decodeAudioData(
             datos
         );
 
-
-    // Guardar en caché
     audiosCargados.set(
         ruta,
         buffer
     );
-
-
-    console.log(
-        `✅ Audio cargado: ${ruta}`
-    );
-
 
     return buffer;
 }
 
 
 // =====================================================
-// ▶️ REPRODUCIR VOZ
+// 🔊 REPRODUCIR VOZ
 // =====================================================
 
 export async function reproducirVoz(
@@ -84,18 +63,17 @@ export async function reproducirVoz(
     personaje
 ) {
 
+    mostrarMensaje(
+        `🔊 Intentando voz de ${personaje}...`
+    );
+
     const audioContext =
         window.gamerproAudioContext;
 
-
-    // =================================================
-    // 🚨 VERIFICAR AUDIO
-    // =================================================
-
     if (!audioContext) {
 
-        console.error(
-            "❌ No existe AudioContext."
+        mostrarMensaje(
+            "❌ NO EXISTE AUDIOCONTEXT"
         );
 
         return;
@@ -103,13 +81,10 @@ export async function reproducirVoz(
 
 
     // =================================================
-    // 🔓 ASEGURAR QUE ESTÉ ACTIVO
+    // 🔓 ACTIVAR CONTEXTO
     // =================================================
 
-    if (
-        audioContext.state ===
-        "suspended"
-    ) {
+    if (audioContext.state !== "running") {
 
         try {
 
@@ -117,9 +92,8 @@ export async function reproducirVoz(
 
         } catch (error) {
 
-            console.error(
-                "❌ No se pudo activar el audio:",
-                error
+            mostrarMensaje(
+                "❌ AUDIO BLOQUEADO"
             );
 
             return;
@@ -129,18 +103,12 @@ export async function reproducirVoz(
 
     try {
 
-        // =================================================
-        // 📥 CARGAR MP3
-        // =================================================
-
+        // Cargar MP3
         const buffer =
             await cargarAudio(ruta);
 
 
-        // =================================================
-        // 🎵 CREAR REPRODUCTOR
-        // =================================================
-
+        // Crear reproductor
         const fuente =
             audioContext.createBufferSource();
 
@@ -148,20 +116,14 @@ export async function reproducirVoz(
             buffer;
 
 
-        // =================================================
-        // 🔊 VOLUMEN
-        // =================================================
-
+        // Volumen
         const volumen =
             audioContext.createGain();
 
         volumen.gain.value = 1.0;
 
 
-        // =================================================
-        // 🔌 CONECTAR
-        // =================================================
-
+        // Conectar
         fuente.connect(
             volumen
         );
@@ -171,28 +133,20 @@ export async function reproducirVoz(
         );
 
 
-        // =================================================
-        // ▶️ REPRODUCIR
-        // =================================================
-
+        // Reproducir
         fuente.start(0);
 
 
-        console.log(
-            `▶️ Reproduciendo ${personaje}: ${ruta}`
+        mostrarMensaje(
+            `▶️ REPRODUCIENDO ${personaje}`
         );
 
-
-        // =================================================
-        // 🧹 LIMPIAR AL TERMINAR
-        // =================================================
 
         fuente.addEventListener(
             "ended",
             () => {
 
                 fuente.disconnect();
-
                 volumen.disconnect();
 
             }
@@ -201,10 +155,61 @@ export async function reproducirVoz(
 
     } catch (error) {
 
-        console.error(
-            `❌ Error reproduciendo ${personaje}:`,
-            error
+        mostrarMensaje(
+            "❌ ERROR: " +
+            error.message
         );
 
+        console.error(
+            "Error de audio:",
+            error
+        );
     }
-                }
+}
+
+
+// =====================================================
+// 🖥️ MENSAJE VISIBLE
+// =====================================================
+
+function mostrarMensaje(texto) {
+
+    let aviso =
+        document.getElementById(
+            "avisoAudio"
+        );
+
+    if (!aviso) {
+
+        aviso =
+            document.createElement("div");
+
+        aviso.id =
+            "avisoAudio";
+
+        Object.assign(
+            aviso.style,
+            {
+                position: "fixed",
+                top: "20px",
+                left: "20px",
+                right: "20px",
+                padding: "15px",
+                background: "rgba(0,0,0,0.9)",
+                color: "white",
+                fontFamily: "Arial",
+                fontSize: "16px",
+                textAlign: "center",
+                borderRadius: "10px",
+                zIndex: "99999"
+            }
+        );
+
+        document.body.appendChild(
+            aviso
+        );
+    }
+
+    aviso.textContent =
+        texto;
+}
