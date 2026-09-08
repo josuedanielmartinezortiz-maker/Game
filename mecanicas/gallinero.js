@@ -8,22 +8,39 @@ export function iniciarGallinero(
     nombreGanador = null
 ) {
 
-    console.log(
-        "🐔 INICIANDO GALLINERO..."
-    );
+    console.log("🐔 INICIANDO GALLINERO...");
 
     // =================================================
-    // 🔍 COMPROBAR IMAGEN
+    // 🧹 ELIMINAR ESCENAS ANTERIORES
+    // =================================================
+
+    const escena3Anterior =
+        document.getElementById("escena3Canvas");
+
+    if (escena3Anterior) {
+        escena3Anterior.remove();
+        console.log("🧹 ESCENA 3 ELIMINADA");
+    }
+
+    const escenaAnterior =
+        document.getElementById("escenaCanvas");
+
+    if (escenaAnterior) {
+        escenaAnterior.remove();
+        console.log("🧹 ESCENA ANTERIOR ELIMINADA");
+    }
+
+    // =================================================
+    // 🔍 COMPROBAR IMÁGENES
     // =================================================
 
     if (!imagenes) {
 
         console.error(
-            "❌ No existen las imágenes."
+            "❌ NO EXISTEN LAS IMÁGENES"
         );
 
         return;
-
     }
 
     if (!imagenes.gallinero) {
@@ -33,37 +50,9 @@ export function iniciarGallinero(
         );
 
         console.log(
-            "📦 Imágenes disponibles:",
+            "📦 IMÁGENES DISPONIBLES:",
             Object.keys(imagenes)
         );
-
-        const error =
-            document.createElement("div");
-
-        Object.assign(
-            error.style,
-            {
-                position: "fixed",
-                inset: "0",
-                background: "#200",
-                color: "#ff5555",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                textAlign: "center",
-                fontFamily: "Arial",
-                fontSize: "24px",
-                zIndex: "60000",
-                padding: "30px",
-                boxSizing: "border-box"
-            }
-        );
-
-        error.textContent =
-            "❌ NO SE CARGÓ EL GALLINERO\n\n" +
-            "Falta: ./assets/gallinero.png";
-
-        game.appendChild(error);
 
         return;
     }
@@ -82,10 +71,13 @@ export function iniciarGallinero(
         canvas.style,
         {
             position: "fixed",
-            inset: "0",
+            left: "0",
+            top: "0",
             width: "100vw",
             height: "100vh",
-            zIndex: "100"
+            display: "block",
+            zIndex: "10000",
+            background: "#000"
         }
     );
 
@@ -219,7 +211,6 @@ export function iniciarGallinero(
             window.innerHeight;
 
         dibujar();
-
     }
 
     // =================================================
@@ -256,11 +247,9 @@ export function iniciarGallinero(
         // =================================================
 
         pollosColocados.forEach(
-
             (pollo, indice) => {
 
-                if (!pollo)
-                    return;
+                if (!pollo) return;
 
                 const casilla =
                     CASILLAS[indice];
@@ -287,8 +276,7 @@ export function iniciarGallinero(
                 const imagen =
                     pollo.imagen;
 
-                if (!imagen)
-                    return;
+                if (!imagen) return;
 
                 const proporcion =
                     imagen.naturalWidth /
@@ -311,11 +299,8 @@ export function iniciarGallinero(
                     alto
 
                 );
-
             }
-
         );
-
     }
 
     // =================================================
@@ -345,16 +330,9 @@ export function iniciarGallinero(
             if (
 
                 rx >= casilla.x &&
-
-                rx <=
-                casilla.x +
-                casilla.w &&
-
+                rx <= casilla.x + casilla.w &&
                 ry >= casilla.y &&
-
-                ry <=
-                casilla.y +
-                casilla.h
+                ry <= casilla.y + casilla.h
 
             ) {
 
@@ -364,11 +342,8 @@ export function iniciarGallinero(
                 );
 
                 return;
-
             }
-
         }
-
     }
 
     // =================================================
@@ -388,7 +363,7 @@ export function iniciarGallinero(
     );
 
     // =================================================
-    // ▶️ INICIO
+    // 🔄 RESIZE
     // =================================================
 
     window.addEventListener(
@@ -396,17 +371,18 @@ export function iniciarGallinero(
         ajustarCanvas
     );
 
+    // =================================================
+    // ▶️ INICIAR
+    // =================================================
+
     ajustarCanvas();
 
     console.log(
-        "🐔 GALLINERO INICIADO CORRECTAMENTE"
+        "🐔🏠 GALLINERO INICIADO CORRECTAMENTE"
     );
 
     return {
-
         CASILLAS,
-
         pollosColocados
-
     };
-        }
+         }
