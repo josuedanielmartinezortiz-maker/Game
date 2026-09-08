@@ -20,7 +20,11 @@ const recursos = {
     micaela: "./assets/micaela.png",
 
     mikeespalda: "./assets/mikeespalda.png",
-    micaelaespalda: "./assets/micaelaespalda.png"
+    micaelaespalda: "./assets/micaelaespalda.png",
+
+    // 🐔 ESCENA 2
+    pollonoob: "./assets/pollonoob.jpg",
+    noob: "./assets/noob.jpg"
 };
 
 
