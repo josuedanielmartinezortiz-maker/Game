@@ -8,6 +8,70 @@ export function iniciarGallinero(
     nombreGanador = null
 ) {
 
+    console.log(
+        "🐔 INICIANDO GALLINERO..."
+    );
+
+    // =================================================
+    // 🔍 COMPROBAR IMAGEN
+    // =================================================
+
+    if (!imagenes) {
+
+        console.error(
+            "❌ No existen las imágenes."
+        );
+
+        return;
+
+    }
+
+    if (!imagenes.gallinero) {
+
+        console.error(
+            "❌ NO EXISTE imagenes.gallinero"
+        );
+
+        console.log(
+            "📦 Imágenes disponibles:",
+            Object.keys(imagenes)
+        );
+
+        const error =
+            document.createElement("div");
+
+        Object.assign(
+            error.style,
+            {
+                position: "fixed",
+                inset: "0",
+                background: "#200",
+                color: "#ff5555",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+                fontFamily: "Arial",
+                fontSize: "24px",
+                zIndex: "60000",
+                padding: "30px",
+                boxSizing: "border-box"
+            }
+        );
+
+        error.textContent =
+            "❌ NO SE CARGÓ EL GALLINERO\n\n" +
+            "Falta: ./assets/gallinero.png";
+
+        game.appendChild(error);
+
+        return;
+    }
+
+    // =================================================
+    // 🖼️ CANVAS
+    // =================================================
+
     const canvas =
         document.createElement("canvas");
 
@@ -88,7 +152,7 @@ export function iniciarGallinero(
         window.gamerproPolloObtenido;
 
     console.log(
-        "🏆 POLLO RECIBIDO POR GALLINERO:",
+        "🏆 POLLO RECIBIDO:",
         ganadorFinal
     );
 
@@ -129,7 +193,7 @@ export function iniciarGallinero(
         };
 
         console.log(
-            "🐔✅ POLLO COLOCADO EN CASILLA 1:",
+            "🐔✅ GANADOR EN CASILLA 1:",
             ganadorFinal
         );
 
@@ -175,23 +239,17 @@ export function iniciarGallinero(
         // 🏠 GALLINERO
         // =================================================
 
-        if (
-            imagenes.gallinero
-        ) {
+        ctx.drawImage(
 
-            ctx.drawImage(
+            imagenes.gallinero,
 
-                imagenes.gallinero,
+            0,
+            0,
 
-                0,
-                0,
+            canvas.width,
+            canvas.height
 
-                canvas.width,
-                canvas.height
-
-            );
-
-        }
+        );
 
         // =================================================
         // 🐔 POLLOS
@@ -318,21 +376,15 @@ export function iniciarGallinero(
     // =================================================
 
     canvas.addEventListener(
-
         "pointerdown",
-
         evento => {
 
             tocarCasilla(
-
                 evento.clientX,
-
                 evento.clientY
-
             );
 
         }
-
     );
 
     // =================================================
@@ -340,17 +392,14 @@ export function iniciarGallinero(
     // =================================================
 
     window.addEventListener(
-
         "resize",
-
         ajustarCanvas
-
     );
 
     ajustarCanvas();
 
     console.log(
-        "🐔 GALLINERO INICIADO"
+        "🐔 GALLINERO INICIADO CORRECTAMENTE"
     );
 
     return {
@@ -360,5 +409,4 @@ export function iniciarGallinero(
         pollosColocados
 
     };
-
         }
