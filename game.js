@@ -14,6 +14,9 @@ import { iniciarEscena1 }
 import { iniciarEscena2 }
     from "./escenas/escena2.js";
 
+import { iniciarEscena3 }
+    from "./escenas/escena3.js";
+
 import { iniciarGallinero }
     from "./mecanicas/gallinero.js";
 
@@ -23,7 +26,6 @@ import { iniciarGallinero }
 
 const game =
     document.getElementById("game");
-
 
 // =====================================================
 // 📦 RECURSOS
@@ -64,13 +66,11 @@ const recursos = {
         "./assets/pollitonoob.png"
 };
 
-
 // =====================================================
 // 🖼️ IMÁGENES
 // =====================================================
 
 let imagenes = null;
-
 
 // =====================================================
 // 🎬 INICIAR JUEGO
@@ -82,10 +82,8 @@ function iniciarJuego() {
         "🔥 BOTÓN FUNCIONÓ"
     );
 
-
     const mensaje =
         document.createElement("div");
-
 
     Object.assign(
         mensaje.style,
@@ -106,24 +104,24 @@ function iniciarJuego() {
         }
     );
 
-
     mensaje.textContent =
         "🔥 BOTÓN FUNCIONÓ\n\n" +
         "🎬 INICIANDO ESCENA 1";
 
-
     game.appendChild(
         mensaje
     );
-
 
     setTimeout(
         function() {
 
             mensaje.remove();
 
-
             try {
+
+                // =================================================
+                // 🌲 ESCENA 1
+                // =================================================
 
                 iniciarEscena1(
 
@@ -133,9 +131,55 @@ function iniciarJuego() {
 
                     function() {
 
+                        // =================================================
+                        // 🐔 ESCENA 2
+                        // =================================================
+
                         iniciarEscena2(
+
                             game,
-                            imagenes
+
+                            imagenes,
+
+                            function() {
+
+                                // =================================================
+                                // 🥚 ESCENA 3
+                                // =================================================
+
+                                iniciarEscena3(
+
+                                    game,
+
+                                    imagenes,
+
+                                    function(ganador) {
+
+                                        console.log(
+                                            "🐔 POLLO GANADOR:",
+                                            ganador.nombre
+                                        );
+
+                                        // =================================================
+                                        // 🐔 GALLINERO
+                                        // =================================================
+
+                                        iniciarGallinero(
+
+                                            game,
+
+                                            imagenes,
+
+                                            ganador.nombre
+
+                                        );
+
+                                    }
+
+                                );
+
+                            }
+
                         );
 
                     }
@@ -145,14 +189,12 @@ function iniciarJuego() {
             } catch (error) {
 
                 console.error(
-                    "❌ ERROR ESCENA 1:",
+                    "❌ ERROR:",
                     error
                 );
 
-
                 const errorPantalla =
                     document.createElement("div");
-
 
                 Object.assign(
                     errorPantalla.style,
@@ -174,16 +216,13 @@ function iniciarJuego() {
                     }
                 );
 
-
                 errorPantalla.textContent =
-                    "🔴 ERROR ESCENA 1\n\n" +
+                    "🔴 ERROR DEL JUEGO\n\n" +
                     error.message;
-
 
                 game.appendChild(
                     errorPantalla
                 );
-
             }
 
         },
@@ -191,7 +230,6 @@ function iniciarJuego() {
         1000
     );
 }
-
 
 // =====================================================
 // 📺 PANTALLA DE CARGA
@@ -202,7 +240,6 @@ const pantallaCarga =
         game,
         iniciarJuego
     );
-
 
 // =====================================================
 // 📥 CARGAR RECURSOS
@@ -232,7 +269,6 @@ precargarImagenes(
 
 )
 
-
 // =====================================================
 // ✅ TODO CARGADO
 // =====================================================
@@ -243,18 +279,15 @@ precargarImagenes(
         imagenes =
             resultado;
 
-
         console.log(
             "✅ TODOS LOS RECURSOS CARGADOS"
         );
-
 
         pantallaCarga
             .marcarCargaCompleta();
 
     }
 )
-
 
 // =====================================================
 // ❌ ERROR
