@@ -55,7 +55,7 @@ const recursos = {
         "./assets/noob.png",
 
     pollozombie:
-        "./assets/pollo zombie.png",
+        "./assets/pollozombie.png",
 
     pollitonoob:
         "./assets/pollitonoob.png"
