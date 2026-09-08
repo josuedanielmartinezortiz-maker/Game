@@ -1,464 +1,507 @@
 // =====================================================
-// 🎮 GAMERPRO GAME — PANTALLA DE CARGA REAL
+// 🎮 GAMERPRO GAME — PANTALLA DE CARGA
 // =====================================================
 
 export function iniciarPantallaCarga(game) {
 
-    return new Promise((resolver) => {
+    // =================================================
+    // 🖥️ CREAR PANTALLA
+    // =================================================
 
-        const pantalla =
-            document.createElement("div");
+    const pantalla =
+        document.createElement("div");
 
-        pantalla.id =
-            "pantallaCarga";
+    pantalla.id =
+        "pantallaCarga";
 
+    Object.assign(pantalla.style, {
 
-        Object.assign(pantalla.style, {
+        position: "fixed",
+        inset: "0",
 
-            position: "fixed",
-            inset: "0",
+        width: "100%",
+        height: "100%",
 
-            width: "100%",
-            height: "100%",
+        background: "#000",
 
-            background: "#000",
+        display: "flex",
+        flexDirection: "column",
 
-            display: "flex",
-            flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
 
-            justifyContent: "center",
-            alignItems: "center",
+        zIndex: "10000",
 
-            zIndex: "10000",
+        color: "#fff",
 
-            color: "#fff",
+        fontFamily:
+            "Arial, sans-serif",
 
-            fontFamily:
-                "Arial, sans-serif",
+        textAlign: "center",
 
-            textAlign: "center",
+        boxSizing: "border-box",
 
-            touchAction:
-                "manipulation",
-
-            boxSizing:
-                "border-box"
-        });
-
-
-        // =================================================
-        // 🖥️ CONTENIDO
-        // =================================================
-
-        pantalla.innerHTML = `
-
-            <div style="
-                font-size: 38px;
-                font-weight: bold;
-                margin-bottom: 35px;
-            ">
-                GAMERPRO GAME
-            </div>
+        touchAction:
+            "manipulation"
+    });
 
 
-            <div
-                id="textoCarga"
-                style="
-                    font-size: 21px;
-                    margin-bottom: 18px;
-                "
-            >
-                ⏳ Cargando...
-            </div>
+    // =================================================
+    // 📝 CONTENIDO
+    // =================================================
+
+    pantalla.innerHTML = `
+
+        <div style="
+            font-size: 38px;
+            font-weight: bold;
+            margin-bottom: 35px;
+        ">
+            GAMERPRO GAME
+        </div>
 
 
-            <div style="
-                width: min(80%, 500px);
-                height: 22px;
+        <div
+            id="textoCarga"
+            style="
+                font-size: 21px;
+                margin-bottom: 18px;
+            "
+        >
+            ⏳ Cargando...
+        </div>
 
-                background: #222;
 
-                border-radius: 20px;
+        <!-- BARRA -->
 
-                overflow: hidden;
+        <div style="
+            width: min(80%, 500px);
+            height: 22px;
 
-                border: 2px solid #555;
+            background: #222;
 
-                margin-bottom: 15px;
-            ">
+            border: 2px solid #555;
 
-                <div
-                    id="barraCarga"
-                    style="
-                        width: 0%;
-                        height: 100%;
+            border-radius: 20px;
 
-                        background: #fff;
+            overflow: hidden;
 
-                        transition:
-                            width 0.2s ease;
-                    "
-                ></div>
-
-            </div>
-
+            margin-bottom: 15px;
+        ">
 
             <div
-                id="porcentajeCarga"
+                id="barraCarga"
                 style="
-                    font-size: 18px;
-                    margin-bottom: 10px;
-                "
-            >
-                0%
-            </div>
+                    width: 0%;
+                    height: 100%;
 
+                    background: #fff;
 
-            <div
-                id="recursoCarga"
-                style="
-                    font-size: 15px;
-                    color: #aaa;
-
-                    min-height: 22px;
-
-                    max-width: 80%;
-
-                    overflow-wrap: break-word;
-                "
-            >
-                Preparando recursos...
-            </div>
-
-
-            <div
-                id="errorCarga"
-                style="
-                    display: none;
-
-                    margin-top: 25px;
-
-                    padding: 15px;
-
-                    max-width: 80%;
-
-                    background: #250000;
-
-                    border: 2px solid #ff3333;
-
-                    border-radius: 10px;
-
-                    color: #ff6666;
-
-                    font-size: 16px;
+                    transition:
+                        width 0.2s ease;
                 "
             ></div>
 
-
-            <button
-                id="botonIniciar"
-                type="button"
-                disabled
-                style="
-                    display: none;
-
-                    margin-top: 30px;
-
-                    padding: 16px 30px;
-
-                    font-size: 20px;
-
-                    font-weight: bold;
-
-                    border: none;
-
-                    border-radius: 12px;
-
-                    cursor: pointer;
-
-                    touch-action:
-                        manipulation;
-                "
-            >
-                👆 TOCA PARA INICIAR
-            </button>
-        `;
+        </div>
 
 
-        game.appendChild(
-            pantalla
+        <!-- PORCENTAJE -->
+
+        <div
+            id="porcentajeCarga"
+            style="
+                font-size: 18px;
+                margin-bottom: 10px;
+            "
+        >
+            0%
+        </div>
+
+
+        <!-- RECURSO ACTUAL -->
+
+        <div
+            id="recursoCarga"
+            style="
+                font-size: 15px;
+                color: #aaa;
+
+                min-height: 22px;
+
+                max-width: 80%;
+
+                overflow-wrap: break-word;
+            "
+        >
+            Preparando recursos...
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div
+            id="errorCarga"
+            style="
+                display: none;
+
+                margin-top: 25px;
+
+                padding: 15px;
+
+                max-width: 80%;
+
+                background: #250000;
+
+                border: 2px solid #ff3333;
+
+                border-radius: 10px;
+
+                color: #ff6666;
+
+                font-size: 16px;
+            "
+        ></div>
+
+
+        <!-- BOTÓN -->
+
+        <button
+            id="botonIniciar"
+
+            type="button"
+
+            disabled
+
+            style="
+                display: none;
+
+                margin-top: 30px;
+
+                padding: 16px 30px;
+
+                font-size: 20px;
+
+                font-weight: bold;
+
+                border: none;
+
+                border-radius: 12px;
+
+                cursor: pointer;
+
+                touch-action:
+                    manipulation;
+            "
+        >
+            👆 TOCA PARA INICIAR
+        </button>
+    `;
+
+
+    game.appendChild(
+        pantalla
+    );
+
+
+    // =================================================
+    // 🔎 ELEMENTOS
+    // =================================================
+
+    const textoCarga =
+        pantalla.querySelector(
+            "#textoCarga"
+        );
+
+    const barraCarga =
+        pantalla.querySelector(
+            "#barraCarga"
+        );
+
+    const porcentajeCarga =
+        pantalla.querySelector(
+            "#porcentajeCarga"
+        );
+
+    const recursoCarga =
+        pantalla.querySelector(
+            "#recursoCarga"
+        );
+
+    const errorCarga =
+        pantalla.querySelector(
+            "#errorCarga"
+        );
+
+    const boton =
+        pantalla.querySelector(
+            "#botonIniciar"
         );
 
 
-        // =================================================
-        // 🔎 ELEMENTOS
-        // =================================================
+    // =================================================
+    // 📡 CONTROL DE LA PANTALLA
+    // =================================================
 
-        const textoCarga =
-            pantalla.querySelector(
-                "#textoCarga"
-            );
+    let cargaCompleta = false;
 
-        const barraCarga =
-            pantalla.querySelector(
-                "#barraCarga"
-            );
+    let resolverInicio;
 
-        const porcentajeCarga =
-            pantalla.querySelector(
-                "#porcentajeCarga"
-            );
 
-        const recursoCarga =
-            pantalla.querySelector(
-                "#recursoCarga"
-            );
+    const promesaInicio =
+        new Promise((resolver) => {
 
-        const errorCarga =
-            pantalla.querySelector(
-                "#errorCarga"
-            );
+            resolverInicio =
+                resolver;
 
-        const boton =
-            pantalla.querySelector(
-                "#botonIniciar"
-            );
+        });
 
 
-        // =================================================
-        // 📊 ACTUALIZAR PROGRESO
-        // =================================================
+    // =================================================
+    // 📊 ACTUALIZAR CARGA
+    // =================================================
 
-        window.gamerproActualizarCarga =
-            function (
-                cargadas,
-                total,
-                nombre,
-                correcta
-            ) {
+    function actualizarCarga(
+        cargadas,
+        total,
+        nombre,
+        correcta
+    ) {
 
-                const porcentaje =
-                    total > 0
-                        ? Math.round(
-                            (cargadas / total) * 100
-                        )
-                        : 0;
+        const porcentaje =
+            total > 0
+                ? Math.round(
+                    (cargadas / total) * 100
+                )
+                : 0;
 
 
-                barraCarga.style.width =
-                    `${porcentaje}%`;
+        barraCarga.style.width =
+            `${porcentaje}%`;
 
 
-                porcentajeCarga.textContent =
-                    `${porcentaje}%`;
+        porcentajeCarga.textContent =
+            `${porcentaje}%`;
 
 
-                if (correcta) {
+        if (!correcta) {
 
-                    textoCarga.textContent =
-                        "⏳ Cargando...";
+            // =============================================
+            // ❌ ERROR
+            // =============================================
 
-                    recursoCarga.textContent =
-                        `✅ ${nombre}`;
+            textoCarga.textContent =
+                "❌ ERROR AL CARGAR";
 
-                } else {
+            recursoCarga.textContent =
+                `❌ ${nombre}`;
 
-                    textoCarga.textContent =
-                        "❌ Error al cargar";
+            errorCarga.style.display =
+                "block";
 
-                    recursoCarga.textContent =
-                        `❌ ${nombre}`;
+            errorCarga.textContent =
+                `No se pudo cargar el recurso: ${nombre}`;
 
-                    errorCarga.style.display =
-                        "block";
+            boton.style.display =
+                "none";
 
-                    errorCarga.textContent =
-                        `No se pudo cargar el recurso: ${nombre}`;
+            boton.disabled =
+                true;
 
-                    boton.style.display =
-                        "none";
+            cargaCompleta =
+                false;
 
-                    boton.disabled =
-                        true;
-                }
-            };
-
-
-        // =================================================
-        // ✅ MARCAR CARGA COMPLETA
-        // =================================================
-
-        window.gamerproCargaCompleta =
-            function () {
-
-                textoCarga.textContent =
-                    "✅ ¡Todo listo!";
-
-
-                porcentajeCarga.textContent =
-                    "100%";
-
-
-                barraCarga.style.width =
-                    "100%";
-
-
-                recursoCarga.textContent =
-                    "🎮 Todos los recursos cargados";
-
-
-                errorCarga.style.display =
-                    "none";
-
-
-                boton.style.display =
-                    "block";
-
-
-                boton.disabled =
-                    false;
-            };
-
-
-        // =================================================
-        // 👆 PRIMER TOQUE
-        // =================================================
-
-        function iniciar() {
-
-            if (
-                boton.disabled ||
-                boton.dataset.iniciado === "true"
-            ) {
-                return;
-            }
-
-
-            boton.dataset.iniciado =
-                "true";
-
-
-            console.log(
-                "👆 GAMERPRO GAME iniciado"
-            );
-
-
-            // =================================================
-            // 🔊 ACTIVAR AUDIO
-            // =================================================
-
-            try {
-
-                const AudioContext =
-                    window.AudioContext ||
-                    window.webkitAudioContext;
-
-
-                if (AudioContext) {
-
-                    const audioContext =
-                        new AudioContext();
-
-
-                    window.gamerproAudioContext =
-                        audioContext;
-
-
-                    const resultado =
-                        audioContext.resume();
-
-
-                    if (resultado) {
-
-                        resultado
-                            .then(() => {
-
-                                console.log(
-                                    "🔓 AUDIO DESBLOQUEADO"
-                                );
-
-                            })
-                            .catch((error) => {
-
-                                console.warn(
-                                    "⚠️ Audio:",
-                                    error
-                                );
-
-                            });
-                    }
-
-
-                    // -----------------------------------------
-                    // 🔇 SONIDO SILENCIOSO
-                    // -----------------------------------------
-
-                    const buffer =
-                        audioContext.createBuffer(
-                            1,
-                            1,
-                            audioContext.sampleRate
-                        );
-
-
-                    const fuente =
-                        audioContext.createBufferSource();
-
-
-                    fuente.buffer =
-                        buffer;
-
-
-                    fuente.connect(
-                        audioContext.destination
-                    );
-
-
-                    fuente.start(0);
-                }
-
-
-            } catch (error) {
-
-                console.warn(
-                    "⚠️ Audio:",
-                    error
-                );
-            }
-
-
-            // =================================================
-            // 🌑 QUITAR PANTALLA
-            // =================================================
-
-            pantalla.style.transition =
-                "opacity 0.5s ease";
-
-
-            pantalla.style.opacity =
-                "0";
-
-
-            setTimeout(() => {
-
-                pantalla.remove();
-
-                delete window.gamerproActualizarCarga;
-                delete window.gamerproCargaCompleta;
-
-                resolver();
-
-            }, 500);
+            return;
         }
 
 
-        boton.addEventListener(
-            "pointerdown",
-            iniciar,
-            {
-                once: true
-            }
+        // =============================================
+        // ✅ RECURSO CARGADO
+        // =============================================
+
+        textoCarga.textContent =
+            "⏳ Cargando...";
+
+        recursoCarga.textContent =
+            `✅ ${nombre}`;
+    }
+
+
+    // =================================================
+    // ✅ TODO CARGADO
+    // =================================================
+
+    function marcarCargaCompleta() {
+
+        cargaCompleta =
+            true;
+
+
+        textoCarga.textContent =
+            "✅ ¡Todo listo!";
+
+
+        barraCarga.style.width =
+            "100%";
+
+
+        porcentajeCarga.textContent =
+            "100%";
+
+
+        recursoCarga.textContent =
+            "🎮 Todos los recursos cargados";
+
+
+        errorCarga.style.display =
+            "none";
+
+
+        boton.style.display =
+            "block";
+
+
+        boton.disabled =
+            false;
+    }
+
+
+    // =================================================
+    // 👆 INICIAR JUEGO
+    // =================================================
+
+    async function iniciar() {
+
+        if (!cargaCompleta) {
+            return;
+        }
+
+
+        if (
+            boton.dataset.iniciado ===
+            "true"
+        ) {
+            return;
+        }
+
+
+        boton.dataset.iniciado =
+            "true";
+
+
+        boton.disabled =
+            true;
+
+
+        console.log(
+            "👆 GAMERPRO GAME iniciado"
         );
 
-    });
+
+        // =================================================
+        // 🔊 ACTIVAR AUDIO
+        // =================================================
+
+        try {
+
+            const AudioContext =
+                window.AudioContext ||
+                window.webkitAudioContext;
+
+
+            if (AudioContext) {
+
+                const audioContext =
+                    new AudioContext();
+
+
+                window.gamerproAudioContext =
+                    audioContext;
+
+
+                await audioContext.resume();
+
+
+                console.log(
+                    "🔓 AUDIO DESBLOQUEADO"
+                );
+
+
+                // -----------------------------------------
+                // 🔇 SONIDO SILENCIOSO
+                // -----------------------------------------
+
+                const buffer =
+                    audioContext.createBuffer(
+                        1,
+                        1,
+                        audioContext.sampleRate
+                    );
+
+
+                const fuente =
+                    audioContext.createBufferSource();
+
+
+                fuente.buffer =
+                    buffer;
+
+
+                fuente.connect(
+                    audioContext.destination
+                );
+
+
+                fuente.start(0);
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "⚠️ Audio:",
+                error
+            );
+        }
+
+
+        // =================================================
+        // 🌑 DESAPARECER
+        // =================================================
+
+        pantalla.style.transition =
+            "opacity 0.5s ease";
+
+
+        pantalla.style.opacity =
+            "0";
+
+
+        setTimeout(() => {
+
+            pantalla.remove();
+
+            resolverInicio();
+
+        }, 500);
+    }
+
+
+    boton.addEventListener(
+        "pointerdown",
+        iniciar
+    );
+
+
+    // =================================================
+    // 📦 DEVOLVER CONTROL
+    // =================================================
+
+    return {
+
+        promesaInicio,
+
+        actualizarCarga,
+
+        marcarCargaCompleta
+
+    };
                 }
