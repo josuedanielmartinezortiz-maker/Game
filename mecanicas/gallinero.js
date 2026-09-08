@@ -1,313 +1,364 @@
 // =====================================================
-// 🎮 GAMERPRO GAME — GAME.JS
+// 🐔 GAMERPRO GAME — GALLINERO
 // =====================================================
 
-import { precargarImagenes }
-    from "./sistemas/precarga.js";
+export function iniciarGallinero(
+    game,
+    imagenes,
+    nombreGanador = null
+) {
 
-import { iniciarPantallaCarga }
-    from "./sistemas/pantallaCarga.js";
+    const canvas =
+        document.createElement("canvas");
 
-import { iniciarEscena1 }
-    from "./escenas/escena1.js";
-
-import { iniciarEscena2 }
-    from "./escenas/escena2.js";
-
-import { iniciarEscena3 }
-    from "./escenas/escena3.js";
-
-import { iniciarGallinero }
-    from "./mecanicas/gallinero.js";
-
-// =====================================================
-// 🎮 GAME
-// =====================================================
-
-const game =
-    document.getElementById("game");
-
-// =====================================================
-// 📦 RECURSOS
-// =====================================================
-
-const recursos = {
-
-    escena1:
-        "./assets/escena1.png",
-
-    escena2:
-        "./assets/escena2.png",
-
-    gallinero:
-        "./assets/gallinero.png",
-
-    mike:
-        "./assets/mike.png",
-
-    micaela:
-        "./assets/micaela.png",
-
-    mikeespalda:
-        "./assets/mikeespalda.png",
-
-    micaelaespalda:
-        "./assets/micaelaespalda.png",
-
-    // 🐔 POLLOS
-
-    pollonoob:
-        "./assets/pollonoob.png",
-
-    noob:
-        "./assets/noob.png",
-
-    pollozombie:
-        "./assets/pollozombie.png",
-
-    pollitonoob:
-        "./assets/pollitonoob.png"
-};
-
-// =====================================================
-// 🖼️ IMÁGENES
-// =====================================================
-
-let imagenes = null;
-
-// =====================================================
-// 🎬 INICIAR JUEGO
-// =====================================================
-
-function iniciarJuego() {
-
-    console.log(
-        "🔥 BOTÓN FUNCIONÓ"
-    );
-
-    const mensaje =
-        document.createElement("div");
+    canvas.id =
+        "gallineroCanvas";
 
     Object.assign(
-        mensaje.style,
+        canvas.style,
         {
             position: "fixed",
             inset: "0",
-            background: "#111",
-            color: "#00ff66",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            fontFamily: "Arial",
-            fontSize: "32px",
-            fontWeight: "bold",
-            zIndex: "50000",
-            textAlign: "center",
-            whiteSpace: "pre-line"
+            width: "100vw",
+            height: "100vh",
+            zIndex: "100"
         }
     );
 
-    mensaje.textContent =
-        "🔥 BOTÓN FUNCIONÓ\n\n" +
-        "🎬 INICIANDO ESCENA 1";
+    game.appendChild(canvas);
 
-    game.appendChild(
-        mensaje
+    const ctx =
+        canvas.getContext("2d");
+
+    // =================================================
+    // 📦 CASILLAS — 22
+    // =================================================
+
+    const CASILLAS = [
+
+        // Fila 1
+        { x: 0.02, y: 0.04, w: 0.10, h: 0.14 },
+        { x: 0.14, y: 0.04, w: 0.10, h: 0.14 },
+        { x: 0.26, y: 0.04, w: 0.10, h: 0.14 },
+        { x: 0.38, y: 0.04, w: 0.10, h: 0.14 },
+        { x: 0.50, y: 0.04, w: 0.10, h: 0.14 },
+        { x: 0.62, y: 0.04, w: 0.10, h: 0.14 },
+        { x: 0.74, y: 0.04, w: 0.10, h: 0.14 },
+        { x: 0.86, y: 0.04, w: 0.10, h: 0.14 },
+
+        // Fila 2
+        { x: 0.02, y: 0.20, w: 0.10, h: 0.14 },
+        { x: 0.86, y: 0.20, w: 0.10, h: 0.14 },
+
+        // Fila 3
+        { x: 0.02, y: 0.36, w: 0.10, h: 0.14 },
+        { x: 0.86, y: 0.36, w: 0.10, h: 0.14 },
+
+        // Fila 4
+        { x: 0.02, y: 0.52, w: 0.10, h: 0.14 },
+        { x: 0.86, y: 0.52, w: 0.10, h: 0.14 },
+
+        // Fila 5
+        { x: 0.02, y: 0.68, w: 0.10, h: 0.14 },
+        { x: 0.14, y: 0.68, w: 0.10, h: 0.14 },
+        { x: 0.26, y: 0.68, w: 0.10, h: 0.14 },
+        { x: 0.38, y: 0.68, w: 0.10, h: 0.14 },
+        { x: 0.50, y: 0.68, w: 0.10, h: 0.14 },
+        { x: 0.62, y: 0.68, w: 0.10, h: 0.14 },
+        { x: 0.74, y: 0.68, w: 0.10, h: 0.14 },
+        { x: 0.86, y: 0.68, w: 0.10, h: 0.14 }
+
+    ];
+
+    // =================================================
+    // 🐔 INVENTARIO
+    // =================================================
+
+    const pollosColocados =
+        new Array(
+            CASILLAS.length
+        ).fill(null);
+
+    // =================================================
+    // ⭐ GANADOR
+    // =================================================
+
+    const ganadorFinal =
+        nombreGanador ||
+        window.gamerproPolloObtenido;
+
+    console.log(
+        "🏆 POLLO RECIBIDO POR GALLINERO:",
+        ganadorFinal
     );
 
-    setTimeout(
-        function() {
+    // =================================================
+    // 🐔 POLLOS
+    // =================================================
 
-            mensaje.remove();
+    const POLLOS = {
 
-            try {
+        "Pollo Noob":
+            imagenes.pollonoob,
 
-                // =================================================
-                // 🌲 ESCENA 1
-                // =================================================
+        "Pollo Zombie":
+            imagenes.pollozombie,
 
-                iniciarEscena1(
+        "Pollito Noob":
+            imagenes.pollitonoob
 
-                    game,
+    };
 
-                    imagenes,
+    const imagenGanador =
+        POLLOS[ganadorFinal];
 
-                    function() {
+    // =================================================
+    // 🐔 COLOCAR GANADOR
+    // =================================================
 
-                        // =================================================
-                        // 🐔 ESCENA 2
-                        // =================================================
+    if (imagenGanador) {
 
-                        iniciarEscena2(
+        pollosColocados[0] = {
 
-                            game,
+            nombre:
+                ganadorFinal,
 
-                            imagenes,
+            imagen:
+                imagenGanador
 
-                            function() {
+        };
 
-                                // =================================================
-                                // 🥚 ESCENA 3
-                                // =================================================
+        console.log(
+            "🐔✅ POLLO COLOCADO EN CASILLA 1:",
+            ganadorFinal
+        );
 
-                                iniciarEscena3(
+    } else {
 
-                                    game,
+        console.error(
+            "❌ NO SE ENCONTRÓ EL POLLO:",
+            ganadorFinal
+        );
 
-                                    imagenes,
+    }
 
-                                    function(ganador) {
+    // =================================================
+    // 📐 AJUSTAR CANVAS
+    // =================================================
 
-                                        console.log(
-                                            "🏆 POLLO GANADOR:",
-                                            ganador.nombre
-                                        );
+    function ajustarCanvas() {
 
-                                        // Guardar ganador
-                                        window.gamerproPolloObtenido =
-                                            ganador.nombre;
+        canvas.width =
+            window.innerWidth;
 
-                                        // =================================================
-                                        // 🐔 GALLINERO
-                                        // =================================================
+        canvas.height =
+            window.innerHeight;
 
-                                        iniciarGallinero(
+        dibujar();
 
-                                            game,
+    }
 
-                                            imagenes,
+    // =================================================
+    // 🎨 DIBUJAR
+    // =================================================
 
-                                            ganador.nombre
+    function dibujar() {
 
-                                        );
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
 
-                                    }
+        // =================================================
+        // 🏠 GALLINERO
+        // =================================================
 
-                                );
+        if (
+            imagenes.gallinero
+        ) {
 
-                            }
+            ctx.drawImage(
 
-                        );
+                imagenes.gallinero,
 
-                    }
+                0,
+                0,
 
-                );
+                canvas.width,
+                canvas.height
 
-            } catch (error) {
+            );
 
-                console.error(
-                    "❌ ERROR DEL JUEGO:",
-                    error
-                );
+        }
 
-                const errorPantalla =
-                    document.createElement("div");
+        // =================================================
+        // 🐔 POLLOS
+        // =================================================
 
-                Object.assign(
-                    errorPantalla.style,
-                    {
-                        position: "fixed",
-                        inset: "0",
-                        background: "#200",
-                        color: "#ff5555",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: "30px",
-                        boxSizing: "border-box",
-                        fontFamily: "monospace",
-                        fontSize: "18px",
-                        textAlign: "center",
-                        zIndex: "50000",
-                        whiteSpace: "pre-line"
-                    }
-                );
+        pollosColocados.forEach(
 
-                errorPantalla.textContent =
-                    "🔴 ERROR DEL JUEGO\n\n" +
-                    error.message;
+            (pollo, indice) => {
 
-                game.appendChild(
-                    errorPantalla
+                if (!pollo)
+                    return;
+
+                const casilla =
+                    CASILLAS[indice];
+
+                const x =
+                    (
+                        casilla.x +
+                        casilla.w / 2
+                    ) *
+                    canvas.width;
+
+                const y =
+                    (
+                        casilla.y +
+                        casilla.h / 2
+                    ) *
+                    canvas.height;
+
+                const alto =
+                    canvas.height *
+                    casilla.h *
+                    0.85;
+
+                const imagen =
+                    pollo.imagen;
+
+                if (!imagen)
+                    return;
+
+                const proporcion =
+                    imagen.naturalWidth /
+                    imagen.naturalHeight;
+
+                const ancho =
+                    alto *
+                    proporcion;
+
+                ctx.drawImage(
+
+                    imagen,
+
+                    x - ancho / 2,
+
+                    y - alto / 2,
+
+                    ancho,
+
+                    alto
+
                 );
 
             }
 
-        },
+        );
 
-        1000
-    );
-}
+    }
 
-// =====================================================
-// 📺 PANTALLA DE CARGA
-// =====================================================
+    // =================================================
+    // 👆 TOCAR CASILLA
+    // =================================================
 
-const pantallaCarga =
-    iniciarPantallaCarga(
-        game,
-        iniciarJuego
-    );
-
-// =====================================================
-// 📥 CARGAR RECURSOS
-// =====================================================
-
-precargarImagenes(
-
-    recursos,
-
-    function(
-        cargadas,
-        total,
-        nombre,
-        correcta
+    function tocarCasilla(
+        x,
+        y
     ) {
 
-        pantallaCarga.actualizarCarga(
+        const rx =
+            x / canvas.width;
 
-            cargadas,
-            total,
-            nombre,
-            correcta
+        const ry =
+            y / canvas.height;
 
-        );
+        for (
+            let i = 0;
+            i < CASILLAS.length;
+            i++
+        ) {
 
-    }
+            const casilla =
+                CASILLAS[i];
 
-)
+            if (
 
-// =====================================================
-// ✅ TODO CARGADO
-// =====================================================
+                rx >= casilla.x &&
 
-.then(
-    function(resultado) {
+                rx <=
+                casilla.x +
+                casilla.w &&
 
-        imagenes =
-            resultado;
+                ry >= casilla.y &&
 
-        console.log(
-            "✅ TODOS LOS RECURSOS CARGADOS"
-        );
+                ry <=
+                casilla.y +
+                casilla.h
 
-        pantallaCarga
-            .marcarCargaCompleta();
+            ) {
 
-    }
-)
+                console.log(
+                    "🐔 CASILLA TOCADA:",
+                    i + 1
+                );
 
-// =====================================================
-// ❌ ERROR
-// =====================================================
+                return;
 
-.catch(
-    function(error) {
+            }
 
-        console.error(
-            "❌ ERROR DE CARGA:",
-            error
-        );
+        }
 
     }
-);
+
+    // =================================================
+    // 📱 CONTROL TÁCTIL
+    // =================================================
+
+    canvas.addEventListener(
+
+        "pointerdown",
+
+        evento => {
+
+            tocarCasilla(
+
+                evento.clientX,
+
+                evento.clientY
+
+            );
+
+        }
+
+    );
+
+    // =================================================
+    // ▶️ INICIO
+    // =================================================
+
+    window.addEventListener(
+
+        "resize",
+
+        ajustarCanvas
+
+    );
+
+    ajustarCanvas();
+
+    console.log(
+        "🐔 GALLINERO INICIADO"
+    );
+
+    return {
+
+        CASILLAS,
+
+        pollosColocados
+
+    };
+
+        }
