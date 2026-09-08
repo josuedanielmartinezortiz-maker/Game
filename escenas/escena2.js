@@ -2,6 +2,8 @@
 // 🐔 GAMERPRO GAME — ESCENA 2
 // =====================================================
 
+import { iniciarEscena3 } from "./escena3.js";
+
 export function iniciarEscena2(game, imagenes) {
 
     const canvas =
@@ -44,10 +46,8 @@ export function iniciarEscena2(game, imagenes) {
 
     const HUEVO = {
 
-        // A la derecha del pollo
         x: 0.58,
 
-        // Fuera de la pantalla
         y: -0.15,
 
         escala: 0.30,
@@ -159,7 +159,6 @@ export function iniciarEscena2(game, imagenes) {
         ctx.globalAlpha =
             1 - progreso;
 
-        // 💥 Onda
         ctx.beginPath();
 
         ctx.arc(
@@ -179,7 +178,6 @@ export function iniciarEscena2(game, imagenes) {
         ctx.stroke();
 
 
-        // ⚡ Rayos
         for (
             let i = 0;
             i < 8;
@@ -230,7 +228,7 @@ export function iniciarEscena2(game, imagenes) {
 
 
     // =================================================
-    // 🥚 ACTUALIZACIÓN DEL HUEVO
+    // 🥚 ACTUALIZACIÓN
     // =================================================
 
     let ultimoTiempo =
@@ -241,6 +239,7 @@ export function iniciarEscena2(game, imagenes) {
     ) {
 
         if (!HUEVO.cayendo) {
+
             ultimoTiempo =
                 tiempoActual;
 
@@ -264,7 +263,7 @@ export function iniciarEscena2(game, imagenes) {
             delta;
 
 
-        // 💥 LLEGÓ AL SUELO
+        // 💥 IMPACTO
         if (
             HUEVO.y >=
             HUEVO.suelo
@@ -285,6 +284,21 @@ export function iniciarEscena2(game, imagenes) {
             console.log(
                 "🥚💥 KBOOM!"
             );
+
+            // =================================================
+            // 🎬 PASAR A ESCENA 3
+            // =================================================
+
+            setTimeout(() => {
+
+                game.innerHTML = "";
+
+                iniciarEscena3(
+                    game,
+                    imagenes
+                );
+
+            }, 700);
         }
     }
 
@@ -302,8 +316,6 @@ export function iniciarEscena2(game, imagenes) {
             canvas.height
         );
 
-
-        // 🌾 Fondo
         ctx.drawImage(
             imagenes.escena2,
             0,
@@ -312,42 +324,32 @@ export function iniciarEscena2(game, imagenes) {
             canvas.height
         );
 
-
-        // 👦 Mike
         dibujarElemento(
             imagenMike,
             MIKE
         );
 
-
-        // 👧 Micaela
         dibujarElemento(
             imagenMicaela,
             MICAELA
         );
 
-
-        // 🐔 Pollo
         dibujarElemento(
             imagenPollo,
             POLLO
         );
 
-
-        // 🥚 Huevo
         dibujarElemento(
             imagenHuevo,
             HUEVO
         );
 
-
-        // 💥 Explosión
         dibujarExplosion();
     }
 
 
     // =================================================
-    // 📱 AJUSTAR CANVAS
+    // 📱 CANVAS
     // =================================================
 
     function ajustarCanvas() {
@@ -362,7 +364,6 @@ export function iniciarEscena2(game, imagenes) {
     }
 
     ajustarCanvas();
-
 
     window.addEventListener(
         "resize",
@@ -389,7 +390,6 @@ export function iniciarEscena2(game, imagenes) {
         );
     }
 
-
     requestAnimationFrame(
         actualizar
     );
@@ -398,9 +398,6 @@ export function iniciarEscena2(game, imagenes) {
     // =================================================
     // ⏱️ ENTRADA DEL HUEVO
     // =================================================
-
-    // La escena se muestra primero.
-    // Después de 1 segundo comienza la caída.
 
     setTimeout(() => {
 
@@ -418,4 +415,4 @@ export function iniciarEscena2(game, imagenes) {
         );
 
     }, 1000);
-}
+            }
