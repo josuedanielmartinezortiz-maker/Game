@@ -14,6 +14,8 @@ import { iniciarEscena1 }
 import { iniciarEscena2 }
     from "./escenas/escena2.js";
 
+import { iniciarGallinero }
+    from "./mecanicas/gallinero.js";
 
 // =====================================================
 // 🎮 GAME
