@@ -53,19 +53,15 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
         },
         {
             personaje: "MIKE",
-            texto: "No sé…"
-        },
-        {
-            personaje: "SONIDO",
-            texto: "Pío… pío…"
+            texto: "No sé."
         },
         {
             personaje: "MICAELA",
-            texto: "¿Qué es eso?"
+            texto: "¿Qué es eso, Mike?"
         },
         {
             personaje: "MIKE",
-            texto: "No sé… vamos a averiguarlo."
+            texto: "No sé, deberíamos averiguarlo."
         }
     ];
 
@@ -174,13 +170,6 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
             );
 
         } else if (dialogo.personaje === "MIKE") {
-
-            hablarSuave(
-                dialogo.texto,
-                false
-            );
-
-        } else if (dialogo.personaje === "SONIDO") {
 
             hablarSuave(
                 dialogo.texto,
@@ -302,7 +291,7 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
     actualizar();
 
     // =================================================
-    // ⏸️ INICIO
+    // ▶️ INICIO AUTOMÁTICO
     // =================================================
 
     setTimeout(() => {
@@ -310,4 +299,4 @@ export function iniciarEscena1(game, imagenes, alTerminar) {
         siguienteDialogo();
 
     }, 2000);
-            }
+}
