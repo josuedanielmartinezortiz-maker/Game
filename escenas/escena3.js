@@ -5,27 +5,35 @@
 
 export function iniciarEscena3(game, imagenes, alTerminar) {
 
-    const canvas = document.createElement("canvas");
+    const canvas =
+        document.createElement("canvas");
+
     canvas.id = "escenaCanvas";
+
     game.appendChild(canvas);
 
-    const ctx = canvas.getContext("2d");
+    const ctx =
+        canvas.getContext("2d");
+
 
     // =================================================
     // 🐔 POLLOS
     // =================================================
 
     const POLLOS = [
+
         {
             nombre: "Pollo Noob",
             imagen: imagenes.pollonoob,
             probabilidad: 98
         },
+
         {
             nombre: "Pollo Zombie",
             imagen: imagenes.pollozombie,
             probabilidad: 1
         },
+
         {
             nombre: "Pollito Noob",
             imagen: imagenes.pollitonoob,
@@ -33,13 +41,15 @@ export function iniciarEscena3(game, imagenes, alTerminar) {
         }
     ];
 
+
     // =================================================
     // 🎲 ELEGIR POLLO
     // =================================================
 
     function elegirPollo() {
 
-        const numero = Math.random() * 100;
+        const numero =
+            Math.random() * 100;
 
         if (numero < 98) {
             return POLLOS[0];
@@ -52,66 +62,77 @@ export function iniciarEscena3(game, imagenes, alTerminar) {
         return POLLOS[2];
     }
 
-    const polloGanador = elegirPollo();
+
+    const polloGanador =
+        elegirPollo();
+
 
     console.log(
         `🐔 POLLO OBTENIDO: ${polloGanador.nombre}`
     );
 
-    // Guardamos el pollo obtenido
+
     window.gamerproPolloObtenido =
         polloGanador.nombre;
+
 
     // =================================================
     // 🥚 HUEVO
     // =================================================
 
     const HUEVO = {
+
         x: 0.58,
         y: 0.84,
         escala: 0.30,
+
         abierto: false
     };
 
+
     // =================================================
-    // 🐔 POSICIONES DE LOS 3 POLLOS
+    // 🐔 POSICIONES
     // =================================================
-
-    const CENTRO = {
-        x: 0.50,
-        y: 0.67
-    };
-
-    const POLLO_A = {
-        x: 0.38,
-        y: 0.67
-    };
-
-    const POLLO_B = {
-        x: 0.50,
-        y: 0.67
-    };
-
-    const POLLO_C = {
-        x: 0.62,
-        y: 0.67
-    };
 
     const posiciones = [
-        POLLO_A,
-        POLLO_B,
-        POLLO_C
+
+        {
+            x: 0.38,
+            y: 0.67
+        },
+
+        {
+            x: 0.50,
+            y: 0.67
+        },
+
+        {
+            x: 0.62,
+            y: 0.67
+        }
     ];
+
+
+    const CENTRO = {
+
+        x: 0.50,
+        y: 0.67
+    };
+
 
     // =================================================
     // 🔄 ANIMACIÓN
     // =================================================
 
     let rotacion = 0;
+
     let animando = false;
+
     let ganadorMostrado = false;
 
+
     const TAMANO_BASE = 180;
+
 
     // =================================================
     // 🎨 DIBUJAR IMAGEN
@@ -127,38 +148,56 @@ export function iniciarEscena3(game, imagenes, alTerminar) {
 
         if (!imagen) return;
 
-        const posX = x * canvas.width;
-        const posY = y * canvas.height;
+
+        const posX =
+            x * canvas.width;
+
+        const posY =
+            y * canvas.height;
+
 
         const alto =
             TAMANO_BASE * escala;
+
 
         const proporcion =
             imagen.naturalWidth /
             imagen.naturalHeight;
 
+
         const ancho =
             alto * proporcion;
 
+
         ctx.save();
+
 
         ctx.translate(
             posX,
             posY
         );
 
-        ctx.rotate(rotacion);
+
+        ctx.rotate(
+            rotacion
+        );
+
 
         ctx.drawImage(
+
             imagen,
+
             -ancho / 2,
             -alto / 2,
+
             ancho,
             alto
         );
 
+
         ctx.restore();
     }
+
 
     // =================================================
     // 🥚 HUEVO
@@ -168,73 +207,98 @@ export function iniciarEscena3(game, imagenes, alTerminar) {
 
         if (HUEVO.abierto) return;
 
+
         dibujarImagen(
+
             imagenes.noob,
+
             HUEVO.x,
             HUEVO.y,
+
             HUEVO.escala
         );
     }
 
+
     // =================================================
-    // 🐔 TRES POLLOS
+    // 🐔 POLLOS
     // =================================================
 
     function dibujarPollos() {
 
         if (!animando) return;
 
-        POLLOS.forEach((pollo, indice) => {
 
-            const posicion =
-                posiciones[indice];
+        POLLOS.forEach(
+            (pollo, indice) => {
 
-            let x =
-                posicion.x;
+                const posicion =
+                    posiciones[indice];
 
-            let y =
-                posicion.y;
 
-            // 🔄 Movimiento circular
-            if (!ganadorMostrado) {
+                let x =
+                    posicion.x;
 
-                const radio = 0.035;
+                let y =
+                    posicion.y;
 
-                x +=
-                    Math.cos(
-                        rotacion +
-                        indice * 2.1
-                    ) * radio;
 
-                y +=
-                    Math.sin(
-                        rotacion +
-                        indice * 2.1
-                    ) * radio;
+                // 🔄 GIRAR
+                if (!ganadorMostrado) {
+
+                    const radio =
+                        0.035;
+
+
+                    x +=
+                        Math.cos(
+                            rotacion +
+                            indice * 2.1
+                        ) * radio;
+
+
+                    y +=
+                        Math.sin(
+                            rotacion +
+                            indice * 2.1
+                        ) * radio;
+                }
+
+
+                // 💥 GANADOR AL CENTRO
+                if (
+                    ganadorMostrado &&
+                    pollo === polloGanador
+                ) {
+
+                    x +=
+                        (
+                            CENTRO.x - x
+                        ) * 0.75;
+
+
+                    y +=
+                        (
+                            CENTRO.y - y
+                        ) * 0.75;
+                }
+
+
+                dibujarImagen(
+
+                    pollo.imagen,
+
+                    x,
+                    y,
+
+                    0.55,
+
+                    rotacion
+                );
             }
-
-            // 💥 El ganador se acerca al centro
-            if (
-                ganadorMostrado &&
-                pollo === polloGanador
-            ) {
-
-                x +=
-                    (CENTRO.x - x) * 0.75;
-
-                y +=
-                    (CENTRO.y - y) * 0.75;
-            }
-
-            dibujarImagen(
-                pollo.imagen,
-                x,
-                y,
-                0.55,
-                rotacion
-            );
-        });
+        );
     }
+
 
     // =================================================
     // 💥 POM
@@ -244,71 +308,95 @@ export function iniciarEscena3(game, imagenes, alTerminar) {
 
         ctx.save();
 
+
         ctx.font =
             "bold 70px Arial";
+
 
         ctx.textAlign =
             "center";
 
+
         ctx.textBaseline =
             "middle";
+
 
         ctx.fillStyle =
             "#FFFFFF";
 
+
         ctx.strokeStyle =
             "#000000";
 
-        ctx.lineWidth = 8;
+
+        ctx.lineWidth =
+            8;
+
 
         ctx.strokeText(
+
             "💥 POM!",
+
             canvas.width / 2,
+
             canvas.height * 0.45
         );
 
+
         ctx.fillText(
+
             "💥 POM!",
+
             canvas.width / 2,
+
             canvas.height * 0.45
         );
+
 
         ctx.restore();
     }
 
+
     // =================================================
-    // 🎬 ESCENA
+    // 🎬 DIBUJAR ESCENA
     // =================================================
 
     function dibujarEscena() {
 
         ctx.clearRect(
+
             0,
             0,
+
             canvas.width,
             canvas.height
         );
 
-        // 🌾 Fondo
+
         ctx.drawImage(
+
             imagenes.escena2,
+
             0,
             0,
+
             canvas.width,
             canvas.height
         );
 
-        // 🥚 Huevo
+
         dibujarHuevo();
 
-        // 🐔 Pollos
+
         dibujarPollos();
 
-        // 💥 POM
+
         if (ganadorMostrado) {
+
             dibujarPOM();
         }
     }
+
 
     // =================================================
     // 📱 CANVAS
@@ -322,15 +410,21 @@ export function iniciarEscena3(game, imagenes, alTerminar) {
         canvas.height =
             window.innerHeight;
 
+
         dibujarEscena();
     }
 
+
     ajustarCanvas();
 
+
     window.addEventListener(
+
         "resize",
+
         ajustarCanvas
     );
+
 
     // =================================================
     // 🔄 BUCLE
@@ -339,77 +433,103 @@ export function iniciarEscena3(game, imagenes, alTerminar) {
     function actualizar() {
 
         if (animando) {
+
             rotacion += 0.12;
         }
 
+
         dibujarEscena();
+
 
         requestAnimationFrame(
             actualizar
         );
     }
 
+
     actualizar();
+
 
     // =================================================
     // 🎬 SECUENCIA
     // =================================================
 
-    // 1️⃣ Esperar a que aparezca la escena
+
+    // 🥚 1. ABRIR HUEVO
+
     setTimeout(() => {
 
         console.log(
             "🥚 ¡EL HUEVO SE ABRE!"
         );
 
-        HUEVO.abierto = true;
-        animando = true;
+
+        HUEVO.abierto =
+            true;
+
+
+        animando =
+            true;
 
     }, 1000);
 
 
-    // 2️⃣ Los pollos giran
+    // 🔄 2. GIRAR
+
     setTimeout(() => {
 
         console.log(
-            "🔄🐔 ¡LOS POLLOS GIRAN!"
+            "🔄🐔 ¡LOS 3 POLLOS GIRAN!"
         );
 
     }, 2500);
 
 
-    // 3️⃣ POM y selección
+    // 💥 3. POM
+
     setTimeout(() => {
 
-        animando = false;
-        ganadorMostrado = true;
+        animando =
+            false;
+
+
+        ganadorMostrado =
+            true;
+
 
         console.log(
+
             `💥 POM! GANADOR: ${polloGanador.nombre}`
         );
 
     }, 5500);
 
 
-    // 4️⃣ Esperar y terminar cinemática
+    // 🚀 4. TERMINAR
+
     setTimeout(() => {
 
         console.log(
             "🚀 TP AL GALLINERO"
         );
 
-        // El gameplay podrá leer esto
-        window.gamerproComenzarJuego = true;
 
-        // Limpiar escena
+        window.gamerproComenzarJuego =
+            true;
+
+
         game.innerHTML = "";
 
-        // Pasar al juego
-        if (typeof alTerminar === "function") {
+
+        if (
+            typeof alTerminar ===
+            "function"
+        ) {
+
             alTerminar(
                 polloGanador
             );
         }
 
     }, 8000);
-          }
+}
