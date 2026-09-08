@@ -7,8 +7,7 @@ export function iniciarEscena2(game, imagenes) {
     const canvas =
         document.createElement("canvas");
 
-    canvas.id =
-        "escenaCanvas";
+    canvas.id = "escenaCanvas";
 
     game.appendChild(canvas);
 
@@ -17,7 +16,7 @@ export function iniciarEscena2(game, imagenes) {
 
 
     // =================================================
-    // 👥 PERSONAJES
+    // 👦👧 PERSONAJES
     // =================================================
 
     const MIKE = {
@@ -45,10 +44,10 @@ export function iniciarEscena2(game, imagenes) {
 
     const HUEVO = {
 
-        // Más a la derecha del pollo
+        // A la derecha del pollo
         x: 0.58,
 
-        // Empieza muy arriba
+        // Fuera de la pantalla
         y: -0.15,
 
         escala: 0.30,
@@ -57,10 +56,9 @@ export function iniciarEscena2(game, imagenes) {
 
         gravedad: 0.0018,
 
-        // Altura del suelo
         suelo: 0.84,
 
-        cayendo: true,
+        cayendo: false,
 
         impacto: false,
 
@@ -89,21 +87,55 @@ export function iniciarEscena2(game, imagenes) {
 
 
     // =================================================
-    // 💥 EFECTO KBOOM
+    // 🎨 DIBUJAR ELEMENTO
+    // =================================================
+
+    function dibujarElemento(
+        imagen,
+        posicion
+    ) {
+
+        if (!imagen) return;
+
+        const x =
+            posicion.x * canvas.width;
+
+        const y =
+            posicion.y * canvas.height;
+
+        const alto =
+            TAMANO_BASE * posicion.escala;
+
+        const proporcion =
+            imagen.naturalWidth /
+            imagen.naturalHeight;
+
+        const ancho =
+            alto * proporcion;
+
+        ctx.drawImage(
+            imagen,
+            x - ancho / 2,
+            y - alto / 2,
+            ancho,
+            alto
+        );
+    }
+
+
+    // =================================================
+    // 💥 EXPLOSIÓN
     // =================================================
 
     function dibujarExplosion() {
 
         if (!HUEVO.impacto) return;
 
-        const ahora =
-            performance.now();
-
         const transcurrido =
-            ahora - HUEVO.tiempoImpacto;
+            performance.now() -
+            HUEVO.tiempoImpacto;
 
-        const duracion =
-            600;
+        const duracion = 600;
 
         if (transcurrido >= duracion) {
             HUEVO.impacto = false;
@@ -127,7 +159,7 @@ export function iniciarEscena2(game, imagenes) {
         ctx.globalAlpha =
             1 - progreso;
 
-        // 💥 Círculo de impacto
+        // 💥 Onda
         ctx.beginPath();
 
         ctx.arc(
@@ -147,7 +179,7 @@ export function iniciarEscena2(game, imagenes) {
         ctx.stroke();
 
 
-        // ⚡ Rayos del KBOOM
+        // ⚡ Rayos
         for (
             let i = 0;
             i < 8;
@@ -185,8 +217,7 @@ export function iniciarEscena2(game, imagenes) {
                 fin
             );
 
-            ctx.lineWidth =
-                5;
+            ctx.lineWidth = 5;
 
             ctx.strokeStyle =
                 "#FFFFFF";
@@ -199,48 +230,7 @@ export function iniciarEscena2(game, imagenes) {
 
 
     // =================================================
-    // 🎨 DIBUJAR ELEMENTO
-    // =================================================
-
-    function dibujarElemento(
-        imagen,
-        posicion
-    ) {
-
-        if (!imagen) return;
-
-        const x =
-            posicion.x *
-            canvas.width;
-
-        const y =
-            posicion.y *
-            canvas.height;
-
-        const alto =
-            TAMANO_BASE *
-            posicion.escala;
-
-        const proporcion =
-            imagen.naturalWidth /
-            imagen.naturalHeight;
-
-        const ancho =
-            alto *
-            proporcion;
-
-        ctx.drawImage(
-            imagen,
-            x - ancho / 2,
-            y - alto / 2,
-            ancho,
-            alto
-        );
-    }
-
-
-    // =================================================
-    // 🥚 FÍSICA DEL HUEVO
+    // 🥚 ACTUALIZACIÓN DEL HUEVO
     // =================================================
 
     let ultimoTiempo =
@@ -250,6 +240,13 @@ export function iniciarEscena2(game, imagenes) {
         tiempoActual
     ) {
 
+        if (!HUEVO.cayendo) {
+            ultimoTiempo =
+                tiempoActual;
+
+            return;
+        }
+
         const delta =
             tiempoActual -
             ultimoTiempo;
@@ -258,27 +255,16 @@ export function iniciarEscena2(game, imagenes) {
             tiempoActual;
 
 
-        if (!HUEVO.cayendo) {
-            return;
-        }
-
-
-        // Gravedad
         HUEVO.velocidad +=
             HUEVO.gravedad *
             delta;
 
-
-        // Caída
         HUEVO.y +=
             HUEVO.velocidad *
             delta;
 
 
-        // =================================================
-        // 💥 IMPACTO
-        // =================================================
-
+        // 💥 LLEGÓ AL SUELO
         if (
             HUEVO.y >=
             HUEVO.suelo
@@ -304,7 +290,7 @@ export function iniciarEscena2(game, imagenes) {
 
 
     // =================================================
-    // 🎬 ESCENA
+    // 🎬 DIBUJAR ESCENA
     // =================================================
 
     function dibujarEscena() {
@@ -355,13 +341,13 @@ export function iniciarEscena2(game, imagenes) {
         );
 
 
-        // 💥 KBOOM
+        // 💥 Explosión
         dibujarExplosion();
     }
 
 
     // =================================================
-    // 📱 CANVAS
+    // 📱 AJUSTAR CANVAS
     // =================================================
 
     function ajustarCanvas() {
@@ -374,7 +360,6 @@ export function iniciarEscena2(game, imagenes) {
 
         dibujarEscena();
     }
-
 
     ajustarCanvas();
 
@@ -408,4 +393,29 @@ export function iniciarEscena2(game, imagenes) {
     requestAnimationFrame(
         actualizar
     );
-            }
+
+
+    // =================================================
+    // ⏱️ ENTRADA DEL HUEVO
+    // =================================================
+
+    // La escena se muestra primero.
+    // Después de 1 segundo comienza la caída.
+
+    setTimeout(() => {
+
+        HUEVO.cayendo = true;
+
+        HUEVO.velocidad = 0;
+
+        HUEVO.y = -0.15;
+
+        ultimoTiempo =
+            performance.now();
+
+        console.log(
+            "☁️🥚 ¡EL HUEVO APARECE!"
+        );
+
+    }, 1000);
+}
