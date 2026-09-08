@@ -71,7 +71,7 @@ export function iniciarPantallaCarga(game) {
         // 👆 PRIMER TOQUE
         // =================================================
 
-        async function iniciar() {
+        function iniciar() {
 
             if (boton.dataset.iniciado === "true") {
                 return;
@@ -85,7 +85,7 @@ export function iniciarPantallaCarga(game) {
 
 
             // =================================================
-            // 🔊 ACTIVAR AUDIO DURANTE EL TOQUE
+            // 🔊 ACTIVAR AUDIO
             // =================================================
 
             try {
@@ -96,36 +96,37 @@ export function iniciarPantallaCarga(game) {
 
                 if (AudioContext) {
 
-                    // Crear UN SOLO contexto para todo el juego
                     const audioContext =
                         new AudioContext();
 
                     window.gamerproAudioContext =
                         audioContext;
 
+                    // Intentar activar el contexto
+                    const resultado =
+                        audioContext.resume();
 
-                    // -----------------------------------------
-                    // 🔓 DESBLOQUEAR AUDIO
-                    // -----------------------------------------
+                    if (resultado) {
 
-                    if (
-                        audioContext.state ===
-                        "suspended"
-                    ) {
+                        resultado.then(() => {
 
-                        await audioContext.resume();
+                            console.log(
+                                "🔓 AUDIO DESBLOQUEADO"
+                            );
 
+                        }).catch((error) => {
+
+                            console.warn(
+                                "⚠️ Audio:",
+                                error
+                            );
+
+                        });
                     }
 
 
-                    console.log(
-                        "🔊 AudioContext:",
-                        audioContext.state
-                    );
-
-
                     // -----------------------------------------
-                    // 🔇 PEQUEÑO BUFFER SILENCIOSO
+                    // 🔇 SONIDO SILENCIOSO
                     // -----------------------------------------
 
                     const buffer =
@@ -146,16 +147,12 @@ export function iniciarPantallaCarga(game) {
 
                     fuente.start(0);
 
-
-                    console.log(
-                        "🔓 AUDIO DESBLOQUEADO"
-                    );
                 }
 
             } catch (error) {
 
                 console.warn(
-                    "⚠️ No se pudo desbloquear el audio:",
+                    "⚠️ Audio:",
                     error
                 );
             }
@@ -190,4 +187,4 @@ export function iniciarPantallaCarga(game) {
         );
 
     });
-            }
+                }
