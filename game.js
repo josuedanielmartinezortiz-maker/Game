@@ -1,10 +1,22 @@
-import { precargarImagenes } from "./sistemas/precarga.js";
-import { iniciarPantallaCarga } from "./sistemas/pantallaCarga.js";
+// =====================================================
+// 🎮 GAMERPRO GAME — GAME.JS
+// =====================================================
 
-import { iniciarEscena1 } from "./escenas/escena1.js";
-import { iniciarEscena2 } from "./escenas/escena2.js";
+import { precargarImagenes }
+    from "./sistemas/precarga.js";
 
-const game = document.getElementById("game");
+import { iniciarPantallaCarga }
+    from "./sistemas/pantallaCarga.js";
+
+import { iniciarEscena1 }
+    from "./escenas/escena1.js";
+
+import { iniciarEscena2 }
+    from "./escenas/escena2.js";
+
+
+const game =
+    document.getElementById("game");
 
 
 // =====================================================
@@ -13,28 +25,48 @@ const game = document.getElementById("game");
 
 const recursos = {
 
-    escena1: "./assets/escena1.png",
-    escena2: "./assets/escena2.png",
+    escena1:
+        "./assets/escena1.png",
 
-    mike: "./assets/mike.png",
-    micaela: "./assets/micaela.png",
+    escena2:
+        "./assets/escena2.png",
 
-    mikeespalda: "./assets/mikeespalda.png",
-    micaelaespalda: "./assets/micaelaespalda.png",
+
+    mike:
+        "./assets/mike.png",
+
+    micaela:
+        "./assets/micaela.png",
+
+
+    mikeespalda:
+        "./assets/mikeespalda.png",
+
+    micaelaespalda:
+        "./assets/micaelaespalda.png",
+
 
     // 🐔 POLLOS
-    pollonoob: "./assets/pollonoob.png",
-    noob: "./assets/noob.png",
-    pollozombie: "./assets/pollo zombie.png",
-    pollitonoob: "./assets/pollitonoob.png"
+
+    pollonoob:
+        "./assets/pollonoob.png",
+
+    noob:
+        "./assets/noob.png",
+
+    pollozombie:
+        "./assets/pollo zombie.png",
+
+    pollitonoob:
+        "./assets/pollitonoob.png"
 };
 
 
 // =====================================================
-// 🎬 PANTALLA DE CARGA
+// 🎬 CREAR PANTALLA DE CARGA
 // =====================================================
 
-const promesaPantalla =
+const pantallaCarga =
     iniciarPantallaCarga(game);
 
 
@@ -44,7 +76,9 @@ const promesaPantalla =
 
 const promesaRecursos =
     precargarImagenes(
+
         recursos,
+
         (
             cargadas,
             total,
@@ -52,25 +86,12 @@ const promesaRecursos =
             correcta
         ) => {
 
-            console.log(
-                `${correcta ? "✅" : "❌"} ${nombre} (${cargadas}/${total})`
+            pantallaCarga.actualizarCarga(
+                cargadas,
+                total,
+                nombre,
+                correcta
             );
-
-
-            // 📊 ACTUALIZAR PANTALLA
-
-            if (
-                typeof window.gamerproActualizarCarga ===
-                "function"
-            ) {
-
-                window.gamerproActualizarCarga(
-                    cargadas,
-                    total,
-                    nombre,
-                    correcta
-                );
-            }
         }
     );
 
@@ -80,6 +101,7 @@ const promesaRecursos =
 // =====================================================
 
 promesaRecursos
+
     .then(async (imagenes) => {
 
         console.log(
@@ -87,44 +109,42 @@ promesaRecursos
         );
 
 
-        // =================================================
-        // ✅ AVISAR A LA PANTALLA
-        // =================================================
+        // =============================================
+        // ✅ MOSTRAR BOTÓN
+        // =============================================
 
-        if (
-            typeof window.gamerproCargaCompleta ===
-            "function"
-        ) {
-
-            window.gamerproCargaCompleta();
-        }
+        pantallaCarga
+            .marcarCargaCompleta();
 
 
-        // =================================================
-        // 👆 ESPERAR AL BOTÓN
-        // =================================================
+        // =============================================
+        // 👆 ESPERAR AL JUGADOR
+        // =============================================
 
-        await promesaPantalla;
+        await pantallaCarga
+            .promesaInicio;
 
 
         console.log(
-            "🔊 AUDIO DESBLOQUEADO"
+            "🚀 INICIANDO GAMERPRO GAME"
         );
 
 
-        // =================================================
+        // =============================================
         // 🎬 ESCENA 1
-        // =================================================
+        // =============================================
 
         iniciarEscena1(
+
             game,
+
             imagenes,
 
             () => {
 
-                // =================================================
+                // =====================================
                 // 🎬 ESCENA 2
-                // =================================================
+                // =====================================
 
                 iniciarEscena2(
                     game,
@@ -137,9 +157,9 @@ promesaRecursos
     })
 
 
-    // =====================================================
-    // ❌ ERROR DE CARGA
-    // =====================================================
+    // =================================================
+    // ❌ ERROR
+    // =================================================
 
     .catch((error) => {
 
