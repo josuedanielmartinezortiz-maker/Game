@@ -2,80 +2,138 @@
 // 🖼️ GAMERPRO GAME — SISTEMA DE PRECARGA
 // =====================================================
 
-export function precargarImagenes(recursos, actualizarCarga) {
+export function precargarImagenes(
+    recursos,
+    actualizarCarga
+) {
 
-    const nombres = Object.keys(recursos);
+    const nombres =
+        Object.keys(recursos);
+
 
     let cargadas = 0;
 
-    const cargas = nombres.map((nombre) => {
 
-        return new Promise((resolve, reject) => {
+    // =================================================
+    // 📥 CARGAR TODAS LAS IMÁGENES
+    // =================================================
 
-            const imagen = new Image();
+    const cargas =
+        nombres.map((nombre) => {
 
-            imagen.onload = () => {
+            return new Promise(
+                (resolve, reject) => {
 
-                cargadas++;
+                    const imagen =
+                        new Image();
 
-                if (actualizarCarga) {
 
-                    actualizarCarga(
-                        cargadas,
-                        nombres.length,
-                        nombre,
-                        true
-                    );
+                    // =========================================
+                    // ✅ CARGA CORRECTA
+                    // =========================================
+
+                    imagen.onload =
+                        () => {
+
+                            cargadas++;
+
+
+                            console.log(
+                                `✅ Cargada: ${nombre} (${cargadas}/${nombres.length})`
+                            );
+
+
+                            if (
+                                actualizarCarga
+                            ) {
+
+                                actualizarCarga(
+                                    cargadas,
+                                    nombres.length,
+                                    nombre,
+                                    true
+                                );
+                            }
+
+
+                            resolve({
+                                nombre,
+                                imagen
+                            });
+                        };
+
+
+                    // =========================================
+                    // ❌ ERROR
+                    // =========================================
+
+                    imagen.onerror =
+                        () => {
+
+                            console.error(
+                                `❌ FALLÓ LA IMAGEN: ${nombre}`
+                            );
+
+
+                            if (
+                                actualizarCarga
+                            ) {
+
+                                actualizarCarga(
+                                    cargadas,
+                                    nombres.length,
+                                    nombre,
+                                    false
+                                );
+                            }
+
+
+                            reject(
+                                new Error(
+                                    `No se pudo cargar: ${recursos[nombre]}`
+                                )
+                            );
+                        };
+
+
+                    // =========================================
+                    // 🌐 RUTA
+                    // =========================================
+
+                    imagen.src =
+                        recursos[nombre];
                 }
-
-                resolve({
-                    nombre,
-                    imagen
-                });
-            };
-
-
-            imagen.onerror = () => {
-
-                console.error(
-                    `❌ FALLÓ LA IMAGEN: ${nombre}`
-                );
-
-                if (actualizarCarga) {
-
-                    actualizarCarga(
-                        cargadas,
-                        nombres.length,
-                        nombre,
-                        false
-                    );
-                }
-
-                reject(
-                    new Error(
-                        `No se pudo cargar: ${recursos[nombre]}`
-                    )
-                );
-            };
-
-
-            imagen.src =
-                recursos[nombre];
+            );
         });
-    });
 
 
-    return Promise.all(cargas)
-        .then((resultados) => {
+    // =================================================
+    // 🎮 RESULTADO
+    // =================================================
 
-            const imagenes = {};
+    return Promise.all(
+        cargas
+    )
 
-            resultados.forEach((resultado) => {
+    .then((resultados) => {
 
-                imagenes[resultado.nombre] =
+        const imagenes =
+            {};
+
+
+        resultados.forEach(
+            (resultado) => {
+
+                imagenes[
+                    resultado.nombre
+                ] =
                     resultado.imagen;
-            });
 
-            return imagenes;
-        });
-                               }
+            }
+        );
+
+
+        return imagenes;
+
+    });
+                        }
