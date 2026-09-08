@@ -1,11 +1,10 @@
 // =====================================================
-// 🐔 GAMERPRO GAME — MECÁNICA DEL GALLINERO
+// 🐔 GAMERPRO GAME — GALLINERO
 // =====================================================
 
 export function iniciarGallinero(game, imagenes) {
 
-    const canvas =
-        document.createElement("canvas");
+    const canvas = document.createElement("canvas");
 
     canvas.id = "gallineroCanvas";
 
@@ -19,12 +18,11 @@ export function iniciarGallinero(game, imagenes) {
 
     game.appendChild(canvas);
 
-    const ctx =
-        canvas.getContext("2d");
+    const ctx = canvas.getContext("2d");
 
 
     // =================================================
-    // 🐔 CASILLAS
+    // 📦 CASILLAS
     // =================================================
 
     const CASILLAS = [
@@ -64,7 +62,7 @@ export function iniciarGallinero(game, imagenes) {
 
 
     // =================================================
-    // 🐔 POLLOS COLOCADOS
+    // 🐔 INVENTARIO DEL GALLINERO
     // =================================================
 
     const pollosColocados =
@@ -72,7 +70,63 @@ export function iniciarGallinero(game, imagenes) {
 
 
     // =================================================
-    // 📐 AJUSTAR CANVAS
+    // ⭐ POLLO GANADOR
+    // =================================================
+
+    const nombreGanador =
+        window.gamerproPolloObtenido;
+
+
+    const POLLOS = {
+
+        "Pollo Noob":
+            imagenes.pollonoob,
+
+        "Pollo Zombie":
+            imagenes.pollozombie,
+
+        "Pollito Noob":
+            imagenes.pollitonoob
+
+    };
+
+
+    const imagenGanador =
+        POLLOS[nombreGanador];
+
+
+    // =================================================
+    // 🐔 COLOCAR GANADOR
+    // =================================================
+
+    if (imagenGanador) {
+
+        pollosColocados[0] = {
+
+            nombre:
+                nombreGanador,
+
+            imagen:
+                imagenGanador
+
+        };
+
+        console.log(
+            "🐔 POLLO GANADOR EN GALLINERO:",
+            nombreGanador
+        );
+
+    } else {
+
+        console.warn(
+            "⚠️ No se encontró pollo ganador."
+        );
+
+    }
+
+
+    // =================================================
+    // 📐 CANVAS
     // =================================================
 
     function ajustarCanvas() {
@@ -86,11 +140,6 @@ export function iniciarGallinero(game, imagenes) {
         dibujar();
 
     }
-
-    window.addEventListener(
-        "resize",
-        ajustarCanvas
-    );
 
 
     // =================================================
@@ -107,18 +156,22 @@ export function iniciarGallinero(game, imagenes) {
         );
 
 
+        // 🌾 GALLINERO
+
         ctx.drawImage(
+
             imagenes.escena2,
+
             0,
             0,
+
             canvas.width,
             canvas.height
+
         );
 
 
-        // =============================================
         // 🐔 POLLOS
-        // =============================================
 
         pollosColocados.forEach(
             (pollo, indice) => {
@@ -132,15 +185,17 @@ export function iniciarGallinero(game, imagenes) {
 
 
                 const x =
-                    (casilla.x +
-                        casilla.w / 2)
-                    * canvas.width;
+                    (
+                        casilla.x +
+                        casilla.w / 2
+                    ) * canvas.width;
 
 
                 const y =
-                    (casilla.y +
-                        casilla.h / 2)
-                    * canvas.height;
+                    (
+                        casilla.y +
+                        casilla.h / 2
+                    ) * canvas.height;
 
 
                 const alto =
@@ -222,11 +277,6 @@ export function iniciarGallinero(game, imagenes) {
                     i + 1
                 );
 
-
-                seleccionarPollo(
-                    i
-                );
-
                 return;
 
             }
@@ -237,45 +287,12 @@ export function iniciarGallinero(game, imagenes) {
 
 
     // =================================================
-    // 🐔 SELECCIONAR POLLO
-    // =================================================
-
-    function seleccionarPollo(
-        indice
-    ) {
-
-        // Por ahora probamos
-        // colocando Pollo Noob.
-
-        pollosColocados[indice] = {
-
-            nombre:
-                "Pollo Noob",
-
-            imagen:
-                imagenes.pollonoob
-
-        };
-
-
-        console.log(
-            "🐔 Pollo Noob colocado en casilla",
-            indice + 1
-        );
-
-
-        dibujar();
-
-    }
-
-
-    // =================================================
-    // 📱 TOUCH
+    // 📱 CONTROL TÁCTIL
     // =================================================
 
     canvas.addEventListener(
         "pointerdown",
-        (evento) => {
+        evento => {
 
             tocarCasilla(
                 evento.clientX,
@@ -290,6 +307,11 @@ export function iniciarGallinero(game, imagenes) {
     // ▶️ INICIO
     // =================================================
 
+    window.addEventListener(
+        "resize",
+        ajustarCanvas
+    );
+
     ajustarCanvas();
 
 
@@ -298,19 +320,12 @@ export function iniciarGallinero(game, imagenes) {
     );
 
 
-    // =================================================
-    // 📤 API
-    // =================================================
-
     return {
 
         CASILLAS,
 
-        pollosColocados,
-
-        colocarPollo:
-            seleccionarPollo
+        pollosColocados
 
     };
 
-      }
+        }
