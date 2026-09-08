@@ -1,18 +1,62 @@
-export function hablarSuave(texto, esMicaela = false) {
-    speechSynthesis.cancel();
+// =====================================================
+// 🎙️ GAMERPRO GAME — VOCES
+// =====================================================
 
-    const voz = new SpeechSynthesisUtterance(texto);
+import { reproducirVoz } from "./audio.js";
 
-    voz.lang = "es-MX";
-    voz.volume = 0.8;
+// =====================================================
+// 🎙️ AUDIOS
+// =====================================================
 
-    if (esMicaela) {
-        voz.pitch = 1.35;
-        voz.rate = 0.70; // 👧 más lenta
-    } else {
-        voz.pitch = 1.05;
-        voz.rate = 0.70; // 🧑 más lento
+const AUDIOS = {
+
+    MICAELA: {
+        "¿Qué hacemos aquí, Mike?":
+            "./assets/voces/Micaela01.mp3",
+
+        "¿Qué es eso, Mike?":
+            "./assets/voces/Micaela02.mp3"
+    },
+
+    MIKE: {
+        "No sé.":
+            "./assets/voces/Mike01.mp3",
+
+        "No sé, deberíamos averiguarlo.":
+            "./assets/voces/Mike02.mp3"
     }
 
-    speechSynthesis.speak(voz);
-}
+};
+
+// =====================================================
+// 🔊 HABLAR
+// =====================================================
+
+export function hablarSuave(texto, esMicaela = false) {
+
+    const personaje =
+        esMicaela ? "MICAELA" : "MIKE";
+
+    const audios = AUDIOS[personaje];
+
+    if (!audios) {
+        console.warn(
+            `⚠️ No existe el personaje: ${personaje}`
+        );
+        return;
+    }
+
+    const ruta = audios[texto.trim()];
+
+    if (!ruta) {
+        console.warn(
+            `⚠️ No hay audio para: "${texto}"`
+        );
+        return;
+    }
+
+    reproducirVoz(
+        ruta,
+        personaje
+    );
+        }
