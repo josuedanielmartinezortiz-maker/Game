@@ -39,6 +39,10 @@ const recursos = {
     escena2:
         "./assets/escena2.png",
 
+    // 🐔 GALLINERO
+    gallinero:
+        "./assets/gallinero.png",
+
     mike:
         "./assets/mike.png",
 
@@ -161,6 +165,13 @@ function iniciarJuego() {
                                         );
 
                                         // =================================================
+                                        // ⭐ GUARDAR GANADOR
+                                        // =================================================
+
+                                        window.gamerproPolloObtenido =
+                                            ganador.nombre;
+
+                                        // =================================================
                                         // 🐔 GALLINERO
                                         // =================================================
 
@@ -281,6 +292,11 @@ precargarImagenes(
 
         console.log(
             "✅ TODOS LOS RECURSOS CARGADOS"
+        );
+
+        console.log(
+            "🐔 GALLINERO:",
+            imagenes.gallinero
         );
 
         pantallaCarga
