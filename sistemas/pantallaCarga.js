@@ -2,106 +2,56 @@
 // 🎮 GAMERPRO GAME — PANTALLA DE CARGA
 // =====================================================
 
-export function iniciarPantallaCarga(
-    game,
-    alIniciar
-) {
+export function iniciarPantallaCarga(game, alIniciar) {
 
-    // =================================================
-    // 🖥️ CREAR PANTALLA
-    // =================================================
+    const pantalla = document.createElement("div");
 
-    const pantalla =
-        document.createElement("div");
+    pantalla.id = "pantallaCarga";
 
-    pantalla.id =
-        "pantallaCarga";
-
-    Object.assign(
-        pantalla.style,
-        {
-            position: "fixed",
-
-            inset: "0",
-
-            width: "100%",
-            height: "100%",
-
-            background:
-                "#000",
-
-            display:
-                "flex",
-
-            flexDirection:
-                "column",
-
-            justifyContent:
-                "center",
-
-            alignItems:
-                "center",
-
-            zIndex:
-                "10000",
-
-            color:
-                "#fff",
-
-            fontFamily:
-                "Arial, sans-serif",
-
-            textAlign:
-                "center",
-
-            boxSizing:
-                "border-box",
-
-            touchAction:
-                "manipulation"
-        }
-    );
-
-
-    // =================================================
-    // 🧱 CONTENIDO
-    // =================================================
+    Object.assign(pantalla.style, {
+        position: "fixed",
+        inset: "0",
+        width: "100vw",
+        height: "100vh",
+        background: "#000",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: "10000",
+        color: "#fff",
+        fontFamily: "Arial, sans-serif",
+        textAlign: "center"
+    });
 
     pantalla.innerHTML = `
 
         <div style="
             font-size: 38px;
             font-weight: bold;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         ">
             GAMERPRO GAME
         </div>
-
 
         <div
             id="textoCarga"
             style="
                 font-size: 21px;
-                margin-bottom: 18px;
+                margin-bottom: 15px;
             "
         >
             ⏳ Cargando...
         </div>
 
-
         <div style="
-            width: min(80%, 500px);
+            width: 80%;
+            max-width: 500px;
             height: 22px;
-
             background: #222;
-
             border: 2px solid #555;
-
             border-radius: 20px;
-
             overflow: hidden;
-
-            margin-bottom: 15px;
         ">
 
             <div
@@ -110,53 +60,40 @@ export function iniciarPantallaCarga(
                     width: 0%;
                     height: 100%;
                     background: #fff;
-                    transition: width 0.2s ease;
                 "
             ></div>
 
         </div>
 
-
         <div
             id="porcentajeCarga"
             style="
+                margin-top: 12px;
                 font-size: 18px;
-                margin-bottom: 10px;
             "
         >
             0%
         </div>
 
-
         <div
             id="recursoCarga"
             style="
-                font-size: 15px;
+                margin-top: 8px;
+                font-size: 14px;
                 color: #aaa;
-                min-height: 22px;
-                max-width: 80%;
-                overflow-wrap: break-word;
             "
         >
-            Preparando recursos...
+            Preparando...
         </div>
-
 
         <div
             id="errorCarga"
             style="
                 display: none;
-                margin-top: 25px;
-                padding: 15px;
-                max-width: 80%;
-                background: #250000;
-                border: 2px solid #ff3333;
-                border-radius: 10px;
-                color: #ff6666;
-                font-size: 16px;
+                margin-top: 20px;
+                color: #ff4444;
             "
         ></div>
-
 
         <button
             id="botonIniciar"
@@ -164,36 +101,20 @@ export function iniciarPantallaCarga(
             disabled
             style="
                 display: none;
-
                 margin-top: 30px;
-
                 padding: 16px 30px;
-
                 font-size: 20px;
-
                 font-weight: bold;
-
                 border: none;
-
                 border-radius: 12px;
-
                 cursor: pointer;
-
-                touch-action:
-                    manipulation;
-
-                user-select:
-                    none;
             "
         >
             👆 TOCA PARA INICIAR
         </button>
     `;
 
-
-    game.appendChild(
-        pantalla
-    );
+    game.appendChild(pantalla);
 
 
     // =================================================
@@ -201,45 +122,30 @@ export function iniciarPantallaCarga(
     // =================================================
 
     const textoCarga =
-        pantalla.querySelector(
-            "#textoCarga"
-        );
+        pantalla.querySelector("#textoCarga");
 
     const barraCarga =
-        pantalla.querySelector(
-            "#barraCarga"
-        );
+        pantalla.querySelector("#barraCarga");
 
     const porcentajeCarga =
-        pantalla.querySelector(
-            "#porcentajeCarga"
-        );
+        pantalla.querySelector("#porcentajeCarga");
 
     const recursoCarga =
-        pantalla.querySelector(
-            "#recursoCarga"
-        );
+        pantalla.querySelector("#recursoCarga");
 
     const errorCarga =
-        pantalla.querySelector(
-            "#errorCarga"
-        );
+        pantalla.querySelector("#errorCarga");
 
     const boton =
-        pantalla.querySelector(
-            "#botonIniciar"
-        );
+        pantalla.querySelector("#botonIniciar");
 
 
     // =================================================
     // 🔐 ESTADO
     // =================================================
 
-    let cargaCompleta =
-        false;
-
-    let iniciado =
-        false;
+    let cargaCompleta = false;
+    let iniciado = false;
 
 
     // =================================================
@@ -256,38 +162,34 @@ export function iniciarPantallaCarga(
         const porcentaje =
             total > 0
                 ? Math.round(
-                    (cargadas / total) * 100
+                    cargadas / total * 100
                 )
                 : 0;
 
 
         barraCarga.style.width =
-            `${porcentaje}%`;
+            porcentaje + "%";
 
         porcentajeCarga.textContent =
-            `${porcentaje}%`;
+            porcentaje + "%";
 
-
-        // =============================================
-        // ❌ ERROR
-        // =============================================
 
         if (!correcta) {
 
-            cargaCompleta =
-                false;
+            cargaCompleta = false;
 
             textoCarga.textContent =
                 "❌ ERROR AL CARGAR";
 
             recursoCarga.textContent =
-                `❌ ${nombre}`;
+                "❌ " + nombre;
 
             errorCarga.style.display =
                 "block";
 
             errorCarga.textContent =
-                `No se pudo cargar el recurso: ${nombre}`;
+                "No se pudo cargar: " +
+                nombre;
 
             boton.style.display =
                 "none";
@@ -299,51 +201,36 @@ export function iniciarPantallaCarga(
         }
 
 
-        // =============================================
-        // ⏳ CARGANDO
-        // =============================================
-
         textoCarga.textContent =
             "⏳ Cargando...";
 
         recursoCarga.textContent =
-            `✅ ${nombre}`;
+            "✅ " + nombre;
     }
 
 
     // =================================================
-    // ✅ CARGA COMPLETA
+    // ✅ TODO LISTO
     // =================================================
 
     function marcarCargaCompleta() {
 
-        cargaCompleta =
-            true;
-
+        cargaCompleta = true;
 
         textoCarga.textContent =
             "✅ ¡Todo listo!";
 
-
         barraCarga.style.width =
             "100%";
-
 
         porcentajeCarga.textContent =
             "100%";
 
-
         recursoCarga.textContent =
             "🎮 Todos los recursos cargados";
 
-
-        errorCarga.style.display =
-            "none";
-
-
         boton.style.display =
             "block";
-
 
         boton.disabled =
             false;
@@ -351,118 +238,27 @@ export function iniciarPantallaCarga(
 
 
     // =================================================
-    // 🔊 DESBLOQUEAR AUDIO
+    // 👆 BOTÓN
     // =================================================
 
-    async function desbloquearAudio() {
+    function iniciar() {
 
-        try {
-
-            const AudioContext =
-                window.AudioContext ||
-                window.webkitAudioContext;
-
-
-            if (!AudioContext) {
-                return;
-            }
-
-
-            let audioContext =
-                window.gamerproAudioContext;
-
-
-            if (!audioContext) {
-
-                audioContext =
-                    new AudioContext();
-
-                window.gamerproAudioContext =
-                    audioContext;
-            }
-
-
-            if (
-                audioContext.state ===
-                "suspended"
-            ) {
-
-                await audioContext.resume();
-
-            }
-
-
-            const buffer =
-                audioContext.createBuffer(
-                    1,
-                    1,
-                    audioContext.sampleRate
-                );
-
-
-            const fuente =
-                audioContext.createBufferSource();
-
-
-            fuente.buffer =
-                buffer;
-
-
-            fuente.connect(
-                audioContext.destination
-            );
-
-
-            fuente.start(0);
-
-        } catch (error) {
-
-            console.warn(
-                "⚠️ Audio:",
-                error
-            );
-
-        }
-    }
-
-
-    // =================================================
-    // 👆 INICIAR
-    // =================================================
-
-    async function iniciar() {
-
-        if (!cargaCompleta) {
+        if (!cargaCompleta)
             return;
-        }
 
-
-        if (iniciado) {
+        if (iniciado)
             return;
-        }
 
+        iniciado = true;
 
-        iniciado =
-            true;
-
-
-        boton.disabled =
-            true;
-
+        boton.disabled = true;
 
         boton.textContent =
             "🚀 INICIANDO...";
 
 
         // =============================================
-        // 🔊 AUDIO
-        // =============================================
-
-        await desbloquearAudio();
-
-
-        // =============================================
-        // 🚀 LLAMAR DIRECTAMENTE AL JUEGO
+        // 🚀 INICIO DIRECTO
         // =============================================
 
         if (
@@ -476,39 +272,25 @@ export function iniciarPantallaCarga(
 
 
         // =============================================
-        // 🖥️ OCULTAR PANTALLA
+        // 🖥️ QUITAR PANTALLA
         // =============================================
 
-        pantalla.style.transition =
-            "opacity 0.5s ease";
-
-        pantalla.style.opacity =
-            "0";
-
-
-        setTimeout(
-            () => {
-
-                pantalla.remove();
-
-            },
-            500
-        );
+        pantalla.remove();
     }
 
 
     // =================================================
-    // 👆 EVENTOS
+    // 👆 EVENTO
     // =================================================
 
     boton.addEventListener(
-        "pointerdown",
+        "click",
         iniciar
     );
 
 
     // =================================================
-    // 📤 DEVOLVER FUNCIONES
+    // 📤 DEVOLVER
     // =================================================
 
     return {
@@ -518,4 +300,4 @@ export function iniciarPantallaCarga(
         marcarCargaCompleta
 
     };
-                }
+        }
