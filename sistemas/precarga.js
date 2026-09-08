@@ -19,6 +19,7 @@ export function precargarImagenes(recursos, actualizarCarga) {
                 cargadas++;
 
                 if (actualizarCarga) {
+
                     actualizarCarga(
                         cargadas,
                         nombres.length,
@@ -33,6 +34,7 @@ export function precargarImagenes(recursos, actualizarCarga) {
                 });
             };
 
+
             imagen.onerror = () => {
 
                 console.error(
@@ -40,6 +42,7 @@ export function precargarImagenes(recursos, actualizarCarga) {
                 );
 
                 if (actualizarCarga) {
+
                     actualizarCarga(
                         cargadas,
                         nombres.length,
@@ -55,9 +58,12 @@ export function precargarImagenes(recursos, actualizarCarga) {
                 );
             };
 
-            imagen.src = recursos[nombre];
+
+            imagen.src =
+                recursos[nombre];
         });
     });
+
 
     return Promise.all(cargas)
         .then((resultados) => {
@@ -68,7 +74,6 @@ export function precargarImagenes(recursos, actualizarCarga) {
 
                 imagenes[resultado.nombre] =
                     resultado.imagen;
-
             });
 
             return imagenes;
