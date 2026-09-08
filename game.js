@@ -26,6 +26,8 @@ const recursos = {
     pollonoob: "./assets/pollonoob.png",
     noob: "./assets/noob.png"
 };
+pollozombie: "./assets/pollo zombie.png",
+pollitonoob: "./assets/pollitonoob.png"
 
 
 // =====================================================
