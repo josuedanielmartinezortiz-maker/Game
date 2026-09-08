@@ -16,7 +16,7 @@ import { iniciarEscena2 }
 
 
 // =====================================================
-// 🎮 GAME
+// 🎮 CONTENEDOR DEL JUEGO
 // =====================================================
 
 const game =
@@ -24,7 +24,7 @@ const game =
 
 
 // =====================================================
-// 🧪 DIAGNÓSTICO
+// 🧪 PANEL DE DIAGNÓSTICO
 // =====================================================
 
 const diagnostico =
@@ -34,6 +34,7 @@ Object.assign(
     diagnostico.style,
     {
         position: "fixed",
+
         top: "10px",
         left: "10px",
 
@@ -55,11 +56,14 @@ Object.assign(
         border:
             "2px solid #00ff66",
 
-        borderRadius: "10px",
+        borderRadius:
+            "10px",
 
-        zIndex: "20000",
+        zIndex:
+            "9000",
 
-        maxWidth: "90vw",
+        maxWidth:
+            "90vw",
 
         whiteSpace:
             "pre-wrap",
@@ -76,6 +80,10 @@ document.body.appendChild(
     diagnostico
 );
 
+
+// =====================================================
+// 🧪 ACTUALIZAR DIAGNÓSTICO
+// =====================================================
 
 function diagnosticar(
     mensaje
@@ -110,6 +118,7 @@ const recursos = {
     micaelaespalda:
         "./assets/micaelaespalda.png",
 
+
     // 🐔 POLLOS
 
     pollonoob:
@@ -127,11 +136,114 @@ const recursos = {
 
 
 // =====================================================
-// 🎬 PANTALLA DE CARGA
+// 🖼️ IMÁGENES CARGADAS
+// =====================================================
+
+let imagenes = null;
+
+
+// =====================================================
+// 🎬 FUNCIÓN PARA INICIAR EL JUEGO
+// =====================================================
+
+function iniciarJuego() {
+
+    diagnosticar(
+        "🔥 BOTÓN PRESIONADO"
+    );
+
+
+    diagnosticar(
+        "🎬 INTENTANDO INICIAR ESCENA 1..."
+    );
+
+
+    if (!imagenes) {
+
+        diagnosticar(
+            "🔴 ERROR: LAS IMÁGENES NO ESTÁN LISTAS"
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // 🎬 ESCENA 1
+    // =================================================
+
+    try {
+
+        iniciarEscena1(
+
+            game,
+
+            imagenes,
+
+            () => {
+
+                diagnosticar(
+                    "✅ ESCENA 1 TERMINADA"
+                );
+
+
+                // =============================================
+                // 🎬 ESCENA 2
+                // =============================================
+
+                diagnosticar(
+                    "🎬 INICIANDO ESCENA 2..."
+                );
+
+
+                try {
+
+                    iniciarEscena2(
+
+                        game,
+
+                        imagenes
+                    );
+
+
+                    diagnosticar(
+                        "✅ ESCENA 2 INICIADA"
+                    );
+
+                } catch (error) {
+
+                    diagnosticar(
+                        "🔴 ERROR EN ESCENA 2:\n" +
+                        error.message
+                    );
+
+                }
+
+            }
+        );
+
+
+        diagnosticar(
+            "✅ ESCENA 1 FUE LLAMADA"
+        );
+
+    } catch (error) {
+
+        diagnosticar(
+            "🔴 ERROR EN ESCENA 1:\n" +
+            error.message
+        );
+
+    }
+}
+
+
+// =====================================================
+// 📺 CREAR PANTALLA DE CARGA
 // =====================================================
 
 diagnosticar(
-    "📺 Creando pantalla de carga..."
+    "📺 CREANDO PANTALLA DE CARGA..."
 );
 
 
@@ -140,137 +252,57 @@ const pantallaCarga =
 
         game,
 
-        () => {
-
-            // =============================================
-            // 👆 BOTÓN PRESIONADO
-            // =============================================
-
-            diagnosticar(
-                "🔥 BOTÓN PRESIONADO"
-            );
-
-
-            // =============================================
-            // 🎬 ESCENA 1
-            // =============================================
-
-            diagnosticar(
-                "🎬 INTENTANDO INICIAR ESCENA 1..."
-            );
-
-
-            try {
-
-                iniciarEscena1(
-
-                    game,
-
-                    imagenes,
-
-                    () => {
-
-                        diagnosticar(
-                            "✅ ESCENA 1 TERMINADA"
-                        );
-
-
-                        // =====================================
-                        // 🎬 ESCENA 2
-                        // =====================================
-
-                        diagnosticar(
-                            "🎬 INICIANDO ESCENA 2..."
-                        );
-
-
-                        try {
-
-                            iniciarEscena2(
-                                game,
-                                imagenes
-                            );
-
-                            diagnosticar(
-                                "✅ ESCENA 2 INICIADA"
-                            );
-
-                        } catch (error) {
-
-                            diagnosticar(
-                                "🔴 ERROR EN ESCENA 2:\n" +
-                                error.message
-                            );
-
-                        }
-
-                    }
-                );
-
-
-                diagnosticar(
-                    "✅ ESCENA 1 FUE LLAMADA"
-                );
-
-            } catch (error) {
-
-                diagnosticar(
-                    "🔴 ERROR EN ESCENA 1:\n" +
-                    error.message
-                );
-
-            }
-
-        }
+        iniciarJuego
     );
 
 
-// =====================================================
-// 📥 CARGAR RECURSOS
-// =====================================================
-
 diagnosticar(
-    "📦 Cargando recursos..."
+    "✅ PANTALLA DE CARGA CREADA"
 );
 
 
-const promesaRecursos =
-    precargarImagenes(
+// =====================================================
+// 📥 CARGAR TODOS LOS RECURSOS
+// =====================================================
 
-        recursos,
+diagnosticar(
+    "📦 CARGANDO RECURSOS..."
+);
 
-        (
+
+precargarImagenes(
+
+    recursos,
+
+    (
+        cargadas,
+        total,
+        nombre,
+        correcta
+    ) => {
+
+        pantallaCarga.actualizarCarga(
+
             cargadas,
+
             total,
+
             nombre,
+
             correcta
-        ) => {
+        );
 
-            pantallaCarga.actualizarCarga(
+    }
 
-                cargadas,
-
-                total,
-
-                nombre,
-
-                correcta
-            );
-
-        }
-    );
+)
 
 
 // =====================================================
-// 🎮 RECURSOS LISTOS
+// ✅ CARGA COMPLETA
 // =====================================================
 
-let imagenes;
-
-
-promesaRecursos
-
-    .then((resultado) => {
+.then(
+    (resultado) => {
 
         imagenes =
             resultado;
@@ -284,14 +316,21 @@ promesaRecursos
         pantallaCarga
             .marcarCargaCompleta();
 
-    })
+    }
+)
 
 
-    .catch((error) => {
+// =====================================================
+// ❌ ERROR DE CARGA
+// =====================================================
+
+.catch(
+    (error) => {
 
         diagnosticar(
             "🚨 ERROR AL CARGAR:\n" +
             error.message
         );
 
-    });
+    }
+);
