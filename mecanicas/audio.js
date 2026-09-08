@@ -1,14 +1,15 @@
+
 // =====================================================
-// 🎙️ GAMERPRO GAME — PRUEBA DE AUDIO
+// 🎙️ GAMERPRO GAME — AUDIO DE DIAGNÓSTICO
 // =====================================================
 
 export function reproducirVoz(ruta, personaje) {
 
-    // Crear mensaje visible
     let aviso = document.getElementById("avisoAudio");
 
     if (!aviso) {
         aviso = document.createElement("div");
+
         aviso.id = "avisoAudio";
 
         Object.assign(aviso.style, {
@@ -17,9 +18,9 @@ export function reproducirVoz(ruta, personaje) {
             left: "20px",
             right: "20px",
             padding: "15px",
-            background: "rgba(0,0,0,0.85)",
+            background: "rgba(0,0,0,0.9)",
             color: "white",
-            fontFamily: "Arial",
+            fontFamily: "Arial, sans-serif",
             fontSize: "16px",
             textAlign: "center",
             borderRadius: "10px",
@@ -30,61 +31,65 @@ export function reproducirVoz(ruta, personaje) {
     }
 
     aviso.textContent =
-        `🔊 Cargando voz de ${personaje}...`;
+        `🔊 Intentando reproducir ${personaje}...`;
 
-    const audio = new Audio(ruta);
+    const audio = new Audio();
 
-    audio.volume = 1.0;
     audio.preload = "auto";
+    audio.volume = 1.0;
+
+    audio.addEventListener("loadeddata", () => {
+
+        aviso.textContent =
+            `📦 Archivo cargado: ${personaje}`;
+
+    });
 
     audio.addEventListener("canplaythrough", () => {
 
         aviso.textContent =
-            `✅ Audio encontrado: ${ruta}`;
+            `✅ Audio listo: ${personaje}`;
 
     });
 
     audio.addEventListener("error", () => {
 
         aviso.textContent =
-            `❌ NO SE ENCONTRÓ: ${ruta}`;
+            `❌ ERROR AL CARGAR: ${ruta}`;
 
     });
 
-    audio.play()
-        .then(() => {
+    audio.src = ruta;
 
-            aviso.textContent =
-                `▶️ Reproduciendo ${personaje}`;
+    const promesa = audio.play();
 
-            setTimeout(() => {
-                aviso.remove();
-            }, 1500);
+    if (promesa) {
 
-        })
-        .catch(() => {
+        promesa
+            .then(() => {
 
-            aviso.textContent =
-                "🚫 El navegador bloqueó la reproducción automática.";
+                aviso.textContent =
+                    `▶️ REPRODUCIENDO: ${personaje}`;
 
-        });
+                setTimeout(() => {
+
+                    if (aviso) {
+                        aviso.remove();
+                    }
+
+                }, 1500);
+
+            })
+            .catch((error) => {
+
+                console.error(error);
+
+                aviso.textContent =
+                    `🚫 EL NAVEGADOR BLOQUEÓ EL AUDIO`;
+
+            });
+
+    }
 
     return audio;
 }
-
-Ahora inicia el juego.
-
-👀 ¿Qué queremos ver?
-
-Si aparece:
-
-"❌ NO SE ENCONTRÓ"
-→ tenemos que corregir el nombre/ruta del MP3.
-
-"🚫 El navegador bloqueó..."
-→ encontramos el problema: el navegador está impidiendo que la escena reproduzca audio automáticamente.
-
-"▶️ Reproduciendo MICAELA"
-→ ¡el audio funciona! Entonces pasamos al tono de Micaela y Mike. 🎙️
-
-Y tranquilo: este código es solamente para diagnosticar. Después lo quitamos y dejamos el juego limpio.
