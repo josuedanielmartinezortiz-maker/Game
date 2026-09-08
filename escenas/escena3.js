@@ -1,19 +1,25 @@
 // =====================================================
 // 🐔 GAMERPRO GAME — ESCENA 3
-// 🥚 REVELACIÓN DEL HUEVO
+// 🎰 RULETA + HUEVO GIGANTE
 // =====================================================
 
 export function iniciarEscena3(game, imagenes, alTerminar) {
 
-    const canvas =
-        document.createElement("canvas");
+    const canvas = document.createElement("canvas");
 
     canvas.id = "escenaCanvas";
 
+    Object.assign(canvas.style, {
+        position: "fixed",
+        inset: "0",
+        width: "100vw",
+        height: "100vh",
+        zIndex: "1000"
+    });
+
     game.appendChild(canvas);
 
-    const ctx =
-        canvas.getContext("2d");
+    const ctx = canvas.getContext("2d");
 
 
     // =================================================
@@ -21,7 +27,6 @@ export function iniciarEscena3(game, imagenes, alTerminar) {
     // =================================================
 
     const POLLOS = [
-
         {
             nombre: "Pollo Noob",
             imagen: imagenes.pollonoob,
@@ -43,7 +48,7 @@ export function iniciarEscena3(game, imagenes, alTerminar) {
 
 
     // =================================================
-    // 🎲 ELEGIR POLLO
+    // 🎲 ELEGIR GANADOR
     // =================================================
 
     function elegirPollo() {
@@ -51,113 +56,192 @@ export function iniciarEscena3(game, imagenes, alTerminar) {
         const numero =
             Math.random() * 100;
 
-        if (numero < 98) {
+        if (numero < 98)
             return POLLOS[0];
-        }
 
-        if (numero < 99) {
+        if (numero < 99)
             return POLLOS[1];
-        }
 
         return POLLOS[2];
     }
 
 
-    const polloGanador =
+    const ganador =
         elegirPollo();
 
 
     console.log(
-        `🐔 POLLO OBTENIDO: ${polloGanador.nombre}`
+        "🎰 GANADOR:",
+        ganador.nombre
     );
 
 
-    window.gamerproPolloObtenido =
-        polloGanador.nombre;
+    // =================================================
+    // 🥚 ESTADOS
+    // =================================================
+
+    let estado = "HUEVO";
+
+    let tiempoInicio =
+        performance.now();
+
+    let anguloRuleta = 0;
+
+    let velocidadRuleta = 0;
+
+    let indiceActual = 0;
+
+    let tiempoGanador = 0;
 
 
     // =================================================
-    // 🥚 HUEVO
+    // 📐 CANVAS
     // =================================================
 
-    const HUEVO = {
+    function ajustarCanvas() {
 
-        x: 0.58,
-        y: 0.84,
-        escala: 0.30,
+        canvas.width =
+            window.innerWidth;
 
-        abierto: false
-    };
+        canvas.height =
+            window.innerHeight;
+    }
+
+    ajustarCanvas();
+
+    window.addEventListener(
+        "resize",
+        ajustarCanvas
+    );
 
 
     // =================================================
-    // 🐔 POSICIONES
+    // 🥚 HUEVO GIGANTE
     // =================================================
 
-    const posiciones = [
+    function dibujarHuevoGigante() {
 
-        {
-            x: 0.38,
-            y: 0.67
-        },
+        const imagen =
+            imagenes.noob;
 
-        {
-            x: 0.50,
-            y: 0.67
-        },
+        if (!imagen)
+            return;
 
-        {
-            x: 0.62,
-            y: 0.67
+
+        const ancho =
+            canvas.width * 0.75;
+
+        const alto =
+            canvas.height * 0.90;
+
+
+        const proporcion =
+            imagen.naturalWidth /
+            imagen.naturalHeight;
+
+
+        let w = ancho;
+        let h = w / proporcion;
+
+
+        if (h > alto) {
+
+            h = alto;
+            w = h * proporcion;
+
         }
-    ];
 
 
-    const CENTRO = {
+        ctx.drawImage(
 
-        x: 0.50,
-        y: 0.67
-    };
+            imagen,
 
+            canvas.width / 2 - w / 2,
 
-    // =================================================
-    // 🔄 ANIMACIÓN
-    // =================================================
+            canvas.height / 2 - h / 2,
 
-    let rotacion = 0;
+            w,
+            h
 
-    let animando = false;
-
-    let ganadorMostrado = false;
-
-
-    const TAMANO_BASE = 180;
+        );
+    }
 
 
     // =================================================
-    // 🎨 DIBUJAR IMAGEN
+    // 🎰 RULETA
     // =================================================
 
-    function dibujarImagen(
+    function dibujarRuleta() {
+
+        const centroX =
+            canvas.width / 2;
+
+        const centroY =
+            canvas.height / 2;
+
+
+        const radio =
+            Math.min(
+                canvas.width,
+                canvas.height
+            ) * 0.32;
+
+
+        for (
+            let i = 0;
+            i < POLLOS.length;
+            i++
+        ) {
+
+            const angulo =
+                anguloRuleta +
+                i * (Math.PI * 2 / POLLOS.length);
+
+
+            const x =
+                centroX +
+                Math.cos(angulo) *
+                radio;
+
+
+            const y =
+                centroY +
+                Math.sin(angulo) *
+                radio;
+
+
+            dibujarPollo(
+                POLLOS[i].imagen,
+                x,
+                y,
+                0.32,
+                angulo
+            );
+        }
+    }
+
+
+    // =================================================
+    // 🐔 DIBUJAR POLLO
+    // =================================================
+
+    function dibujarPollo(
         imagen,
         x,
         y,
         escala,
-        rotacion = 0
+        rotacion
     ) {
 
-        if (!imagen) return;
+        if (!imagen)
+            return;
 
 
-        const posX =
-            x * canvas.width;
-
-        const posY =
-            y * canvas.height;
-
-
-        const alto =
-            TAMANO_BASE * escala;
+        const tamano =
+            Math.min(
+                canvas.width,
+                canvas.height
+            ) * escala;
 
 
         const proporcion =
@@ -166,15 +250,15 @@ export function iniciarEscena3(game, imagenes, alTerminar) {
 
 
         const ancho =
-            alto * proporcion;
+            tamano * proporcion;
 
 
         ctx.save();
 
 
         ctx.translate(
-            posX,
-            posY
+            x,
+            y
         );
 
 
@@ -188,10 +272,13 @@ export function iniciarEscena3(game, imagenes, alTerminar) {
             imagen,
 
             -ancho / 2,
-            -alto / 2,
+
+            -tamano / 2,
 
             ancho,
-            alto
+
+            tamano
+
         );
 
 
@@ -200,246 +287,250 @@ export function iniciarEscena3(game, imagenes, alTerminar) {
 
 
     // =================================================
-    // 🥚 HUEVO
+    // ⭐ GANADOR GIGANTE
     // =================================================
 
-    function dibujarHuevo() {
+    function dibujarGanador() {
 
-        if (HUEVO.abierto) return;
+        const imagen =
+            ganador.imagen;
 
-
-        dibujarImagen(
-
-            imagenes.noob,
-
-            HUEVO.x,
-            HUEVO.y,
-
-            HUEVO.escala
-        );
-    }
+        if (!imagen)
+            return;
 
 
-    // =================================================
-    // 🐔 POLLOS
-    // =================================================
-
-    function dibujarPollos() {
-
-        if (!animando) return;
-
-
-        POLLOS.forEach(
-            (pollo, indice) => {
-
-                const posicion =
-                    posiciones[indice];
+        const progreso =
+            Math.min(
+                (performance.now() -
+                    tiempoGanador) / 800,
+                1
+            );
 
 
-                let x =
-                    posicion.x;
-
-                let y =
-                    posicion.y;
+        const escala =
+            0.25 +
+            progreso * 0.75;
 
 
-                // 🔄 GIRAR
-                if (!ganadorMostrado) {
-
-                    const radio =
-                        0.035;
-
-
-                    x +=
-                        Math.cos(
-                            rotacion +
-                            indice * 2.1
-                        ) * radio;
+        const tamano =
+            Math.max(
+                canvas.width,
+                canvas.height
+            ) * escala;
 
 
-                    y +=
-                        Math.sin(
-                            rotacion +
-                            indice * 2.1
-                        ) * radio;
-                }
+        const proporcion =
+            imagen.naturalWidth /
+            imagen.naturalHeight;
 
 
-                // 💥 GANADOR AL CENTRO
-                if (
-                    ganadorMostrado &&
-                    pollo === polloGanador
-                ) {
+        const ancho =
+            tamano * proporcion;
 
-                    x +=
-                        (
-                            CENTRO.x - x
-                        ) * 0.75;
-
-
-                    y +=
-                        (
-                            CENTRO.y - y
-                        ) * 0.75;
-                }
-
-
-                dibujarImagen(
-
-                    pollo.imagen,
-
-                    x,
-                    y,
-
-                    0.55,
-
-                    rotacion
-                );
-            }
-        );
-    }
-
-
-    // =================================================
-    // 💥 POM
-    // =================================================
-
-    function dibujarPOM() {
 
         ctx.save();
 
 
-        ctx.font =
-            "bold 70px Arial";
-
-
-        ctx.textAlign =
-            "center";
-
-
-        ctx.textBaseline =
-            "middle";
-
-
-        ctx.fillStyle =
-            "#FFFFFF";
-
-
-        ctx.strokeStyle =
-            "#000000";
-
-
-        ctx.lineWidth =
-            8;
-
-
-        ctx.strokeText(
-
-            "💥 POM!",
-
+        ctx.translate(
             canvas.width / 2,
-
-            canvas.height * 0.45
+            canvas.height / 2
         );
 
 
-        ctx.fillText(
-
-            "💥 POM!",
-
-            canvas.width / 2,
-
-            canvas.height * 0.45
-        );
-
-
-        ctx.restore();
-    }
-
-
-    // =================================================
-    // 🎬 DIBUJAR ESCENA
-    // =================================================
-
-    function dibujarEscena() {
-
-        ctx.clearRect(
-
-            0,
-            0,
-
-            canvas.width,
-            canvas.height
+        ctx.rotate(
+            Math.sin(progreso * Math.PI) * 0.04
         );
 
 
         ctx.drawImage(
 
-            imagenes.escena2,
+            imagen,
 
+            -ancho / 2,
+
+            -tamano / 2,
+
+            ancho,
+
+            tamano
+
+        );
+
+
+        ctx.restore();
+
+
+        // 💥 POM
+
+        if (progreso >= 1) {
+
+            ctx.save();
+
+            ctx.font =
+                "bold " +
+                Math.min(
+                    canvas.width,
+                    canvas.height
+                ) * 0.16 +
+                "px Arial";
+
+            ctx.textAlign =
+                "center";
+
+            ctx.textBaseline =
+                "middle";
+
+            ctx.fillStyle =
+                "#fff";
+
+            ctx.strokeStyle =
+                "#000";
+
+            ctx.lineWidth = 10;
+
+            ctx.strokeText(
+                "💥 POM!",
+                canvas.width / 2,
+                canvas.height * 0.82
+            );
+
+            ctx.fillText(
+                "💥 POM!",
+                canvas.width / 2,
+                canvas.height * 0.82
+            );
+
+            ctx.restore();
+        }
+    }
+
+
+    // =================================================
+    // 🎬 RENDER
+    // =================================================
+
+    function dibujarEscena() {
+
+        ctx.clearRect(
             0,
             0,
-
             canvas.width,
             canvas.height
         );
 
 
-        dibujarHuevo();
+        // Fondo
+
+        ctx.drawImage(
+            imagenes.escena2,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
 
 
-        dibujarPollos();
+        if (estado === "HUEVO") {
+
+            dibujarHuevoGigante();
+
+        }
 
 
-        if (ganadorMostrado) {
+        if (estado === "RULETA") {
 
-            dibujarPOM();
+            dibujarRuleta();
+
+        }
+
+
+        if (estado === "GANADOR") {
+
+            dibujarGanador();
+
         }
     }
 
 
     // =================================================
-    // 📱 CANVAS
-    // =================================================
-
-    function ajustarCanvas() {
-
-        canvas.width =
-            window.innerWidth;
-
-        canvas.height =
-            window.innerHeight;
-
-
-        dibujarEscena();
-    }
-
-
-    ajustarCanvas();
-
-
-    window.addEventListener(
-
-        "resize",
-
-        ajustarCanvas
-    );
-
-
-    // =================================================
-    // 🔄 BUCLE
+    // 🔄 ANIMACIÓN
     // =================================================
 
     function actualizar() {
 
-        if (animando) {
+        const ahora =
+            performance.now();
 
-            rotacion += 0.12;
+
+        const transcurrido =
+            ahora - tiempoInicio;
+
+
+        // =============================================
+        // 🥚 HUEVO
+        // =============================================
+
+        if (
+            estado === "HUEVO" &&
+            transcurrido >= 1800
+        ) {
+
+            estado =
+                "RULETA";
+
+            tiempoInicio =
+                ahora;
+
+            velocidadRuleta =
+                0.55;
+
+            console.log(
+                "🥚💥 ¡HUEVO ABIERTO!"
+            );
+        }
+
+
+        // =============================================
+        // 🎰 RULETA
+        // =============================================
+
+        if (estado === "RULETA") {
+
+            anguloRuleta +=
+                velocidadRuleta;
+
+
+            // Después de unos segundos
+            // comienza a frenar
+
+            if (transcurrido > 2500) {
+
+                velocidadRuleta *=
+                    0.985;
+            }
+
+
+            // Cuando está casi detenida
+            if (
+                transcurrido > 6000 &&
+                velocidadRuleta < 0.01
+            ) {
+
+                estado =
+                    "GANADOR";
+
+                tiempoGanador =
+                    ahora;
+
+                console.log(
+                    "⭐ ¡GANADOR!",
+                    ganador.nombre
+                );
+            }
         }
 
 
         dibujarEscena();
-
 
         requestAnimationFrame(
             actualizar
@@ -451,85 +542,24 @@ export function iniciarEscena3(game, imagenes, alTerminar) {
 
 
     // =================================================
-    // 🎬 SECUENCIA
+    // ⏱️ FINAL
     // =================================================
 
+    setTimeout(
+        () => {
 
-    // 🥚 1. ABRIR HUEVO
+            if (
+                typeof alTerminar ===
+                "function"
+            ) {
 
-    setTimeout(() => {
+                alTerminar(
+                    ganador
+                );
 
-        console.log(
-            "🥚 ¡EL HUEVO SE ABRE!"
-        );
+            }
 
-
-        HUEVO.abierto =
-            true;
-
-
-        animando =
-            true;
-
-    }, 1000);
-
-
-    // 🔄 2. GIRAR
-
-    setTimeout(() => {
-
-        console.log(
-            "🔄🐔 ¡LOS 3 POLLOS GIRAN!"
-        );
-
-    }, 2500);
-
-
-    // 💥 3. POM
-
-    setTimeout(() => {
-
-        animando =
-            false;
-
-
-        ganadorMostrado =
-            true;
-
-
-        console.log(
-
-            `💥 POM! GANADOR: ${polloGanador.nombre}`
-        );
-
-    }, 5500);
-
-
-    // 🚀 4. TERMINAR
-
-    setTimeout(() => {
-
-        console.log(
-            "🚀 TP AL GALLINERO"
-        );
-
-
-        window.gamerproComenzarJuego =
-            true;
-
-
-        game.innerHTML = "";
-
-
-        if (
-            typeof alTerminar ===
-            "function"
-        ) {
-
-            alTerminar(
-                polloGanador
-            );
-        }
-
-    }, 8000);
-}
+        },
+        9000
+    );
+            }
