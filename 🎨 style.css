@@ -1,10 +1,15 @@
+/* =====================================================
+   GAMERPRO GAME — ESTILOS PRINCIPALES
+   ===================================================== */
+
 * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
 html,
 body {
-    margin: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -12,22 +17,45 @@ body {
 
 body {
     font-family: Arial, sans-serif;
+    background: #000;
 }
+
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+   ===================================================== */
 
 #game {
-    position: relative;
-    width: 100%;
-    height: 100%;
+    position: fixed;
+    inset: 0;
+
+    width: 100vw;
+    height: 100dvh;
+
+    overflow: hidden;
+    background: #000;
 }
 
+/* =====================================================
+   PANTALLA DE INICIO
+   ===================================================== */
+
 #inicio {
-    position: absolute;
+    position: fixed;
     inset: 0;
+
+    width: 100vw;
+    height: 100dvh;
 
     display: flex;
     align-items: center;
     justify-content: center;
+
+    z-index: 50000;
 }
+
+/* =====================================================
+   BOTÓN PLAY
+   ===================================================== */
 
 #playButton {
     width: 220px;
@@ -37,15 +65,76 @@ body {
     font-weight: bold;
 
     cursor: pointer;
-  }
-#escena1 {
-    position: absolute;
+}
 
-    width: 100%;
-    height: 100%;
+/* =====================================================
+   CANVAS DE TODAS LAS ESCENAS
+   ===================================================== */
 
-    object-fit: cover;
+#game canvas {
+    position: fixed;
 
     left: 0;
     top: 0;
+
+    width: 100vw;
+    height: 100dvh;
+
+    display: block;
+
+    margin: 0;
+    padding: 0;
+
+    max-width: none;
+    max-height: none;
 }
+
+/* =====================================================
+   ESCENA 1
+   ===================================================== */
+
+#escena1 {
+    position: fixed;
+
+    left: 0;
+    top: 0;
+
+    width: 100vw;
+    height: 100dvh;
+
+    display: block;
+}
+
+/* =====================================================
+   MÓVIL VERTICAL
+   ===================================================== */
+
+@media (orientation: portrait) {
+
+    #game {
+        width: 100vw;
+        height: 100dvh;
+    }
+
+    #game canvas {
+        width: 100vw;
+        height: 100dvh;
+    }
+}
+
+/* =====================================================
+   MÓVIL HORIZONTAL
+   ===================================================== */
+
+@media (orientation: landscape) {
+
+    #game {
+        width: 100vw;
+        height: 100dvh;
+    }
+
+    #game canvas {
+        width: 100vw;
+        height: 100dvh;
+    }
+    }
