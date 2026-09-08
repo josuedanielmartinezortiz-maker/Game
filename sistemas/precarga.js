@@ -10,102 +10,102 @@ export function precargarImagenes(
     const nombres =
         Object.keys(recursos);
 
-
     let cargadas = 0;
-
 
     // =================================================
     // 📥 CARGAR TODAS LAS IMÁGENES
     // =================================================
 
     const cargas =
-        nombres.map((nombre) => {
+        nombres.map(
+            (nombre) => {
 
-            return new Promise(
-                (resolve, reject) => {
+                return new Promise(
+                    (resolve, reject) => {
 
-                    const imagen =
-                        new Image();
+                        const imagen =
+                            new Image();
 
+                        // =================================
+                        // ✅ CARGA CORRECTA
+                        // =================================
 
-                    // =========================================
-                    // ✅ CARGA CORRECTA
-                    // =========================================
+                        imagen.onload =
+                            () => {
 
-                    imagen.onload =
-                        () => {
+                                cargadas++;
 
-                            cargadas++;
-
-
-                            console.log(
-                                `✅ Cargada: ${nombre} (${cargadas}/${nombres.length})`
-                            );
-
-
-                            if (
-                                actualizarCarga
-                            ) {
-
-                                actualizarCarga(
-                                    cargadas,
-                                    nombres.length,
-                                    nombre,
-                                    true
+                                console.log(
+                                    `✅ Cargada: ${nombre} (${cargadas}/${nombres.length})`
                                 );
-                            }
 
+                                if (
+                                    actualizarCarga
+                                ) {
 
-                            resolve({
-                                nombre,
-                                imagen
-                            });
-                        };
+                                    actualizarCarga(
+                                        cargadas,
+                                        nombres.length,
+                                        nombre,
+                                        true
+                                    );
+                                }
 
+                                resolve({
 
-                    // =========================================
-                    // ❌ ERROR
-                    // =========================================
-
-                    imagen.onerror =
-                        () => {
-
-                            console.error(
-                                `❌ FALLÓ LA IMAGEN: ${nombre}`
-                            );
-
-
-                            if (
-                                actualizarCarga
-                            ) {
-
-                                actualizarCarga(
-                                    cargadas,
-                                    nombres.length,
                                     nombre,
-                                    false
+
+                                    imagen
+
+                                });
+
+                            };
+
+                        // =================================
+                        // ❌ ERROR
+                        // =================================
+
+                        imagen.onerror =
+                            () => {
+
+                                console.error(
+                                    `❌ FALLÓ LA IMAGEN: ${nombre}`
                                 );
-                            }
 
+                                if (
+                                    actualizarCarga
+                                ) {
 
-                            reject(
-                                new Error(
-                                    `No se pudo cargar: ${recursos[nombre]}`
-                                )
-                            );
-                        };
+                                    actualizarCarga(
+                                        cargadas,
+                                        nombres.length,
+                                        nombre,
+                                        false
+                                    );
+                                }
 
+                                reject(
 
-                    // =========================================
-                    // 🌐 RUTA
-                    // =========================================
+                                    new Error(
+                                        `No se pudo cargar: ${recursos[nombre]}`
+                                    )
 
-                    imagen.src =
-                        recursos[nombre];
-                }
-            );
-        });
+                                );
 
+                            };
+
+                        // =================================
+                        // 🌐 RUTA
+                        // =================================
+
+                        imagen.src =
+                            recursos[nombre];
+
+                    }
+                );
+
+            }
+        );
 
     // =================================================
     // 🎮 RESULTADO
@@ -115,25 +115,30 @@ export function precargarImagenes(
         cargas
     )
 
-    .then((resultados) => {
+    .then(
+        (resultados) => {
 
-        const imagenes =
-            {};
+            const imagenes =
+                {};
 
+            resultados.forEach(
+                (resultado) => {
 
-        resultados.forEach(
-            (resultado) => {
+                    imagenes[
+                        resultado.nombre
+                    ] =
+                        resultado.imagen;
 
-                imagenes[
-                    resultado.nombre
-                ] =
-                    resultado.imagen;
+                }
+            );
 
-            }
-        );
+            console.log(
+                "🖼️ IMÁGENES DISPONIBLES:",
+                Object.keys(imagenes)
+            );
 
+            return imagenes;
 
-        return imagenes;
-
-    });
-                        }
+        }
+    );
+        }
