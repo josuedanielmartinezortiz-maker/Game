@@ -16,83 +16,11 @@ import { iniciarEscena2 }
 
 
 // =====================================================
-// 🎮 CONTENEDOR DEL JUEGO
+// 🎮 GAME
 // =====================================================
 
 const game =
     document.getElementById("game");
-
-
-// =====================================================
-// 🧪 DIAGNÓSTICO VISIBLE
-// =====================================================
-
-const diagnostico =
-    document.createElement("div");
-
-Object.assign(
-    diagnostico.style,
-    {
-        position: "fixed",
-
-        top: "10px",
-        left: "10px",
-
-        width: "calc(100vw - 20px)",
-
-        padding: "12px",
-
-        boxSizing: "border-box",
-
-        background:
-            "rgba(0,0,0,0.92)",
-
-        color:
-            "#00ff66",
-
-        fontFamily:
-            "monospace",
-
-        fontSize: "15px",
-
-        lineHeight: "1.4",
-
-        border:
-            "2px solid #00ff66",
-
-        borderRadius:
-            "10px",
-
-        zIndex:
-            "9000",
-
-        whiteSpace:
-            "pre-wrap",
-
-        pointerEvents:
-            "none"
-    }
-);
-
-diagnostico.textContent =
-    "🧪 GAMERPRO\nPreparando...";
-
-document.body.appendChild(
-    diagnostico
-);
-
-
-// =====================================================
-// 🧪 DIAGNÓSTICO
-// =====================================================
-
-function diagnosticar(
-    mensaje
-) {
-
-    diagnostico.textContent +=
-        `\n${mensaje}`;
-}
 
 
 // =====================================================
@@ -148,100 +76,118 @@ let imagenes = null;
 
 function iniciarJuego() {
 
-    diagnosticar(
-        "🔥 BOTÓN PRESIONADO"
-    );
-
-    diagnosticar(
-        "🚀 INICIANDO GAMERPRO GAME..."
+    console.log(
+        "🔥 BOTÓN FUNCIONÓ"
     );
 
 
-    // ================================================
-    // 🖼️ COMPROBAR RECURSOS
-    // ================================================
-
-    if (!imagenes) {
-
-        diagnosticar(
-            "🔴 ERROR: LAS IMÁGENES NO ESTÁN LISTAS"
-        );
-
-        return;
-    }
+    const mensaje =
+        document.createElement("div");
 
 
-    diagnosticar(
-        "✅ IMÁGENES DISPONIBLES"
+    Object.assign(
+        mensaje.style,
+        {
+            position: "fixed",
+            inset: "0",
+            background: "#111",
+            color: "#00ff66",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontFamily: "Arial",
+            fontSize: "32px",
+            fontWeight: "bold",
+            zIndex: "50000",
+            textAlign: "center",
+            whiteSpace: "pre-line"
+        }
     );
 
 
-    // ================================================
-    // 🎬 ESCENA 1
-    // ================================================
+    mensaje.textContent =
+        "🔥 BOTÓN FUNCIONÓ\n\n" +
+        "🎬 INICIANDO ESCENA 1";
 
-    diagnosticar(
-        "🎬 INICIANDO ESCENA 1..."
+
+    game.appendChild(
+        mensaje
     );
 
 
-    try {
+    setTimeout(
+        function() {
 
-        iniciarEscena1(
+            mensaje.remove();
 
-            game,
 
-            imagenes,
+            try {
 
-            () => {
+                iniciarEscena1(
 
-                diagnosticar(
-                    "✅ ESCENA 1 TERMINADA"
+                    game,
+
+                    imagenes,
+
+                    function() {
+
+                        iniciarEscena2(
+                            game,
+                            imagenes
+                        );
+
+                    }
+
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "❌ ERROR ESCENA 1:",
+                    error
                 );
 
 
-                diagnosticar(
-                    "🎬 INICIANDO ESCENA 2..."
+                const errorPantalla =
+                    document.createElement("div");
+
+
+                Object.assign(
+                    errorPantalla.style,
+                    {
+                        position: "fixed",
+                        inset: "0",
+                        background: "#200",
+                        color: "#ff5555",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: "30px",
+                        boxSizing: "border-box",
+                        fontFamily: "monospace",
+                        fontSize: "18px",
+                        textAlign: "center",
+                        zIndex: "50000",
+                        whiteSpace: "pre-line"
+                    }
                 );
 
 
-                try {
-
-                    iniciarEscena2(
-                        game,
-                        imagenes
-                    );
+                errorPantalla.textContent =
+                    "🔴 ERROR ESCENA 1\n\n" +
+                    error.message;
 
 
-                    diagnosticar(
-                        "✅ ESCENA 2 INICIADA"
-                    );
-
-                } catch (error) {
-
-                    diagnosticar(
-                        "🔴 ERROR ESCENA 2:\n" +
-                        error.message
-                    );
-
-                }
+                game.appendChild(
+                    errorPantalla
+                );
 
             }
-        );
 
+        },
 
-        diagnosticar(
-            "✅ ESCENA 1 EJECUTADA"
-        );
-
-    } catch (error) {
-
-        diagnosticar(
-            "🔴 ERROR ESCENA 1:\n" +
-            error.message
-        );
-
-    }
+        1000
+    );
 }
 
 
@@ -249,54 +195,35 @@ function iniciarJuego() {
 // 📺 PANTALLA DE CARGA
 // =====================================================
 
-diagnosticar(
-    "📺 CREANDO PANTALLA DE CARGA..."
-);
-
-
 const pantallaCarga =
     iniciarPantallaCarga(
-
         game,
-
         iniciarJuego
     );
-
-
-diagnosticar(
-    "✅ PANTALLA DE CARGA CREADA"
-);
 
 
 // =====================================================
 // 📥 CARGAR RECURSOS
 // =====================================================
 
-diagnosticar(
-    "📦 CARGANDO RECURSOS..."
-);
-
-
 precargarImagenes(
 
     recursos,
 
-    (
+    function(
         cargadas,
         total,
         nombre,
         correcta
-    ) => {
+    ) {
 
         pantallaCarga.actualizarCarga(
 
             cargadas,
-
             total,
-
             nombre,
-
             correcta
+
         );
 
     }
@@ -305,17 +232,17 @@ precargarImagenes(
 
 
 // =====================================================
-// ✅ RECURSOS LISTOS
+// ✅ TODO CARGADO
 // =====================================================
 
 .then(
-    (resultado) => {
+    function(resultado) {
 
         imagenes =
             resultado;
 
 
-        diagnosticar(
+        console.log(
             "✅ TODOS LOS RECURSOS CARGADOS"
         );
 
@@ -332,11 +259,11 @@ precargarImagenes(
 // =====================================================
 
 .catch(
-    (error) => {
+    function(error) {
 
-        diagnosticar(
-            "🚨 ERROR DE CARGA:\n" +
-            error.message
+        console.error(
+            "❌ ERROR DE CARGA:",
+            error
         );
 
     }
