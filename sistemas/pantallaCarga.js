@@ -14,40 +14,42 @@ export function iniciarPantallaCarga(game) {
     pantalla.id =
         "pantallaCarga";
 
-    Object.assign(pantalla.style, {
+    Object.assign(
+        pantalla.style,
+        {
+            position: "fixed",
+            inset: "0",
 
-        position: "fixed",
-        inset: "0",
+            width: "100%",
+            height: "100%",
 
-        width: "100%",
-        height: "100%",
+            background: "#000",
 
-        background: "#000",
+            display: "flex",
+            flexDirection: "column",
 
-        display: "flex",
-        flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
 
-        justifyContent: "center",
-        alignItems: "center",
+            zIndex: "10000",
 
-        zIndex: "10000",
+            color: "#fff",
 
-        color: "#fff",
+            fontFamily:
+                "Arial, sans-serif",
 
-        fontFamily:
-            "Arial, sans-serif",
+            textAlign: "center",
 
-        textAlign: "center",
+            boxSizing: "border-box",
 
-        boxSizing: "border-box",
-
-        touchAction:
-            "manipulation"
-    });
+            touchAction:
+                "manipulation"
+        }
+    );
 
 
     // =================================================
-    // 📝 CONTENIDO
+    // 🧱 CONTENIDO
     // =================================================
 
     pantalla.innerHTML = `
@@ -71,8 +73,6 @@ export function iniciarPantallaCarga(game) {
             ⏳ Cargando...
         </div>
 
-
-        <!-- BARRA -->
 
         <div style="
             width: min(80%, 500px);
@@ -105,8 +105,6 @@ export function iniciarPantallaCarga(game) {
         </div>
 
 
-        <!-- PORCENTAJE -->
-
         <div
             id="porcentajeCarga"
             style="
@@ -117,8 +115,6 @@ export function iniciarPantallaCarga(game) {
             0%
         </div>
 
-
-        <!-- RECURSO ACTUAL -->
 
         <div
             id="recursoCarga"
@@ -136,8 +132,6 @@ export function iniciarPantallaCarga(game) {
             Preparando recursos...
         </div>
 
-
-        <!-- ERROR -->
 
         <div
             id="errorCarga"
@@ -162,8 +156,6 @@ export function iniciarPantallaCarga(game) {
             "
         ></div>
 
-
-        <!-- BOTÓN -->
 
         <button
             id="botonIniciar"
@@ -191,6 +183,8 @@ export function iniciarPantallaCarga(game) {
 
                 touch-action:
                     manipulation;
+
+                user-select: none;
             "
         >
             👆 TOCA PARA INICIAR
@@ -239,21 +233,31 @@ export function iniciarPantallaCarga(game) {
 
 
     // =================================================
-    // 📡 CONTROL DE LA PANTALLA
+    // 🔐 ESTADO
     // =================================================
 
-    let cargaCompleta = false;
+    let cargaCompleta =
+        false;
+
+    let iniciado =
+        false;
+
+
+    // =================================================
+    // 🤝 PROMESA DE INICIO
+    // =================================================
 
     let resolverInicio;
 
-
     const promesaInicio =
-        new Promise((resolver) => {
+        new Promise(
+            (resolver) => {
 
-            resolverInicio =
-                resolver;
+                resolverInicio =
+                    resolver;
 
-        });
+            }
+        );
 
 
     // =================================================
@@ -270,7 +274,8 @@ export function iniciarPantallaCarga(game) {
         const porcentaje =
             total > 0
                 ? Math.round(
-                    (cargadas / total) * 100
+                    (cargadas / total) *
+                    100
                 )
                 : 0;
 
@@ -278,16 +283,18 @@ export function iniciarPantallaCarga(game) {
         barraCarga.style.width =
             `${porcentaje}%`;
 
-
         porcentajeCarga.textContent =
             `${porcentaje}%`;
 
 
+        // =============================================
+        // ❌ ERROR
+        // =============================================
+
         if (!correcta) {
 
-            // =============================================
-            // ❌ ERROR
-            // =============================================
+            cargaCompleta =
+                false;
 
             textoCarga.textContent =
                 "❌ ERROR AL CARGAR";
@@ -307,15 +314,12 @@ export function iniciarPantallaCarga(game) {
             boton.disabled =
                 true;
 
-            cargaCompleta =
-                false;
-
             return;
         }
 
 
         // =============================================
-        // ✅ RECURSO CARGADO
+        // ⏳ CARGANDO
         // =============================================
 
         textoCarga.textContent =
@@ -335,33 +339,106 @@ export function iniciarPantallaCarga(game) {
         cargaCompleta =
             true;
 
-
         textoCarga.textContent =
             "✅ ¡Todo listo!";
-
 
         barraCarga.style.width =
             "100%";
 
-
         porcentajeCarga.textContent =
             "100%";
-
 
         recursoCarga.textContent =
             "🎮 Todos los recursos cargados";
 
-
         errorCarga.style.display =
             "none";
-
 
         boton.style.display =
             "block";
 
-
         boton.disabled =
             false;
+    }
+
+
+    // =================================================
+    // 🔊 DESBLOQUEAR AUDIO
+    // =================================================
+
+    async function desbloquearAudio() {
+
+        try {
+
+            const AudioContext =
+                window.AudioContext ||
+                window.webkitAudioContext;
+
+
+            if (!AudioContext) {
+
+                return;
+
+            }
+
+
+            let audioContext =
+                window.gamerproAudioContext;
+
+
+            if (!audioContext) {
+
+                audioContext =
+                    new AudioContext();
+
+                window.gamerproAudioContext =
+                    audioContext;
+
+            }
+
+
+            if (
+                audioContext.state ===
+                "suspended"
+            ) {
+
+                await audioContext.resume();
+
+            }
+
+
+            // Pequeño sonido silencioso
+            // para desbloquear audio móvil
+
+            const buffer =
+                audioContext.createBuffer(
+                    1,
+                    1,
+                    audioContext.sampleRate
+                );
+
+
+            const fuente =
+                audioContext.createBufferSource();
+
+            fuente.buffer =
+                buffer;
+
+            fuente.connect(
+                audioContext.destination
+            );
+
+            fuente.start(0);
+
+
+        } catch (error) {
+
+            console.warn(
+                "⚠️ No se pudo desbloquear el audio:",
+                error
+            );
+
+        }
     }
 
 
@@ -371,119 +448,75 @@ export function iniciarPantallaCarga(game) {
 
     async function iniciar() {
 
+        // No permitir iniciar
+        // si algo falló
+
         if (!cargaCompleta) {
+
             return;
+
         }
 
 
-        if (
-            boton.dataset.iniciado ===
-            "true"
-        ) {
+        // Evitar doble toque
+
+        if (iniciado) {
+
             return;
+
         }
 
 
-        boton.dataset.iniciado =
-            "true";
+        iniciado =
+            true;
 
 
         boton.disabled =
             true;
 
 
-        console.log(
-            "👆 GAMERPRO GAME iniciado"
-        );
+        boton.textContent =
+            "🚀 INICIANDO...";
 
 
-        // =================================================
-        // 🔊 ACTIVAR AUDIO
-        // =================================================
+        // =============================================
+        // 🔊 AUDIO
+        // =============================================
 
-        try {
-
-            const AudioContext =
-                window.AudioContext ||
-                window.webkitAudioContext;
+        await desbloquearAudio();
 
 
-            if (AudioContext) {
-
-                const audioContext =
-                    new AudioContext();
-
-
-                window.gamerproAudioContext =
-                    audioContext;
-
-
-                await audioContext.resume();
-
-
-                console.log(
-                    "🔓 AUDIO DESBLOQUEADO"
-                );
-
-
-                // -----------------------------------------
-                // 🔇 SONIDO SILENCIOSO
-                // -----------------------------------------
-
-                const buffer =
-                    audioContext.createBuffer(
-                        1,
-                        1,
-                        audioContext.sampleRate
-                    );
-
-
-                const fuente =
-                    audioContext.createBufferSource();
-
-
-                fuente.buffer =
-                    buffer;
-
-
-                fuente.connect(
-                    audioContext.destination
-                );
-
-
-                fuente.start(0);
-            }
-
-        } catch (error) {
-
-            console.warn(
-                "⚠️ Audio:",
-                error
-            );
-        }
-
-
-        // =================================================
-        // 🌑 DESAPARECER
-        // =================================================
+        // =============================================
+        // 🎬 OCULTAR PANTALLA
+        // =============================================
 
         pantalla.style.transition =
             "opacity 0.5s ease";
-
 
         pantalla.style.opacity =
             "0";
 
 
-        setTimeout(() => {
+        setTimeout(
+            () => {
 
-            pantalla.remove();
+                pantalla.remove();
 
-            resolverInicio();
+                // =====================================
+                // 🔥 ESTA ES LA PARTE IMPORTANTE
+                // =====================================
 
-        }, 500);
+                resolverInicio();
+
+            },
+            500
+        );
     }
 
+
+    // =================================================
+    // 👆 EVENTOS DEL BOTÓN
+    // =================================================
 
     boton.addEventListener(
         "pointerdown",
@@ -491,8 +524,14 @@ export function iniciarPantallaCarga(game) {
     );
 
 
+    boton.addEventListener(
+        "click",
+        iniciar
+    );
+
+
     // =================================================
-    // 📦 DEVOLVER CONTROL
+    // 📤 DEVOLVER SISTEMA
     // =================================================
 
     return {
@@ -504,4 +543,4 @@ export function iniciarPantallaCarga(game) {
         marcarCargaCompleta
 
     };
-                }
+        }
