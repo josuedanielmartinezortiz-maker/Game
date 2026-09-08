@@ -14,24 +14,24 @@ export function iniciarGallinero(
     // 🧹 ELIMINAR ESCENAS ANTERIORES
     // =================================================
 
-    const escena3Anterior =
+    const escena3 =
         document.getElementById("escena3Canvas");
 
-    if (escena3Anterior) {
-        escena3Anterior.remove();
+    if (escena3) {
+        escena3.remove();
         console.log("🧹 ESCENA 3 ELIMINADA");
     }
 
-    const escenaAnterior =
+    const escena =
         document.getElementById("escenaCanvas");
 
-    if (escenaAnterior) {
-        escenaAnterior.remove();
+    if (escena) {
+        escena.remove();
         console.log("🧹 ESCENA ANTERIOR ELIMINADA");
     }
 
     // =================================================
-    // 🔍 COMPROBAR IMÁGENES
+    // 🔍 COMPROBAR IMAGEN
     // =================================================
 
     if (!imagenes) {
@@ -42,16 +42,9 @@ export function iniciarGallinero(
     }
 
     if (!imagenes.gallinero) {
-
         console.error(
             "❌ NO EXISTE imagenes.gallinero"
         );
-
-        console.log(
-            "📦 IMÁGENES DISPONIBLES:",
-            Object.keys(imagenes)
-        );
-
         return;
     }
 
@@ -74,8 +67,8 @@ export function iniciarGallinero(
             width: "100vw",
             height: "100vh",
             display: "block",
-            zIndex: "10000",
-            background: "#000000"
+            background: "#000000",
+            zIndex: "10000"
         }
     );
 
@@ -197,59 +190,98 @@ export function iniciarGallinero(
     }
 
     // =================================================
-    // 📐 RECTÁNGULO REAL DEL GALLINERO
+    // 📐 ZONA REAL DE LA IMAGEN
     // =================================================
 
-    function obtenerRectanguloGallinero() {
+    function obtenerZonaGallinero() {
 
         const imagen =
             imagenes.gallinero;
 
-        const anchoImagen =
+        const iw =
             imagen.naturalWidth;
 
-        const altoImagen =
+        const ih =
             imagen.naturalHeight;
 
-        if (
-            !anchoImagen ||
-            !altoImagen
-        ) {
+        if (!iw || !ih) {
+
             return {
                 x: 0,
                 y: 0,
                 w: canvas.width,
                 h: canvas.height
             };
+
+        }
+
+        let ancho;
+        let alto;
+
+        // =============================================
+        // 📱 VERTICAL
+        // =============================================
+
+        if (
+            canvas.height >
+            canvas.width
+        ) {
+
+            // La imagen ocupa todo el ancho
+            ancho =
+                canvas.width;
+
+            alto =
+                ancho *
+                (ih / iw);
+
         }
 
         // =============================================
-        // CONTAIN
+        // 🖥️ HORIZONTAL
         // =============================================
 
-        const escala =
-            Math.min(
-                canvas.width / anchoImagen,
-                canvas.height / altoImagen
-            );
+        else {
 
-        const ancho =
-            anchoImagen * escala;
+            // La imagen ocupa toda la altura
+            alto =
+                canvas.height;
 
-        const alto =
-            altoImagen * escala;
+            ancho =
+                alto *
+                (iw / ih);
 
-        const x =
-            (canvas.width - ancho) / 2;
+            // Seguridad
+            if (
+                ancho >
+                canvas.width
+            ) {
 
-        const y =
-            (canvas.height - alto) / 2;
+                ancho =
+                    canvas.width;
+
+                alto =
+                    ancho *
+                    (ih / iw);
+
+            }
+
+        }
 
         return {
-            x,
-            y,
-            w: ancho,
-            h: alto
+
+            x:
+                (canvas.width - ancho) / 2,
+
+            y:
+                (canvas.height - alto) / 2,
+
+            w:
+                ancho,
+
+            h:
+                alto
+
         };
     }
 
@@ -296,14 +328,14 @@ export function iniciarGallinero(
         );
 
         // =============================================
-        // 🏠 RECTÁNGULO DEL GALLINERO
+        // 🏠 ZONA DEL GALLINERO
         // =============================================
 
         const zona =
-            obtenerRectanguloGallinero();
+            obtenerZonaGallinero();
 
         // =============================================
-        // 🏠 GALLINERO SIN DEFORMAR
+        // 🏠 DIBUJAR GALLINERO
         // =============================================
 
         ctx.drawImage(
@@ -319,7 +351,7 @@ export function iniciarGallinero(
         );
 
         // =============================================
-        // 🐔 POLLOS
+        // 🐔 DIBUJAR POLLOS
         // =============================================
 
         pollosColocados.forEach(
@@ -332,34 +364,33 @@ export function iniciarGallinero(
                 const casilla =
                     CASILLAS[indice];
 
-                // =====================================
-                // POSICIÓN DENTRO DEL GALLINERO
-                // =====================================
+                // Posición relativa
+                // a la imagen real
+
+                const xRel =
+                    casilla.x +
+                    casilla.w / 2;
+
+                const yRel =
+                    casilla.y +
+                    casilla.h / 2;
 
                 const x =
                     zona.x +
-                    (
-                        casilla.x +
-                        casilla.w / 2
-                    ) *
-                    zona.w;
+                    xRel * zona.w;
 
                 const y =
                     zona.y +
-                    (
-                        casilla.y +
-                        casilla.h / 2
-                    ) *
-                    zona.h;
+                    yRel * zona.h;
 
                 // =====================================
                 // TAMAÑO DEL POLLO
                 // =====================================
 
-                const alto =
+                let alto =
                     zona.h *
                     casilla.h *
-                    0.85;
+                    0.70;
 
                 const imagen =
                     pollo.imagen;
@@ -368,29 +399,48 @@ export function iniciarGallinero(
                     return;
                 }
 
-                const anchoBase =
+                const iw =
                     imagen.naturalWidth;
 
-                const altoBase =
+                const ih =
                     imagen.naturalHeight;
 
-                if (
-                    !anchoBase ||
-                    !altoBase
-                ) {
+                if (!iw || !ih) {
                     return;
                 }
 
                 const proporcion =
-                    anchoBase /
-                    altoBase;
+                    iw / ih;
 
-                const ancho =
+                let ancho =
                     alto *
                     proporcion;
 
                 // =====================================
-                // DIBUJAR POLLO
+                // SEGURIDAD PARA VERTICAL
+                // =====================================
+
+                const anchoMaximo =
+                    zona.w *
+                    casilla.w *
+                    0.90;
+
+                if (
+                    ancho >
+                    anchoMaximo
+                ) {
+
+                    ancho =
+                        anchoMaximo;
+
+                    alto =
+                        ancho /
+                        proporcion;
+
+                }
+
+                // =====================================
+                // DIBUJAR
                 // =====================================
 
                 ctx.drawImage(
@@ -406,6 +456,7 @@ export function iniciarGallinero(
                     alto
 
                 );
+
             }
         );
     }
@@ -420,10 +471,7 @@ export function iniciarGallinero(
     ) {
 
         const zona =
-            obtenerRectanguloGallinero();
-
-        // Convertir toque a coordenadas
-        // relativas al gallinero
+            obtenerZonaGallinero();
 
         const rx =
             (x - zona.x) /
@@ -433,7 +481,6 @@ export function iniciarGallinero(
             (y - zona.y) /
             zona.h;
 
-        // Fuera del gallinero
         if (
             rx < 0 ||
             rx > 1 ||
@@ -518,4 +565,4 @@ export function iniciarGallinero(
         pollosColocados
 
     };
-         }
+}
