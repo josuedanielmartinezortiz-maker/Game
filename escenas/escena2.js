@@ -45,24 +45,26 @@ export function iniciarEscena2(game, imagenes) {
 
     const HUEVO = {
 
-        x: 0.50,
+        // Más a la derecha del pollo
+        x: 0.58,
 
-        // Empieza arriba del cielo
+        // Empieza muy arriba
         y: -0.15,
 
         escala: 0.30,
 
         velocidad: 0,
 
-        gravedad: 0.0012,
+        gravedad: 0.0018,
 
+        // Altura del suelo
         suelo: 0.84,
 
         cayendo: true,
 
-        rebotando: false,
+        impacto: false,
 
-        rebotes: 0
+        tiempoImpacto: 0
     };
 
 
@@ -84,6 +86,116 @@ export function iniciarEscena2(game, imagenes) {
 
 
     const TAMANO_BASE = 180;
+
+
+    // =================================================
+    // 💥 EFECTO KBOOM
+    // =================================================
+
+    function dibujarExplosion() {
+
+        if (!HUEVO.impacto) return;
+
+        const ahora =
+            performance.now();
+
+        const transcurrido =
+            ahora - HUEVO.tiempoImpacto;
+
+        const duracion =
+            600;
+
+        if (transcurrido >= duracion) {
+            HUEVO.impacto = false;
+            return;
+        }
+
+        const progreso =
+            transcurrido / duracion;
+
+        const x =
+            HUEVO.x * canvas.width;
+
+        const y =
+            HUEVO.suelo * canvas.height;
+
+        const radio =
+            25 + progreso * 90;
+
+        ctx.save();
+
+        ctx.globalAlpha =
+            1 - progreso;
+
+        // 💥 Círculo de impacto
+        ctx.beginPath();
+
+        ctx.arc(
+            x,
+            y,
+            radio,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.lineWidth =
+            10 * (1 - progreso);
+
+        ctx.strokeStyle =
+            "#FFD21F";
+
+        ctx.stroke();
+
+
+        // ⚡ Rayos del KBOOM
+        for (
+            let i = 0;
+            i < 8;
+            i++
+        ) {
+
+            const angulo =
+                (Math.PI * 2 / 8) * i;
+
+            const inicio =
+                radio * 0.6;
+
+            const fin =
+                radio + 25;
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                x +
+                Math.cos(angulo) *
+                inicio,
+
+                y +
+                Math.sin(angulo) *
+                inicio
+            );
+
+            ctx.lineTo(
+                x +
+                Math.cos(angulo) *
+                fin,
+
+                y +
+                Math.sin(angulo) *
+                fin
+            );
+
+            ctx.lineWidth =
+                5;
+
+            ctx.strokeStyle =
+                "#FFFFFF";
+
+            ctx.stroke();
+        }
+
+        ctx.restore();
+    }
 
 
     // =================================================
@@ -128,13 +240,15 @@ export function iniciarEscena2(game, imagenes) {
 
 
     // =================================================
-    // 🥚 ANIMACIÓN DEL HUEVO
+    // 🥚 FÍSICA DEL HUEVO
     // =================================================
 
     let ultimoTiempo =
         performance.now();
 
-    function actualizarHuevo(tiempoActual) {
+    function actualizarHuevo(
+        tiempoActual
+    ) {
 
         const delta =
             tiempoActual -
@@ -144,54 +258,53 @@ export function iniciarEscena2(game, imagenes) {
             tiempoActual;
 
 
-        if (HUEVO.cayendo) {
-
-            // Gravedad
-            HUEVO.velocidad +=
-                HUEVO.gravedad *
-                delta;
-
-            // Movimiento
-            HUEVO.y +=
-                HUEVO.velocidad *
-                delta;
-
-
-            // Llegó al suelo
-            if (
-                HUEVO.y >=
-                HUEVO.suelo
-            ) {
-
-                HUEVO.y =
-                    HUEVO.suelo;
-
-                HUEVO.velocidad *=
-                    -0.35;
-
-                HUEVO.rebotes++;
-
-                if (
-                    HUEVO.rebotes >= 2
-                ) {
-
-                    HUEVO.velocidad =
-                        0;
-
-                    HUEVO.cayendo =
-                        false;
-                }
-            }
+        if (!HUEVO.cayendo) {
+            return;
         }
 
 
-        ultimoTiempo =
-            tiempoActual;
+        // Gravedad
+        HUEVO.velocidad +=
+            HUEVO.gravedad *
+            delta;
+
+
+        // Caída
+        HUEVO.y +=
+            HUEVO.velocidad *
+            delta;
+
+
+        // =================================================
+        // 💥 IMPACTO
+        // =================================================
+
+        if (
+            HUEVO.y >=
+            HUEVO.suelo
+        ) {
+
+            HUEVO.y =
+                HUEVO.suelo;
+
+            HUEVO.cayendo =
+                false;
+
+            HUEVO.impacto =
+                true;
+
+            HUEVO.tiempoImpacto =
+                performance.now();
+
+            console.log(
+                "🥚💥 KBOOM!"
+            );
+        }
     }
 
 
     // =================================================
-    // 🎬 DIBUJAR ESCENA
+    // 🎬 ESCENA
     // =================================================
 
     function dibujarEscena() {
@@ -205,7 +318,6 @@ export function iniciarEscena2(game, imagenes) {
 
 
         // 🌾 Fondo
-
         ctx.drawImage(
             imagenes.escena2,
             0,
@@ -216,7 +328,6 @@ export function iniciarEscena2(game, imagenes) {
 
 
         // 👦 Mike
-
         dibujarElemento(
             imagenMike,
             MIKE
@@ -224,7 +335,6 @@ export function iniciarEscena2(game, imagenes) {
 
 
         // 👧 Micaela
-
         dibujarElemento(
             imagenMicaela,
             MICAELA
@@ -232,7 +342,6 @@ export function iniciarEscena2(game, imagenes) {
 
 
         // 🐔 Pollo
-
         dibujarElemento(
             imagenPollo,
             POLLO
@@ -240,16 +349,19 @@ export function iniciarEscena2(game, imagenes) {
 
 
         // 🥚 Huevo
-
         dibujarElemento(
             imagenHuevo,
             HUEVO
         );
+
+
+        // 💥 KBOOM
+        dibujarExplosion();
     }
 
 
     // =================================================
-    // 📱 AJUSTAR CANVAS
+    // 📱 CANVAS
     // =================================================
 
     function ajustarCanvas() {
@@ -277,7 +389,9 @@ export function iniciarEscena2(game, imagenes) {
     // 🔄 BUCLE
     // =================================================
 
-    function actualizar(tiempoActual) {
+    function actualizar(
+        tiempoActual
+    ) {
 
         actualizarHuevo(
             tiempoActual
@@ -294,4 +408,4 @@ export function iniciarEscena2(game, imagenes) {
     requestAnimationFrame(
         actualizar
     );
-}
+            }
