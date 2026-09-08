@@ -1,13 +1,8 @@
 // =====================================================
-// 🎙️ GAMERPRO GAME — AUDIO
+// 🎙️ GAMERPRO GAME — SISTEMA DE AUDIO
 // =====================================================
 
 const audiosCargados = new Map();
-
-
-// =====================================================
-// 📥 CARGAR MP3
-// =====================================================
 
 async function cargarAudio(ruta) {
 
@@ -24,10 +19,6 @@ async function cargarAudio(ruta) {
         );
     }
 
-    mostrarMensaje(
-        "📥 Cargando: " + ruta
-    );
-
     const respuesta =
         await fetch(ruta);
 
@@ -41,9 +32,7 @@ async function cargarAudio(ruta) {
         await respuesta.arrayBuffer();
 
     const buffer =
-        await audioContext.decodeAudioData(
-            datos
-        );
+        await audioContext.decodeAudioData(datos);
 
     audiosCargados.set(
         ruta,
@@ -63,52 +52,25 @@ export async function reproducirVoz(
     personaje
 ) {
 
-    mostrarMensaje(
-        `🔊 Intentando voz de ${personaje}...`
-    );
-
     const audioContext =
         window.gamerproAudioContext;
 
     if (!audioContext) {
-
-        mostrarMensaje(
+        console.error(
             "❌ NO EXISTE AUDIOCONTEXT"
         );
-
         return;
     }
 
-
-    // =================================================
-    // 🔓 ACTIVAR CONTEXTO
-    // =================================================
-
-    if (audioContext.state !== "running") {
-
-        try {
-
-            await audioContext.resume();
-
-        } catch (error) {
-
-            mostrarMensaje(
-                "❌ AUDIO BLOQUEADO"
-            );
-
-            return;
-        }
-    }
-
-
     try {
 
-        // Cargar MP3
+        if (audioContext.state !== "running") {
+            await audioContext.resume();
+        }
+
         const buffer =
             await cargarAudio(ruta);
 
-
-        // Crear reproductor
         const fuente =
             audioContext.createBufferSource();
 
@@ -116,14 +78,75 @@ export async function reproducirVoz(
             buffer;
 
 
-        // Volumen
+        // =================================================
+        // 🎙️ EFECTOS DE VOZ
+        // =================================================
+
+        if (personaje === "MICAELA") {
+
+            // 🌸 Micaela:
+            // Un poco más aguda y ligera.
+            fuente.playbackRate.value = 1.10;
+
+
+            // Filtro suave para darle un tono
+            // un poco más limpio.
+            const filtro =
+                audioContext.createBiquadFilter();
+
+            filtro.type = "highshelf";
+
+            filtro.frequency.value = 2500;
+
+            filtro.gain.value = 2;
+
+
+            // Volumen
+            const volumen =
+                audioContext.createGain();
+
+            volumen.gain.value = 0.95;
+
+
+            // Conexiones
+            fuente.connect(filtro);
+
+            filtro.connect(volumen);
+
+            volumen.connect(
+                audioContext.destination
+            );
+
+
+            fuente.start(0);
+
+
+            fuente.addEventListener(
+                "ended",
+                () => {
+                    fuente.disconnect();
+                    filtro.disconnect();
+                    volumen.disconnect();
+                }
+            );
+
+            console.log(
+                "🌸 VOZ MICAELA PROCESADA"
+            );
+
+            return;
+        }
+
+
+        // =================================================
+        // 👦 MIKE — VOZ ORIGINAL
+        // =================================================
+
         const volumen =
             audioContext.createGain();
 
         volumen.gain.value = 1.0;
 
-
-        // Conectar
         fuente.connect(
             volumen
         );
@@ -132,84 +155,25 @@ export async function reproducirVoz(
             audioContext.destination
         );
 
-
-        // Reproducir
         fuente.start(0);
-
-
-        mostrarMensaje(
-            `▶️ REPRODUCIENDO ${personaje}`
-        );
-
 
         fuente.addEventListener(
             "ended",
             () => {
-
                 fuente.disconnect();
                 volumen.disconnect();
-
             }
         );
 
+        console.log(
+            "👦 VOZ MIKE ORIGINAL"
+        );
 
     } catch (error) {
 
-        mostrarMensaje(
-            "❌ ERROR: " +
-            error.message
-        );
-
         console.error(
-            "Error de audio:",
+            "❌ ERROR DE AUDIO:",
             error
         );
     }
-}
-
-
-// =====================================================
-// 🖥️ MENSAJE VISIBLE
-// =====================================================
-
-function mostrarMensaje(texto) {
-
-    let aviso =
-        document.getElementById(
-            "avisoAudio"
-        );
-
-    if (!aviso) {
-
-        aviso =
-            document.createElement("div");
-
-        aviso.id =
-            "avisoAudio";
-
-        Object.assign(
-            aviso.style,
-            {
-                position: "fixed",
-                top: "20px",
-                left: "20px",
-                right: "20px",
-                padding: "15px",
-                background: "rgba(0,0,0,0.9)",
-                color: "white",
-                fontFamily: "Arial",
-                fontSize: "16px",
-                textAlign: "center",
-                borderRadius: "10px",
-                zIndex: "99999"
-            }
-        );
-
-        document.body.appendChild(
-            aviso
-        );
-    }
-
-    aviso.textContent =
-        texto;
 }
