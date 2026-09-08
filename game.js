@@ -1,6 +1,5 @@
 // =====================================================
 // 🎮 GAMERPRO GAME — GAME.JS
-// 🧪 DIAGNÓSTICO VISIBLE
 // =====================================================
 
 import { precargarImagenes }
@@ -17,7 +16,7 @@ import { iniciarEscena2 }
 
 
 // =====================================================
-// 🎮 CONTENEDOR DEL JUEGO
+// 🎮 GAME
 // =====================================================
 
 const game =
@@ -25,7 +24,7 @@ const game =
 
 
 // =====================================================
-// 🧪 PANEL DE DIAGNÓSTICO
+// 🧪 DIAGNÓSTICO
 // =====================================================
 
 const diagnostico =
@@ -40,9 +39,11 @@ Object.assign(
 
         padding: "12px 16px",
 
-        background: "rgba(0,0,0,0.90)",
+        background:
+            "rgba(0,0,0,0.90)",
 
-        color: "#00ff66",
+        color:
+            "#00ff66",
 
         fontFamily:
             "monospace",
@@ -76,16 +77,12 @@ document.body.appendChild(
 );
 
 
-// =====================================================
-// 🧪 FUNCIÓN DE DIAGNÓSTICO
-// =====================================================
-
-function diagnosticar(mensaje) {
+function diagnosticar(
+    mensaje
+) {
 
     diagnostico.textContent +=
         `\n${mensaje}`;
-
-    console.log(mensaje);
 }
 
 
@@ -137,21 +134,105 @@ diagnosticar(
     "📺 Creando pantalla de carga..."
 );
 
-const pantallaCarga =
-    iniciarPantallaCarga(game);
 
-diagnosticar(
-    "✅ Pantalla de carga creada"
-);
+const pantallaCarga =
+    iniciarPantallaCarga(
+
+        game,
+
+        () => {
+
+            // =============================================
+            // 👆 BOTÓN PRESIONADO
+            // =============================================
+
+            diagnosticar(
+                "🔥 BOTÓN PRESIONADO"
+            );
+
+
+            // =============================================
+            // 🎬 ESCENA 1
+            // =============================================
+
+            diagnosticar(
+                "🎬 INTENTANDO INICIAR ESCENA 1..."
+            );
+
+
+            try {
+
+                iniciarEscena1(
+
+                    game,
+
+                    imagenes,
+
+                    () => {
+
+                        diagnosticar(
+                            "✅ ESCENA 1 TERMINADA"
+                        );
+
+
+                        // =====================================
+                        // 🎬 ESCENA 2
+                        // =====================================
+
+                        diagnosticar(
+                            "🎬 INICIANDO ESCENA 2..."
+                        );
+
+
+                        try {
+
+                            iniciarEscena2(
+                                game,
+                                imagenes
+                            );
+
+                            diagnosticar(
+                                "✅ ESCENA 2 INICIADA"
+                            );
+
+                        } catch (error) {
+
+                            diagnosticar(
+                                "🔴 ERROR EN ESCENA 2:\n" +
+                                error.message
+                            );
+
+                        }
+
+                    }
+                );
+
+
+                diagnosticar(
+                    "✅ ESCENA 1 FUE LLAMADA"
+                );
+
+            } catch (error) {
+
+                diagnosticar(
+                    "🔴 ERROR EN ESCENA 1:\n" +
+                    error.message
+                );
+
+            }
+
+        }
+    );
 
 
 // =====================================================
-// 📥 PRECARGAR RECURSOS
+// 📥 CARGAR RECURSOS
 // =====================================================
 
 diagnosticar(
     "📦 Cargando recursos..."
 );
+
 
 const promesaRecursos =
     precargarImagenes(
@@ -181,135 +262,36 @@ const promesaRecursos =
 
 
 // =====================================================
-// 🎮 CUANDO TERMINA LA CARGA
+// 🎮 RECURSOS LISTOS
 // =====================================================
+
+let imagenes;
+
 
 promesaRecursos
 
-    .then(async (imagenes) => {
+    .then((resultado) => {
+
+        imagenes =
+            resultado;
+
 
         diagnosticar(
             "✅ TODOS LOS RECURSOS CARGADOS"
         );
 
+
         pantallaCarga
             .marcarCargaCompleta();
 
-
-        // =================================================
-        // 👆 ESPERAR EL BOTÓN
-        // =================================================
-
-        diagnosticar(
-            "⏳ ESPERANDO TOQUE EN EL BOTÓN..."
-        );
-
-        await pantallaCarga
-            .promesaInicio;
-
-
-        // =================================================
-        // 👆 BOTÓN PRESIONADO
-        // =================================================
-
-        diagnosticar(
-            "🔥 BOTÓN PRESIONADO"
-        );
-
-
-        // =================================================
-        // 🎬 ESCENA 1
-        // =================================================
-
-        diagnosticar(
-            "🎬 INTENTANDO INICIAR ESCENA 1..."
-        );
-
-
-        try {
-
-            iniciarEscena1(
-
-                game,
-
-                imagenes,
-
-                () => {
-
-                    diagnosticar(
-                        "✅ ESCENA 1 TERMINADA"
-                    );
-
-
-                    // =============================================
-                    // 🎬 ESCENA 2
-                    // =============================================
-
-                    diagnosticar(
-                        "🎬 INICIANDO ESCENA 2..."
-                    );
-
-                    try {
-
-                        iniciarEscena2(
-                            game,
-                            imagenes
-                        );
-
-                        diagnosticar(
-                            "✅ ESCENA 2 INICIADA"
-                        );
-
-                    } catch (error) {
-
-                        diagnostico.style.color =
-                            "#ff3333";
-
-                        diagnostico.style.borderColor =
-                            "#ff3333";
-
-                        diagnosticar(
-                            "🔴 ERROR EN ESCENA 2:\n" +
-                            error.message
-                        );
-
-                    }
-
-                }
-            );
-
-
-            diagnosticar(
-                "✅ ESCENA 1 FUE LLAMADA"
-            );
-
-        } catch (error) {
-
-            diagnostico.style.color =
-                "#ff3333";
-
-            diagnostico.style.borderColor =
-                "#ff3333";
-
-            diagnosticar(
-                "🔴 ERROR EN ESCENA 1:\n" +
-                error.message
-            );
-
-        }
-
     })
+
 
     .catch((error) => {
 
-        diagnostico.style.color =
-            "#ff3333";
-
-        diagnostico.style.borderColor =
-            "#ff3333";
-
-        diagnostico.textContent =
-            "🚨 ERROR AL CARGAR EL JUEGO\n\n" +
-            error.message;
+        diagnosticar(
+            "🚨 ERROR AL CARGAR:\n" +
+            error.message
+        );
 
     });
