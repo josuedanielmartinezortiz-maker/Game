@@ -19,7 +19,6 @@ export function iniciarGallinero(
 
     if (escena3) {
         escena3.remove();
-        console.log("🧹 ESCENA 3 ELIMINADA");
     }
 
     const escena =
@@ -27,20 +26,10 @@ export function iniciarGallinero(
 
     if (escena) {
         escena.remove();
-        console.log("🧹 ESCENA ANTERIOR ELIMINADA");
     }
 
-    // =================================================
-    // ❌ COMPROBACIONES
-    // =================================================
-
-    if (!imagenes) {
-        console.error("❌ NO EXISTEN LAS IMÁGENES");
-        return;
-    }
-
-    if (!imagenes.gallinero) {
-        console.error("❌ NO EXISTE imagenes.gallinero");
+    if (!imagenes || !imagenes.gallinero) {
+        console.error("❌ NO EXISTE EL GALLINERO");
         return;
     }
 
@@ -54,24 +43,69 @@ export function iniciarGallinero(
     canvas.id =
         "gallineroCanvas";
 
-    Object.assign(
-        canvas.style,
-        {
-            position: "fixed",
-            left: "0",
-            top: "0",
-            width: "100vw",
-            height: "100dvh",
-            display: "block",
-            background: "#000000",
-            zIndex: "10000"
-        }
-    );
+    Object.assign(canvas.style, {
+        position: "fixed",
+        left: "0",
+        top: "0",
+        width: "100vw",
+        height: "100dvh",
+        display: "block",
+        background: "#000",
+        zIndex: "10000",
+        touchAction: "none"
+    });
 
     game.appendChild(canvas);
 
     const ctx =
         canvas.getContext("2d");
+
+    // =================================================
+    // 🔒 SISTEMA DE BLOQUEO
+    // =================================================
+
+    let pantallaBloqueada = false;
+
+    let zonaBloqueada = null;
+
+    // =================================================
+    // 🔘 BOTÓN DE BLOQUEO
+    // =================================================
+
+    const botonBloqueo =
+        document.createElement("button");
+
+    botonBloqueo.id =
+        "botonBloquearPantalla";
+
+    botonBloqueo.textContent =
+        "🔒 BLOQUEAR PANTALLA";
+
+    Object.assign(botonBloqueo.style, {
+        position: "fixed",
+        right: "15px",
+        bottom: "15px",
+        zIndex: "20000",
+
+        padding: "12px 18px",
+
+        border: "3px solid #000",
+        borderRadius: "12px",
+
+        background: "#ffffff",
+        color: "#000000",
+
+        fontFamily: "Arial, sans-serif",
+        fontSize: "16px",
+        fontWeight: "bold",
+
+        cursor: "pointer",
+
+        boxShadow:
+            "0 4px 10px rgba(0,0,0,0.5)"
+    });
+
+    game.appendChild(botonBloqueo);
 
     // =================================================
     // 🐔 22 CASILLAS
@@ -117,22 +151,15 @@ export function iniciarGallinero(
     // =================================================
 
     const pollosColocados =
-        new Array(
-            CASILLAS.length
-        ).fill(null);
+        new Array(CASILLAS.length).fill(null);
 
     // =================================================
-    // 🏆 GANADOR
+    // 🏆 POLLO GANADOR
     // =================================================
 
     const ganadorFinal =
         nombreGanador ||
         window.gamerproPolloObtenido;
-
-    console.log(
-        "🏆 POLLO RECIBIDO:",
-        ganadorFinal
-    );
 
     const POLLOS = {
 
@@ -152,16 +179,12 @@ export function iniciarGallinero(
     if (imagenGanador) {
 
         pollosColocados[0] = {
-
-            nombre:
-                ganadorFinal,
-
-            imagen:
-                imagenGanador
+            nombre: ganadorFinal,
+            imagen: imagenGanador
         };
 
         console.log(
-            "🐔✅ GANADOR EN CASILLA 1:",
+            "🐔🏆 GANADOR:",
             ganadorFinal
         );
 
@@ -174,10 +197,10 @@ export function iniciarGallinero(
     }
 
     // =================================================
-    // 🏠 ENCUADRE DEL GALLINERO
+    // 🏠 OBTENER ZONA DEL GALLINERO
     // =================================================
 
-    function obtenerZonaGallinero() {
+    function calcularZonaGallinero() {
 
         const imagen =
             imagenes.gallinero;
@@ -198,10 +221,10 @@ export function iniciarGallinero(
             };
         }
 
-        const proporcionImagen =
+        const proporcion =
             iw / ih;
 
-        const proporcionPantalla =
+        const pantalla =
             canvas.width /
             canvas.height;
 
@@ -212,14 +235,7 @@ export function iniciarGallinero(
         // 📱 VERTICAL
         // =================================================
 
-        if (
-            proporcionPantalla < 1
-        ) {
-
-            /*
-             * En vertical aumentamos
-             * ligeramente el tamaño.
-             */
+        if (pantalla < 1) {
 
             const zoomVertical = 1.12;
 
@@ -229,18 +245,9 @@ export function iniciarGallinero(
 
             alto =
                 ancho /
-                proporcionImagen;
+                proporcion;
 
-            /*
-             * Si el zoom hace que el
-             * alto sea insuficiente,
-             * usamos el alto como referencia.
-             */
-
-            if (
-                alto <
-                canvas.height
-            ) {
+            if (alto < canvas.height) {
 
                 alto =
                     canvas.height *
@@ -248,7 +255,7 @@ export function iniciarGallinero(
 
                 ancho =
                     alto *
-                    proporcionImagen;
+                    proporcion;
             }
 
         }
@@ -258,12 +265,6 @@ export function iniciarGallinero(
         // =================================================
 
         else {
-
-            /*
-             * En horizontal hacemos que
-             * TODO el gallinero entre
-             * dentro de la pantalla.
-             */
 
             const escala =
                 Math.min(
@@ -277,10 +278,6 @@ export function iniciarGallinero(
             alto =
                 ih * escala;
         }
-
-        // =================================================
-        // 📍 CENTRAR
-        // =================================================
 
         return {
 
@@ -299,7 +296,148 @@ export function iniciarGallinero(
     }
 
     // =================================================
-    // 🎨 DIBUJAR
+    // 📐 ZONA ACTUAL
+    // =================================================
+
+    function obtenerZonaGallinero() {
+
+        if (
+            pantallaBloqueada &&
+            zonaBloqueada
+        ) {
+
+            return zonaBloqueada;
+        }
+
+        return calcularZonaGallinero();
+    }
+
+    // =================================================
+    // 🐔 DIBUJAR POLLO GRANDE
+    // =================================================
+
+    function dibujarPollo(
+        pollo,
+        casilla,
+        zona
+    ) {
+
+        if (!pollo || !pollo.imagen) {
+            return;
+        }
+
+        const imagen =
+            pollo.imagen;
+
+        const iw =
+            imagen.naturalWidth;
+
+        const ih =
+            imagen.naturalHeight;
+
+        if (!iw || !ih) {
+            return;
+        }
+
+        // Centro de la casilla
+        const xRel =
+            casilla.x +
+            casilla.w / 2;
+
+        const yRel =
+            casilla.y +
+            casilla.h / 2;
+
+        const x =
+            zona.x +
+            xRel * zona.w;
+
+        const y =
+            zona.y +
+            yRel * zona.h;
+
+        // =================================================
+        // 🐔 TAMAÑO DEL POLLO
+        // =================================================
+
+        /*
+         * Antes:
+         *
+         * zona.h * casilla.h * 0.70
+         *
+         * Eso hacía que el pollo terminara
+         * demasiado pequeño.
+         *
+         * Ahora usamos un tamaño mayor.
+         */
+
+        const MULTIPLICADOR_POLLO =
+            1.45;
+
+        let alto =
+            zona.h *
+            casilla.h *
+            MULTIPLICADOR_POLLO;
+
+        let ancho =
+            alto *
+            (iw / ih);
+
+        // =================================================
+        // 🚧 LÍMITE DE SEGURIDAD
+        // =================================================
+
+        /*
+         * El pollo puede ser grande,
+         * pero nunca debe salirse
+         * demasiado de su casilla.
+         */
+
+        const anchoMaximo =
+            zona.w *
+            casilla.w *
+            1.35;
+
+        const altoMaximo =
+            zona.h *
+            casilla.h *
+            1.35;
+
+        if (ancho > anchoMaximo) {
+
+            ancho =
+                anchoMaximo;
+
+            alto =
+                ancho *
+                (ih / iw);
+        }
+
+        if (alto > altoMaximo) {
+
+            alto =
+                altoMaximo;
+
+            ancho =
+                alto *
+                (iw / ih);
+        }
+
+        // =================================================
+        // 🎨 DIBUJAR
+        // =================================================
+
+        ctx.drawImage(
+            imagen,
+            x - ancho / 2,
+            y - alto / 2,
+            ancho,
+            alto
+        );
+    }
+
+    // =================================================
+    // 🎨 DIBUJAR TODO
     // =================================================
 
     function dibujar() {
@@ -311,7 +449,6 @@ export function iniciarGallinero(
             canvas.height
         );
 
-        // Fondo negro
         ctx.fillStyle =
             "#000000";
 
@@ -322,12 +459,12 @@ export function iniciarGallinero(
             canvas.height
         );
 
-        // =================================================
-        // 🏠 FONDO
-        // =================================================
-
         const zona =
             obtenerZonaGallinero();
+
+        // =================================================
+        // 🏠 GALLINERO
+        // =================================================
 
         ctx.drawImage(
             imagenes.gallinero,
@@ -348,83 +485,10 @@ export function iniciarGallinero(
                     return;
                 }
 
-                const casilla =
-                    CASILLAS[indice];
-
-                // Centro de casilla
-                const xRel =
-                    casilla.x +
-                    casilla.w / 2;
-
-                const yRel =
-                    casilla.y +
-                    casilla.h / 2;
-
-                // Posición real
-                const x =
-                    zona.x +
-                    xRel * zona.w;
-
-                const y =
-                    zona.y +
-                    yRel * zona.h;
-
-                const imagen =
-                    pollo.imagen;
-
-                if (!imagen) {
-                    return;
-                }
-
-                const iw =
-                    imagen.naturalWidth;
-
-                const ih =
-                    imagen.naturalHeight;
-
-                if (!iw || !ih) {
-                    return;
-                }
-
-                const proporcion =
-                    iw / ih;
-
-                // Tamaño del pollo
-                let alto =
-                    zona.h *
-                    casilla.h *
-                    0.70;
-
-                let ancho =
-                    alto *
-                    proporcion;
-
-                // No permitir que salga
-                // de su casilla
-                const anchoMaximo =
-                    zona.w *
-                    casilla.w *
-                    0.90;
-
-                if (
-                    ancho >
-                    anchoMaximo
-                ) {
-
-                    ancho =
-                        anchoMaximo;
-
-                    alto =
-                        ancho /
-                        proporcion;
-                }
-
-                ctx.drawImage(
-                    imagen,
-                    x - ancho / 2,
-                    y - alto / 2,
-                    ancho,
-                    alto
+                dibujarPollo(
+                    pollo,
+                    CASILLAS[indice],
+                    zona
                 );
             }
         );
@@ -435,6 +499,10 @@ export function iniciarGallinero(
     // =================================================
 
     function ajustarCanvas() {
+
+        if (pantallaBloqueada) {
+            return;
+        }
 
         const ancho =
             window.visualViewport
@@ -456,13 +524,68 @@ export function iniciarGallinero(
     }
 
     // =================================================
+    // 🔒 BLOQUEAR / DESBLOQUEAR
+    // =================================================
+
+    botonBloqueo.addEventListener(
+        "click",
+        function() {
+
+            if (!pantallaBloqueada) {
+
+                // Guardamos exactamente
+                // el encuadre actual.
+                zonaBloqueada = {
+                    x: obtenerZonaGallinero().x,
+                    y: obtenerZonaGallinero().y,
+                    w: obtenerZonaGallinero().w,
+                    h: obtenerZonaGallinero().h
+                };
+
+                pantallaBloqueada = true;
+
+                botonBloqueo.textContent =
+                    "🔓 DESBLOQUEAR PANTALLA";
+
+                botonBloqueo.style.background =
+                    "#222";
+
+                botonBloqueo.style.color =
+                    "#fff";
+
+                console.log(
+                    "🔒 PANTALLA BLOQUEADA"
+                );
+
+            } else {
+
+                pantallaBloqueada = false;
+
+                zonaBloqueada = null;
+
+                botonBloqueo.textContent =
+                    "🔒 BLOQUEAR PANTALLA";
+
+                botonBloqueo.style.background =
+                    "#fff";
+
+                botonBloqueo.style.color =
+                    "#000";
+
+                ajustarCanvas();
+
+                console.log(
+                    "🔓 PANTALLA DESBLOQUEADA"
+                );
+            }
+        }
+    );
+
+    // =================================================
     // 👆 TOCAR CASILLA
     // =================================================
 
-    function tocarCasilla(
-        x,
-        y
-    ) {
+    function tocarCasilla(x, y) {
 
         const zona =
             obtenerZonaGallinero();
@@ -495,13 +618,9 @@ export function iniciarGallinero(
 
             if (
                 rx >= casilla.x &&
-                rx <=
-                    casilla.x +
-                    casilla.w &&
+                rx <= casilla.x + casilla.w &&
                 ry >= casilla.y &&
-                ry <=
-                    casilla.y +
-                    casilla.h
+                ry <= casilla.y + casilla.h
             ) {
 
                 console.log(
@@ -515,7 +634,7 @@ export function iniciarGallinero(
     }
 
     // =================================================
-    // 👆 TOUCH / POINTER
+    // 👆 TOUCH
     // =================================================
 
     canvas.addEventListener(
@@ -530,7 +649,7 @@ export function iniciarGallinero(
     );
 
     // =================================================
-    // 🔄 ROTACIÓN / RESIZE
+    // 🔄 RESIZE
     // =================================================
 
     window.addEventListener(
@@ -557,9 +676,7 @@ export function iniciarGallinero(
     );
 
     return {
-
         CASILLAS,
-
         pollosColocados
     };
         }
