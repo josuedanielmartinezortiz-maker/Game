@@ -11,7 +11,7 @@ export function iniciarGallinero(
     console.log("🐔 INICIANDO GALLINERO...");
 
     // =================================================
-    // 🧹 ELIMINAR ESCENAS ANTERIORES
+    // 🧹 LIMPIAR ESCENAS ANTERIORES
     // =================================================
 
     const escena3 =
@@ -31,25 +31,21 @@ export function iniciarGallinero(
     }
 
     // =================================================
-    // 🔍 COMPROBAR IMAGEN
+    // ❌ COMPROBACIONES
     // =================================================
 
     if (!imagenes) {
-        console.error(
-            "❌ NO EXISTEN LAS IMÁGENES"
-        );
+        console.error("❌ NO EXISTEN LAS IMÁGENES");
         return;
     }
 
     if (!imagenes.gallinero) {
-        console.error(
-            "❌ NO EXISTE imagenes.gallinero"
-        );
+        console.error("❌ NO EXISTE imagenes.gallinero");
         return;
     }
 
     // =================================================
-    // 🖼️ CANVAS
+    // 🎨 CANVAS
     // =================================================
 
     const canvas =
@@ -65,7 +61,7 @@ export function iniciarGallinero(
             left: "0",
             top: "0",
             width: "100vw",
-            height: "100vh",
+            height: "100dvh",
             display: "block",
             background: "#000000",
             zIndex: "10000"
@@ -78,12 +74,12 @@ export function iniciarGallinero(
         canvas.getContext("2d");
 
     // =================================================
-    // 📦 CASILLAS — 22
+    // 🐔 22 CASILLAS
     // =================================================
 
     const CASILLAS = [
 
-        // Fila 1
+        // FILA 1
         { x: 0.02, y: 0.04, w: 0.10, h: 0.14 },
         { x: 0.14, y: 0.04, w: 0.10, h: 0.14 },
         { x: 0.26, y: 0.04, w: 0.10, h: 0.14 },
@@ -93,19 +89,19 @@ export function iniciarGallinero(
         { x: 0.74, y: 0.04, w: 0.10, h: 0.14 },
         { x: 0.86, y: 0.04, w: 0.10, h: 0.14 },
 
-        // Fila 2
+        // FILA 2
         { x: 0.02, y: 0.20, w: 0.10, h: 0.14 },
         { x: 0.86, y: 0.20, w: 0.10, h: 0.14 },
 
-        // Fila 3
+        // FILA 3
         { x: 0.02, y: 0.36, w: 0.10, h: 0.14 },
         { x: 0.86, y: 0.36, w: 0.10, h: 0.14 },
 
-        // Fila 4
+        // FILA 4
         { x: 0.02, y: 0.52, w: 0.10, h: 0.14 },
         { x: 0.86, y: 0.52, w: 0.10, h: 0.14 },
 
-        // Fila 5
+        // FILA 5
         { x: 0.02, y: 0.68, w: 0.10, h: 0.14 },
         { x: 0.14, y: 0.68, w: 0.10, h: 0.14 },
         { x: 0.26, y: 0.68, w: 0.10, h: 0.14 },
@@ -114,11 +110,10 @@ export function iniciarGallinero(
         { x: 0.62, y: 0.68, w: 0.10, h: 0.14 },
         { x: 0.74, y: 0.68, w: 0.10, h: 0.14 },
         { x: 0.86, y: 0.68, w: 0.10, h: 0.14 }
-
     ];
 
     // =================================================
-    // 🐔 INVENTARIO
+    // 🐔 POLLOS COLOCADOS
     // =================================================
 
     const pollosColocados =
@@ -127,7 +122,7 @@ export function iniciarGallinero(
         ).fill(null);
 
     // =================================================
-    // ⭐ GANADOR
+    // 🏆 GANADOR
     // =================================================
 
     const ganadorFinal =
@@ -139,10 +134,6 @@ export function iniciarGallinero(
         ganadorFinal
     );
 
-    // =================================================
-    // 🐔 POLLOS
-    // =================================================
-
     const POLLOS = {
 
         "Pollo Noob":
@@ -153,15 +144,10 @@ export function iniciarGallinero(
 
         "Pollito Noob":
             imagenes.pollitonoob
-
     };
 
     const imagenGanador =
         POLLOS[ganadorFinal];
-
-    // =================================================
-    // 🐔 COLOCAR GANADOR
-    // =================================================
 
     if (imagenGanador) {
 
@@ -172,7 +158,6 @@ export function iniciarGallinero(
 
             imagen:
                 imagenGanador
-
         };
 
         console.log(
@@ -186,11 +171,10 @@ export function iniciarGallinero(
             "❌ NO SE ENCONTRÓ EL POLLO:",
             ganadorFinal
         );
-
     }
 
     // =================================================
-    // 📐 ZONA REAL DE LA IMAGEN
+    // 🏠 ENCUADRE DEL GALLINERO
     // =================================================
 
     function obtenerZonaGallinero() {
@@ -212,61 +196,91 @@ export function iniciarGallinero(
                 w: canvas.width,
                 h: canvas.height
             };
-
         }
+
+        const proporcionImagen =
+            iw / ih;
+
+        const proporcionPantalla =
+            canvas.width /
+            canvas.height;
 
         let ancho;
         let alto;
 
-        // =============================================
+        // =================================================
         // 📱 VERTICAL
-        // =============================================
+        // =================================================
 
         if (
-            canvas.height >
-            canvas.width
+            proporcionPantalla < 1
         ) {
 
-            // La imagen ocupa todo el ancho
-            ancho =
-                canvas.width;
+            /*
+             * En vertical aumentamos
+             * ligeramente el tamaño.
+             */
 
-            alto =
-                ancho *
-                (ih / iw);
-
-        }
-
-        // =============================================
-        // 🖥️ HORIZONTAL
-        // =============================================
-
-        else {
-
-            // La imagen ocupa toda la altura
-            alto =
-                canvas.height;
+            const zoomVertical = 1.12;
 
             ancho =
-                alto *
-                (iw / ih);
+                canvas.width *
+                zoomVertical;
 
-            // Seguridad
+            alto =
+                ancho /
+                proporcionImagen;
+
+            /*
+             * Si el zoom hace que el
+             * alto sea insuficiente,
+             * usamos el alto como referencia.
+             */
+
             if (
-                ancho >
-                canvas.width
+                alto <
+                canvas.height
             ) {
 
-                ancho =
-                    canvas.width;
-
                 alto =
-                    ancho *
-                    (ih / iw);
+                    canvas.height *
+                    zoomVertical;
 
+                ancho =
+                    alto *
+                    proporcionImagen;
             }
 
         }
+
+        // =================================================
+        // 🖥️ HORIZONTAL
+        // =================================================
+
+        else {
+
+            /*
+             * En horizontal hacemos que
+             * TODO el gallinero entre
+             * dentro de la pantalla.
+             */
+
+            const escala =
+                Math.min(
+                    canvas.width / iw,
+                    canvas.height / ih
+                );
+
+            ancho =
+                iw * escala;
+
+            alto =
+                ih * escala;
+        }
+
+        // =================================================
+        // 📍 CENTRAR
+        // =================================================
 
         return {
 
@@ -281,23 +295,7 @@ export function iniciarGallinero(
 
             h:
                 alto
-
         };
-    }
-
-    // =================================================
-    // 📐 AJUSTAR CANVAS
-    // =================================================
-
-    function ajustarCanvas() {
-
-        canvas.width =
-            window.innerWidth;
-
-        canvas.height =
-            window.innerHeight;
-
-        dibujar();
     }
 
     // =================================================
@@ -313,10 +311,7 @@ export function iniciarGallinero(
             canvas.height
         );
 
-        // =============================================
-        // 🖤 FONDO
-        // =============================================
-
+        // Fondo negro
         ctx.fillStyle =
             "#000000";
 
@@ -327,32 +322,24 @@ export function iniciarGallinero(
             canvas.height
         );
 
-        // =============================================
-        // 🏠 ZONA DEL GALLINERO
-        // =============================================
+        // =================================================
+        // 🏠 FONDO
+        // =================================================
 
         const zona =
             obtenerZonaGallinero();
 
-        // =============================================
-        // 🏠 DIBUJAR GALLINERO
-        // =============================================
-
         ctx.drawImage(
-
             imagenes.gallinero,
-
             zona.x,
             zona.y,
-
             zona.w,
             zona.h
-
         );
 
-        // =============================================
-        // 🐔 DIBUJAR POLLOS
-        // =============================================
+        // =================================================
+        // 🐔 POLLOS
+        // =================================================
 
         pollosColocados.forEach(
             (pollo, indice) => {
@@ -364,9 +351,7 @@ export function iniciarGallinero(
                 const casilla =
                     CASILLAS[indice];
 
-                // Posición relativa
-                // a la imagen real
-
+                // Centro de casilla
                 const xRel =
                     casilla.x +
                     casilla.w / 2;
@@ -375,6 +360,7 @@ export function iniciarGallinero(
                     casilla.y +
                     casilla.h / 2;
 
+                // Posición real
                 const x =
                     zona.x +
                     xRel * zona.w;
@@ -382,15 +368,6 @@ export function iniciarGallinero(
                 const y =
                     zona.y +
                     yRel * zona.h;
-
-                // =====================================
-                // TAMAÑO DEL POLLO
-                // =====================================
-
-                let alto =
-                    zona.h *
-                    casilla.h *
-                    0.70;
 
                 const imagen =
                     pollo.imagen;
@@ -412,14 +389,18 @@ export function iniciarGallinero(
                 const proporcion =
                     iw / ih;
 
+                // Tamaño del pollo
+                let alto =
+                    zona.h *
+                    casilla.h *
+                    0.70;
+
                 let ancho =
                     alto *
                     proporcion;
 
-                // =====================================
-                // SEGURIDAD PARA VERTICAL
-                // =====================================
-
+                // No permitir que salga
+                // de su casilla
                 const anchoMaximo =
                     zona.w *
                     casilla.w *
@@ -436,29 +417,42 @@ export function iniciarGallinero(
                     alto =
                         ancho /
                         proporcion;
-
                 }
 
-                // =====================================
-                // DIBUJAR
-                // =====================================
-
                 ctx.drawImage(
-
                     imagen,
-
                     x - ancho / 2,
-
                     y - alto / 2,
-
                     ancho,
-
                     alto
-
                 );
-
             }
         );
+    }
+
+    // =================================================
+    // 📐 AJUSTAR CANVAS
+    // =================================================
+
+    function ajustarCanvas() {
+
+        const ancho =
+            window.visualViewport
+                ? window.visualViewport.width
+                : window.innerWidth;
+
+        const alto =
+            window.visualViewport
+                ? window.visualViewport.height
+                : window.innerHeight;
+
+        canvas.width =
+            Math.round(ancho);
+
+        canvas.height =
+            Math.round(alto);
+
+        dibujar();
     }
 
     // =================================================
@@ -500,17 +494,14 @@ export function iniciarGallinero(
                 CASILLAS[i];
 
             if (
-
                 rx >= casilla.x &&
                 rx <=
                     casilla.x +
                     casilla.w &&
-
                 ry >= casilla.y &&
                 ry <=
                     casilla.y +
                     casilla.h
-
             ) {
 
                 console.log(
@@ -524,7 +515,7 @@ export function iniciarGallinero(
     }
 
     // =================================================
-    // 📱 CONTROL TÁCTIL
+    // 👆 TOUCH / POINTER
     // =================================================
 
     canvas.addEventListener(
@@ -535,12 +526,11 @@ export function iniciarGallinero(
                 evento.clientX,
                 evento.clientY
             );
-
         }
     );
 
     // =================================================
-    // 🔄 RESIZE
+    // 🔄 ROTACIÓN / RESIZE
     // =================================================
 
     window.addEventListener(
@@ -548,8 +538,16 @@ export function iniciarGallinero(
         ajustarCanvas
     );
 
+    if (window.visualViewport) {
+
+        window.visualViewport.addEventListener(
+            "resize",
+            ajustarCanvas
+        );
+    }
+
     // =================================================
-    // ▶️ INICIAR
+    // 🚀 INICIAR
     // =================================================
 
     ajustarCanvas();
@@ -563,6 +561,5 @@ export function iniciarGallinero(
         CASILLAS,
 
         pollosColocados
-
     };
-}
+         }
