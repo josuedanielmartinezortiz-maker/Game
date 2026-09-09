@@ -12,7 +12,7 @@ export function iniciarPantallaCarga(game, alIniciar) {
         position: "fixed",
         inset: "0",
         width: "100vw",
-        height: "100vh",
+        height: "100dvh",
         background: "#000",
         display: "flex",
         flexDirection: "column",
@@ -26,6 +26,10 @@ export function iniciarPantallaCarga(game, alIniciar) {
 
     pantalla.innerHTML = `
 
+        <!-- =========================================
+             🎮 TÍTULO
+             ========================================= -->
+
         <div style="
             font-size: 38px;
             font-weight: bold;
@@ -33,6 +37,11 @@ export function iniciarPantallaCarga(game, alIniciar) {
         ">
             GAMERPRO GAME
         </div>
+
+
+        <!-- =========================================
+             ⏳ TEXTO CARGA
+             ========================================= -->
 
         <div
             id="textoCarga"
@@ -43,6 +52,11 @@ export function iniciarPantallaCarga(game, alIniciar) {
         >
             ⏳ Cargando...
         </div>
+
+
+        <!-- =========================================
+             📊 BARRA
+             ========================================= -->
 
         <div style="
             width: 80%;
@@ -65,6 +79,11 @@ export function iniciarPantallaCarga(game, alIniciar) {
 
         </div>
 
+
+        <!-- =========================================
+             📈 PORCENTAJE
+             ========================================= -->
+
         <div
             id="porcentajeCarga"
             style="
@@ -74,6 +93,11 @@ export function iniciarPantallaCarga(game, alIniciar) {
         >
             0%
         </div>
+
+
+        <!-- =========================================
+             📦 RECURSO
+             ========================================= -->
 
         <div
             id="recursoCarga"
@@ -86,6 +110,11 @@ export function iniciarPantallaCarga(game, alIniciar) {
             Preparando...
         </div>
 
+
+        <!-- =========================================
+             ❌ ERROR
+             ========================================= -->
+
         <div
             id="errorCarga"
             style="
@@ -94,6 +123,11 @@ export function iniciarPantallaCarga(game, alIniciar) {
                 color: #ff4444;
             "
         ></div>
+
+
+        <!-- =========================================
+             👆 INICIAR
+             ========================================= -->
 
         <button
             id="botonIniciar"
@@ -112,6 +146,47 @@ export function iniciarPantallaCarga(game, alIniciar) {
         >
             👆 TOCA PARA INICIAR
         </button>
+
+
+        <!-- =========================================
+             🔒 CANDADO
+             ========================================= -->
+
+        <button
+            id="botonBloqueoPantalla"
+            type="button"
+            aria-label="Bloquear pantalla"
+            title="Bloquear pantalla"
+            style="
+                position: fixed;
+                right: 14px;
+                top: 14px;
+
+                width: 42px;
+                height: 42px;
+
+                padding: 0;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                border: 2px solid #555;
+                border-radius: 50%;
+
+                background: #151515;
+                color: #fff;
+
+                font-size: 21px;
+
+                cursor: pointer;
+
+                z-index: 10001;
+            "
+        >
+            🔓
+        </button>
+
     `;
 
     game.appendChild(pantalla);
@@ -139,6 +214,11 @@ export function iniciarPantallaCarga(game, alIniciar) {
     const boton =
         pantalla.querySelector("#botonIniciar");
 
+    const botonBloqueo =
+        pantalla.querySelector(
+            "#botonBloqueoPantalla"
+        );
+
 
     // =================================================
     // 🔐 ESTADO
@@ -146,6 +226,117 @@ export function iniciarPantallaCarga(game, alIniciar) {
 
     let cargaCompleta = false;
     let iniciado = false;
+
+    let pantallaBloqueada = false;
+
+    let configuracionPantalla = null;
+
+
+    // =================================================
+    // 📐 OBTENER TAMAÑO ACTUAL
+    // =================================================
+
+    function obtenerConfiguracionPantalla() {
+
+        const ancho =
+            window.visualViewport
+                ? window.visualViewport.width
+                : window.innerWidth;
+
+        const alto =
+            window.visualViewport
+                ? window.visualViewport.height
+                : window.innerHeight;
+
+        return {
+
+            ancho: Math.round(ancho),
+
+            alto: Math.round(alto),
+
+            orientacion:
+                ancho >= alto
+                    ? "horizontal"
+                    : "vertical"
+        };
+    }
+
+
+    // =================================================
+    // 🔒 BLOQUEAR CONFIGURACIÓN
+    // =================================================
+
+    function alternarBloqueo() {
+
+        if (!pantallaBloqueada) {
+
+            configuracionPantalla =
+                obtenerConfiguracionPantalla();
+
+            pantallaBloqueada = true;
+
+            botonBloqueo.textContent =
+                "🔒";
+
+            botonBloqueo.style.background =
+                "#333";
+
+            botonBloqueo.style.borderColor =
+                "#fff";
+
+            console.log(
+                "🔒 PANTALLA BLOQUEADA:",
+                configuracionPantalla
+            );
+
+            /*
+             * Guardamos la configuración
+             * para que las escenas puedan
+             * consultarla.
+             */
+
+            window.gamerproPantallaBloqueada =
+                true;
+
+            window.gamerproConfiguracionPantalla =
+                configuracionPantalla;
+
+        } else {
+
+            pantallaBloqueada = false;
+
+            configuracionPantalla = null;
+
+            botonBloqueo.textContent =
+                "🔓";
+
+            botonBloqueo.style.background =
+                "#151515";
+
+            botonBloqueo.style.borderColor =
+                "#555";
+
+            window.gamerproPantallaBloqueada =
+                false;
+
+            window.gamerproConfiguracionPantalla =
+                null;
+
+            console.log(
+                "🔓 PANTALLA DESBLOQUEADA"
+            );
+        }
+    }
+
+
+    // =================================================
+    // 👆 EVENTO CANDADO
+    // =================================================
+
+    botonBloqueo.addEventListener(
+        "click",
+        alternarBloqueo
+    );
 
 
     // =================================================
@@ -238,7 +429,7 @@ export function iniciarPantallaCarga(game, alIniciar) {
 
 
     // =================================================
-    // 👆 BOTÓN
+    // 👆 INICIAR
     // =================================================
 
     function iniciar() {
@@ -251,7 +442,8 @@ export function iniciarPantallaCarga(game, alIniciar) {
 
         iniciado = true;
 
-        boton.disabled = true;
+        boton.disabled =
+            true;
 
         boton.textContent =
             "🚀 INICIANDO...";
@@ -280,7 +472,7 @@ export function iniciarPantallaCarga(game, alIniciar) {
 
 
     // =================================================
-    // 👆 EVENTO
+    // 👆 EVENTO PLAY
     // =================================================
 
     boton.addEventListener(
@@ -300,4 +492,4 @@ export function iniciarPantallaCarga(game, alIniciar) {
         marcarCargaCompleta
 
     };
-        }
+            }
