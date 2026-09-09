@@ -9,14 +9,14 @@ export function iniciarSeleccionPersonaje(
 ) {
 
     // =================================================
-    // 🧹 LIMPIAR PANTALLA ANTERIOR
+    // 🧹 LIMPIAR PANTALLA
     // =================================================
 
     game.innerHTML = "";
 
 
     // =================================================
-    // 📱 CONTENEDOR
+    // 📱 PANTALLA
     // =================================================
 
     const pantalla =
@@ -81,11 +81,13 @@ export function iniciarSeleccionPersonaje(
 
     });
 
-    pantalla.appendChild(titulo);
+    pantalla.appendChild(
+        titulo
+    );
 
 
     // =================================================
-    // 👥 CONTENEDOR DE PERSONAJES
+    // 👥 PERSONAJES
     // =================================================
 
     const personajes =
@@ -114,11 +116,20 @@ export function iniciarSeleccionPersonaje(
 
     });
 
-    pantalla.appendChild(personajes);
+    pantalla.appendChild(
+        personajes
+    );
 
 
     // =================================================
-    // 🧍 CREAR PERSONAJE
+    // 🔒 EVITAR DOBLE SELECCIÓN
+    // =================================================
+
+    let seleccionado = false;
+
+
+    // =================================================
+    // 🧍 CREAR TARJETA
     // =================================================
 
     function crearPersonaje(
@@ -135,7 +146,8 @@ export function iniciarSeleccionPersonaje(
             width:
                 "min(35vw, 260px)",
 
-            display: "flex",
+            display:
+                "flex",
 
             flexDirection:
                 "column",
@@ -146,9 +158,11 @@ export function iniciarSeleccionPersonaje(
             justifyContent:
                 "center",
 
-            cursor: "pointer",
+            cursor:
+                "pointer",
 
-            userSelect: "none",
+            userSelect:
+                "none",
 
             transition:
                 "transform 0.2s ease"
@@ -163,8 +177,12 @@ export function iniciarSeleccionPersonaje(
         const img =
             document.createElement("img");
 
-        img.src =
-            imagen.src;
+        if (imagen) {
+
+            img.src =
+                imagen.src;
+
+        }
 
         img.alt =
             nombre;
@@ -188,7 +206,9 @@ export function iniciarSeleccionPersonaje(
 
         });
 
-        tarjeta.appendChild(img);
+        tarjeta.appendChild(
+            img
+        );
 
 
         // =============================================
@@ -225,6 +245,9 @@ export function iniciarSeleccionPersonaje(
 
         const boton =
             document.createElement("button");
+
+        boton.type =
+            "button";
 
         boton.textContent =
             "ELEGIR";
@@ -266,12 +289,15 @@ export function iniciarSeleccionPersonaje(
 
 
         // =============================================
-        // ✨ EFECTO AL TOCAR
+        // ✨ EFECTO PC
         // =============================================
 
         tarjeta.addEventListener(
             "mouseenter",
             function() {
+
+                if (seleccionado)
+                    return;
 
                 tarjeta.style.transform =
                     "scale(1.06)";
@@ -282,6 +308,9 @@ export function iniciarSeleccionPersonaje(
         tarjeta.addEventListener(
             "mouseleave",
             function() {
+
+                if (seleccionado)
+                    return;
 
                 tarjeta.style.transform =
                     "scale(1)";
@@ -296,10 +325,21 @@ export function iniciarSeleccionPersonaje(
 
         function seleccionar() {
 
+            if (seleccionado)
+                return;
+
+            seleccionado = true;
+
+
             console.log(
                 "👤 PERSONAJE SELECCIONADO:",
                 nombre
             );
+
+
+            // =========================================
+            // 💾 GUARDAR PERSONAJE
+            // =========================================
 
             window.gamerproPersonaje =
                 id;
@@ -308,8 +348,9 @@ export function iniciarSeleccionPersonaje(
                 nombre;
 
 
-            tarjeta.style.transform =
-                "scale(1.1)";
+            // =========================================
+            // 🎨 CAMBIAR BOTÓN
+            // =========================================
 
             boton.textContent =
                 "✅ SELECCIONADO";
@@ -317,9 +358,47 @@ export function iniciarSeleccionPersonaje(
             boton.disabled =
                 true;
 
+            tarjeta.style.transform =
+                "scale(1.08)";
+
+
+            // =========================================
+            // 🔒 DESACTIVAR LOS OTROS BOTONES
+            // =========================================
+
+            const botones =
+                personajes.querySelectorAll(
+                    "button"
+                );
+
+            botones.forEach(
+                function(otroBoton) {
+
+                    if (
+                        otroBoton !==
+                        boton
+                    ) {
+
+                        otroBoton.disabled =
+                            true;
+
+                    }
+
+                }
+            );
+
+
+            // =========================================
+            // ⏱️ PASAR AL SIGUIENTE
+            // =========================================
 
             setTimeout(
                 function() {
+
+                    console.log(
+                        "➡️ PASANDO AL GALLINERO..."
+                    );
+
 
                     if (
                         typeof alSeleccionar ===
@@ -331,6 +410,12 @@ export function iniciarSeleccionPersonaje(
                             nombre
                         );
 
+                    } else {
+
+                        console.error(
+                            "❌ NO EXISTE alSeleccionar"
+                        );
+
                     }
 
                 },
@@ -339,23 +424,38 @@ export function iniciarSeleccionPersonaje(
         }
 
 
+        // =============================================
+        // 👆 BOTÓN
+        // =============================================
+
         boton.addEventListener(
             "click",
-            seleccionar
+            function(event) {
+
+                event.stopPropagation();
+
+                seleccionar();
+
+            }
         );
+
+
+        // =============================================
+        // 👆 TOCAR TARJETA
+        // =============================================
 
         tarjeta.addEventListener(
             "click",
             function(event) {
 
                 if (
-                    event.target !==
+                    event.target ===
                     boton
                 ) {
-
-                    seleccionar();
-
+                    return;
                 }
+
+                seleccionar();
 
             }
         );
@@ -401,7 +501,8 @@ export function iniciarSeleccionPersonaje(
 
     Object.assign(recomendacion.style, {
 
-        position: "absolute",
+        position:
+            "absolute",
 
         bottom:
             "20px",
@@ -438,4 +539,9 @@ export function iniciarSeleccionPersonaje(
     game.appendChild(
         pantalla
     );
-      }
+
+
+    console.log(
+        "👤 SELECCIÓN DE PERSONAJE LISTA"
+    );
+        }
