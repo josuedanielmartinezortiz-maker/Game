@@ -17,17 +17,20 @@ import { iniciarEscena2 }
 import { iniciarEscena3 }
     from "./escenas/escena3.js";
 
+import { iniciarSeleccionPersonaje }
+    from "./escenas/seleccionPersonaje.js";
+
 import { iniciarGallinero }
     from "./mecanicas/gallinero.js";
 
-import { iniciarSeleccionPersonaje }
-    from "./escenas/seleccionPersonaje.js";
+
 // =====================================================
-// 🎮 GAME
+// 🎮 CONTENEDOR PRINCIPAL
 // =====================================================
 
 const game =
     document.getElementById("game");
+
 
 // =====================================================
 // 📦 RECURSOS
@@ -41,11 +44,9 @@ const recursos = {
     escena2:
         "./assets/escena2.png",
 
-    // 🐔 GALLINERO
     gallinero:
         "./assets/gallinero.png",
 
-    // 👤 PERSONAJES
     mike:
         "./assets/mike.png",
 
@@ -58,7 +59,6 @@ const recursos = {
     micaelaespalda:
         "./assets/micaelaespalda.png",
 
-    // 🐔 POLLOS
     pollonoob:
         "./assets/pollonoob.png",
 
@@ -68,10 +68,10 @@ const recursos = {
     pollitonoob:
         "./assets/pollitonoob.png",
 
-    // 🥚 HUEVO
     noob:
         "./assets/noob.png"
 };
+
 
 // =====================================================
 // 🖼️ IMÁGENES CARGADAS
@@ -79,8 +79,9 @@ const recursos = {
 
 let imagenes = null;
 
+
 // =====================================================
-// 🎬 INICIAR JUEGO
+// 🚀 INICIAR JUEGO
 // =====================================================
 
 function iniciarJuego() {
@@ -89,8 +90,9 @@ function iniciarJuego() {
         "🔥 BOTÓN FUNCIONÓ"
     );
 
+
     // =================================================
-    // 📺 MENSAJE INICIAL
+    // 🔥 MENSAJE DE INICIO
     // =================================================
 
     const mensaje =
@@ -101,30 +103,51 @@ function iniciarJuego() {
         {
             position: "fixed",
             inset: "0",
+
             background: "#111",
+
             color: "#00ff66",
+
             display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            fontFamily: "Arial",
-            fontSize: "32px",
-            fontWeight: "bold",
-            zIndex: "50000",
-            textAlign: "center",
-            whiteSpace: "pre-line"
+
+            justifyContent:
+                "center",
+
+            alignItems:
+                "center",
+
+            fontFamily:
+                "Arial",
+
+            fontSize:
+                "32px",
+
+            fontWeight:
+                "bold",
+
+            zIndex:
+                "50000",
+
+            textAlign:
+                "center",
+
+            whiteSpace:
+                "pre-line"
         }
     );
 
+
     mensaje.textContent =
-        "🔥 BOTÓN FUNCIONÓ\n\n" +
-        "🎬 INICIANDO ESCENA 1";
+        "🔥 BOTÓN FUNCIONÓ\n\n🎬 INICIANDO ESCENA 1";
+
 
     game.appendChild(
         mensaje
     );
 
+
     // =================================================
-    // ⏱️ INICIAR ESCENAS
+    // ⏱️ INICIAR ESCENA 1
     // =================================================
 
     setTimeout(
@@ -132,136 +155,190 @@ function iniciarJuego() {
 
             mensaje.remove();
 
+
             try {
 
-                // =========================================
-                // 🌲 ESCENA 1
-                // =========================================
+                // =====================================
+                // 🎬 ESCENA 1
+                // =====================================
 
                 iniciarEscena1(
-
                     game,
-
                     imagenes,
-
                     function() {
 
                         console.log(
                             "➡️ PASANDO A ESCENA 2"
                         );
 
-                        // =================================
-                        // 🐔 ESCENA 2
-                        // =================================
+
+                        // =============================
+                        // 🌾 ESCENA 2
+                        // =============================
 
                         iniciarEscena2(
-
                             game,
-
                             imagenes,
-
                             function() {
 
                                 console.log(
                                     "➡️ PASANDO A ESCENA 3"
                                 );
 
+
                                 // =============================
                                 // 🥚 ESCENA 3
                                 // =============================
 
                                 iniciarEscena3(
-
                                     game,
-
                                     imagenes,
-
-                                    function(
-                                        ganador
-                                    ) {
+                                    function(ganador) {
 
                                         console.log(
-                                            "🏆 POLLO GANADOR:",
+                                            "🐔 POLLO GANADOR:",
                                             ganador.nombre
                                         );
 
-                                        // =====================
-                                        // ⭐ GUARDAR GANADOR
-                                        // =====================
 
-                                        window
-                                            .gamerproPolloObtenido =
+                                        // =========================
+                                        // 🐔 GUARDAR POLLO
+                                        // =========================
+
+                                        window.gamerproPolloObtenido =
                                             ganador.nombre;
 
-                                        // =====================
-                                        // 🐔 GALLINERO
-                                        // =====================
 
                                         console.log(
-                                            "🐔 ABRIENDO GALLINERO..."
+                                            "👤 ABRIENDO SELECCIÓN DE PERSONAJE..."
                                         );
 
-                                        iniciarGallinero(
 
+                                        // =========================
+                                        // 👤 SELECCIÓN PERSONAJE
+                                        // =========================
+
+                                        iniciarSeleccionPersonaje(
                                             game,
-
                                             imagenes,
+                                            function(
+                                                personaje,
+                                                nombre
+                                            ) {
 
-                                            ganador.nombre
+                                                console.log(
+                                                    "👤 PERSONAJE ELEGIDO:",
+                                                    nombre
+                                                );
 
+
+                                                // =================
+                                                // 👤 GUARDAR
+                                                // =================
+
+                                                window.gamerproPersonaje =
+                                                    personaje;
+
+                                                window.gamerproPersonajeNombre =
+                                                    nombre;
+
+
+                                                console.log(
+                                                    "🐔 ABRIENDO GALLINERO..."
+                                                );
+
+
+                                                // =================
+                                                // 🐔 GALLINERO
+                                                // =================
+
+                                                iniciarGallinero(
+                                                    game,
+                                                    imagenes,
+                                                    ganador.nombre
+                                                );
+
+                                            }
                                         );
 
                                     }
-
                                 );
 
                             }
-
                         );
 
                     }
-
                 );
 
-            } catch (
-                error
-            ) {
+            } catch (error) {
+
+                // =====================================
+                // 🔴 ERROR
+                // =====================================
 
                 console.error(
                     "❌ ERROR DEL JUEGO:",
                     error
                 );
 
-                // =========================================
-                // 🔴 PANTALLA DE ERROR
-                // =========================================
 
                 const errorPantalla =
                     document.createElement("div");
 
+
                 Object.assign(
                     errorPantalla.style,
                     {
-                        position: "fixed",
-                        inset: "0",
-                        background: "#200",
-                        color: "#ff5555",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: "30px",
-                        boxSizing: "border-box",
-                        fontFamily: "monospace",
-                        fontSize: "18px",
-                        textAlign: "center",
-                        zIndex: "50000",
-                        whiteSpace: "pre-line"
+
+                        position:
+                            "fixed",
+
+                        inset:
+                            "0",
+
+                        background:
+                            "#200",
+
+                        color:
+                            "#ff5555",
+
+                        display:
+                            "flex",
+
+                        justifyContent:
+                            "center",
+
+                        alignItems:
+                            "center",
+
+                        padding:
+                            "30px",
+
+                        boxSizing:
+                            "border-box",
+
+                        fontFamily:
+                            "monospace",
+
+                        fontSize:
+                            "18px",
+
+                        textAlign:
+                            "center",
+
+                        zIndex:
+                            "50000",
+
+                        whiteSpace:
+                            "pre-line"
                     }
                 );
+
 
                 errorPantalla.textContent =
                     "🔴 ERROR DEL JUEGO\n\n" +
                     error.message;
+
 
                 game.appendChild(
                     errorPantalla
@@ -270,30 +347,27 @@ function iniciarJuego() {
             }
 
         },
-
         1000
     );
 }
 
+
 // =====================================================
-// 📺 PANTALLA DE CARGA
+// ⏳ PANTALLA DE CARGA
 // =====================================================
 
 const pantallaCarga =
     iniciarPantallaCarga(
-
         game,
-
         iniciarJuego
-
     );
 
+
 // =====================================================
-// 📥 PRECARGAR IMÁGENES
+// 📦 PRECARGAR RECURSOS
 // =====================================================
 
 precargarImagenes(
-
     recursos,
 
     function(
@@ -304,91 +378,69 @@ precargarImagenes(
     ) {
 
         pantallaCarga.actualizarCarga(
-
             cargadas,
-
             total,
-
             nombre,
-
             correcta
-
         );
 
     }
 
 )
 
-// =====================================================
-// ✅ TODO CARGADO
-// =====================================================
-
 .then(
-
-    function(
-        resultado
-    ) {
+    function(resultado) {
 
         imagenes =
             resultado;
+
 
         console.log(
             "✅ TODOS LOS RECURSOS CARGADOS"
         );
 
-        // =============================================
-        // 🔍 COMPROBACIÓN DEL GALLINERO
-        // =============================================
 
         console.log(
             "🐔 imagenes.gallinero =",
             imagenes.gallinero
         );
 
-        // =============================================
-        // 🔍 COMPROBAR POLLOS
-        // =============================================
 
         console.log(
             "🐔 pollonoob =",
             imagenes.pollonoob
         );
 
+
         console.log(
             "🧟 pollozombie =",
             imagenes.pollozombie
         );
+
 
         console.log(
             "🐤 pollitonoob =",
             imagenes.pollitonoob
         );
 
-        // =============================================
-        // 🔍 LISTA COMPLETA
-        // =============================================
 
         console.log(
             "📦 RECURSOS CARGADOS:",
             Object.keys(imagenes)
         );
 
-        pantallaCarga
-            .marcarCargaCompleta();
+
+        // ==============================
+        // ✅ MARCAR CARGA COMPLETA
+        // ==============================
+
+        pantallaCarga.marcarCargaCompleta();
 
     }
-
 )
 
-// =====================================================
-// ❌ ERROR DE CARGA
-// =====================================================
-
 .catch(
-
-    function(
-        error
-    ) {
+    function(error) {
 
         console.error(
             "❌ ERROR DE CARGA:",
@@ -396,5 +448,4 @@ precargarImagenes(
         );
 
     }
-
 );
