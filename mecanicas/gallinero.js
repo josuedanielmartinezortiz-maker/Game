@@ -1,6 +1,8 @@
 // =====================================================
-// 🎮 GAMERPRO GAME — GALLINERO
+// 🎮 GAMERPRO GAME — GALLINERO 3D
 // =====================================================
+
+import * as THREE from "three";
 
 export function iniciarGallinero(
     game,
@@ -9,33 +11,305 @@ export function iniciarGallinero(
 ) {
 
     // =================================================
-    // 🐔 CANVAS
+    // 🧹 LIMPIAR ESCENA ANTERIOR
     // =================================================
 
-    const canvas =
-        document.createElement("canvas");
-
-    canvas.id =
-        "gallineroCanvas";
-
-    Object.assign(canvas.style, {
-        position: "fixed",
-        inset: "0",
-        width: "100vw",
-        height: "100dvh",
-        display: "block",
-        background: "#000",
-        zIndex: "9999"
-    });
-
-    game.appendChild(canvas);
-
-    const ctx =
-        canvas.getContext("2d");
-
+    game.innerHTML = "";
 
     // =================================================
-    // 🐔 POLLOS DISPONIBLES
+    // 🌎 ESCENA THREE.JS
+    // =================================================
+
+    const escena = new THREE.Scene();
+
+    escena.background =
+        new THREE.Color(0x87ceeb);
+
+    // =================================================
+    // 📷 CÁMARA
+    // =================================================
+
+    const camara =
+        new THREE.PerspectiveCamera(
+            60,
+            window.innerWidth /
+                window.innerHeight,
+            0.1,
+            1000
+        );
+
+    camara.position.set(
+        0,
+        6,
+        12
+    );
+
+    // =================================================
+    // 🖥️ RENDERIZADOR
+    // =================================================
+
+    const renderer =
+        new THREE.WebGLRenderer({
+            antialias: true
+        });
+
+    renderer.setPixelRatio(
+        Math.min(
+            window.devicePixelRatio,
+            2
+        )
+    );
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+
+    renderer.shadowMap.enabled = true;
+
+    renderer.domElement.style.position =
+        "fixed";
+
+    renderer.domElement.style.inset =
+        "0";
+
+    renderer.domElement.style.width =
+        "100vw";
+
+    renderer.domElement.style.height =
+        "100dvh";
+
+    renderer.domElement.style.display =
+        "block";
+
+    renderer.domElement.style.zIndex =
+        "9999";
+
+    game.appendChild(
+        renderer.domElement
+    );
+
+    // =================================================
+    // 💡 ILUMINACIÓN
+    // =================================================
+
+    const luzAmbiente =
+        new THREE.HemisphereLight(
+            0xffffff,
+            0x668866,
+            2
+        );
+
+    escena.add(
+        luzAmbiente
+    );
+
+    const luzSol =
+        new THREE.DirectionalLight(
+            0xffffff,
+            2
+        );
+
+    luzSol.position.set(
+        10,
+        20,
+        10
+    );
+
+    luzSol.castShadow = true;
+
+    escena.add(
+        luzSol
+    );
+
+    // =================================================
+    // 🌱 SUELO
+    // =================================================
+
+    const sueloGeometria =
+        new THREE.PlaneGeometry(
+            60,
+            60
+        );
+
+    const sueloMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0x4caf50
+        });
+
+    const suelo =
+        new THREE.Mesh(
+            sueloGeometria,
+            sueloMaterial
+        );
+
+    suelo.rotation.x =
+        -Math.PI / 2;
+
+    suelo.receiveShadow = true;
+
+    escena.add(
+        suelo
+    );
+
+    // =================================================
+    // 🏠 BASE DEL GALLINERO
+    // =================================================
+
+    const baseGeometria =
+        new THREE.BoxGeometry(
+            18,
+            0.5,
+            12
+        );
+
+    const baseMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0x8b5a2b
+        });
+
+    const base =
+        new THREE.Mesh(
+            baseGeometria,
+            baseMaterial
+        );
+
+    base.position.set(
+        0,
+        0.25,
+        0
+    );
+
+    base.receiveShadow = true;
+
+    escena.add(
+        base
+    );
+
+    // =================================================
+    // 🏠 PAREDES
+    // =================================================
+
+    const paredMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0xc68642
+        });
+
+    const paredTrasera =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                18,
+                5,
+                0.5
+            ),
+            paredMaterial
+        );
+
+    paredTrasera.position.set(
+        0,
+        2.75,
+        -6
+    );
+
+    paredTrasera.castShadow = true;
+
+    escena.add(
+        paredTrasera
+    );
+
+    // =================================================
+    // 🏠 TECHO
+    // =================================================
+
+    const techoMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0x8b0000
+        });
+
+    const techo =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                19,
+                0.5,
+                13
+            ),
+            techoMaterial
+        );
+
+    techo.position.set(
+        0,
+        5.5,
+        0
+    );
+
+    techo.rotation.z =
+        0.02;
+
+    techo.castShadow = true;
+
+    escena.add(
+        techo
+    );
+
+    // =================================================
+    // 🥤 BEBEDERO
+    // =================================================
+
+    const bebedero =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                1.2,
+                1.2,
+                0.5,
+                32
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0x2196f3
+            })
+        );
+
+    bebedero.position.set(
+        -3,
+        0.75,
+        0
+    );
+
+    bebedero.castShadow = true;
+
+    escena.add(
+        bebedero
+    );
+
+    // =================================================
+    // 🌽 COMEDERO
+    // =================================================
+
+    const comedero =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                2.5,
+                0.6,
+                1
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0xffc107
+            })
+        );
+
+    comedero.position.set(
+        3,
+        0.8,
+        0
+    );
+
+    comedero.castShadow = true;
+
+    escena.add(
+        comedero
+    );
+
+    // =================================================
+    // 🐔 POLLOS
     // =================================================
 
     const POLLOS = {
@@ -48,463 +322,229 @@ export function iniciarGallinero(
 
         "Pollito Noob":
             imagenes.pollitonoob
-
     };
 
-
-    // =================================================
-    // 📦 22 CASILLAS
-    // =================================================
-
-    const CASILLAS = [
-
-        // FILA 1 — 8
-        { x: 0.02, y: 0.04, w: 0.10, h: 0.14 },
-        { x: 0.14, y: 0.04, w: 0.10, h: 0.14 },
-        { x: 0.26, y: 0.04, w: 0.10, h: 0.14 },
-        { x: 0.38, y: 0.04, w: 0.10, h: 0.14 },
-        { x: 0.50, y: 0.04, w: 0.10, h: 0.14 },
-        { x: 0.62, y: 0.04, w: 0.10, h: 0.14 },
-        { x: 0.74, y: 0.04, w: 0.10, h: 0.14 },
-        { x: 0.86, y: 0.04, w: 0.10, h: 0.14 },
-
-        // FILA 2 — 2
-        { x: 0.02, y: 0.20, w: 0.10, h: 0.14 },
-        { x: 0.86, y: 0.20, w: 0.10, h: 0.14 },
-
-        // FILA 3 — 2
-        { x: 0.02, y: 0.36, w: 0.10, h: 0.14 },
-        { x: 0.86, y: 0.36, w: 0.10, h: 0.14 },
-
-        // FILA 4 — 2
-        { x: 0.02, y: 0.52, w: 0.10, h: 0.14 },
-        { x: 0.86, y: 0.52, w: 0.10, h: 0.14 },
-
-        // FILA 5 — 8
-        { x: 0.02, y: 0.68, w: 0.10, h: 0.14 },
-        { x: 0.14, y: 0.68, w: 0.10, h: 0.14 },
-        { x: 0.26, y: 0.68, w: 0.10, h: 0.14 },
-        { x: 0.38, y: 0.68, w: 0.10, h: 0.14 },
-        { x: 0.50, y: 0.68, w: 0.10, h: 0.14 },
-        { x: 0.62, y: 0.68, w: 0.10, h: 0.14 },
-        { x: 0.74, y: 0.68, w: 0.10, h: 0.14 },
-        { x: 0.86, y: 0.68, w: 0.10, h: 0.14 }
-
-    ];
-
-
-    // =================================================
-    // 🐔 POLLO GANADOR
-    // =================================================
-
-    const pollo =
+    const imagenPollo =
         POLLOS[polloGanador];
 
-    if (!pollo) {
+    if (!imagenPollo) {
 
         console.error(
-            "❌ No se encontró el pollo ganador:",
+            "❌ POLLO GANADOR NO ENCONTRADO:",
             polloGanador
         );
 
         return;
     }
 
+    console.log(
+        "🏆 POLLO QUE ENTRA AL GALLINERO:",
+        polloGanador
+    );
 
     // =================================================
-    // 📐 ZONA REAL DEL GALLINERO
+    // 🐔 TEXTURA DEL POLLO
     // =================================================
 
-    function obtenerZonaGallinero() {
-
-        const iw =
-            imagenes.gallinero.naturalWidth;
-
-        const ih =
-            imagenes.gallinero.naturalHeight;
-
-        if (!iw || !ih) {
-
-            return {
-                x: 0,
-                y: 0,
-                w: canvas.width,
-                h: canvas.height
-            };
-        }
-
-
-        let ancho =
-            canvas.width;
-
-        let alto =
-            ancho * (ih / iw);
-
-
-        // =============================================
-        // 📱 VERTICAL
-        // =============================================
-
-        if (canvas.height > canvas.width) {
-
-            ancho =
-                canvas.width;
-
-            alto =
-                ancho * (ih / iw);
-
-            // Un pequeño zoom para aprovechar
-            // mejor la pantalla vertical.
-
-            if (alto < canvas.height) {
-
-                const zoom =
-                    1.12;
-
-                ancho *= zoom;
-                alto *= zoom;
-            }
-
-        }
-
-
-        // =============================================
-        // 🖥️ HORIZONTAL
-        // =============================================
-
-        else {
-
-            alto =
-                canvas.height;
-
-            ancho =
-                alto * (iw / ih);
-
-            // Evitar que se salga horizontalmente.
-
-            if (ancho > canvas.width) {
-
-                ancho =
-                    canvas.width;
-
-                alto =
-                    ancho * (ih / iw);
-            }
-        }
-
-
-        return {
-
-            x:
-                (canvas.width - ancho) / 2,
-
-            y:
-                (canvas.height - alto) / 2,
-
-            w: ancho,
-
-            h: alto
-        };
-    }
-
-
-    // =================================================
-    // 🥤 BEBEDERO
-    // =================================================
-
-    const BEBEDERO = {
-
-        x: 0.365,
-        y: 0.585
-
-    };
-
-
-    // =================================================
-    // 🌽 COMEDERO
-    // =================================================
-
-    const COMEDERO = {
-
-        x: 0.635,
-        y: 0.585
-
-    };
-
-
-    // =================================================
-    // 🐔 TAMAÑO DEL POLLO
-    // =================================================
-
-    const MULTIPLICADOR_POLLO =
-        3.0;
-
-
-    // =================================================
-    // 🖼️ DIBUJAR FONDO
-    // =================================================
-
-    function dibujarFondo(zona) {
-
-        ctx.drawImage(
-            imagenes.gallinero,
-            zona.x,
-            zona.y,
-            zona.w,
-            zona.h
+    const textura =
+        new THREE.TextureLoader().load(
+            imagenPollo.src
         );
-    }
 
+    textura.colorSpace =
+        THREE.SRGBColorSpace;
+
+    const polloMaterial =
+        new THREE.SpriteMaterial({
+            map: textura,
+            transparent: true
+        });
+
+    const pollo =
+        new THREE.Sprite(
+            polloMaterial
+        );
+
+    pollo.scale.set(
+        2.5,
+        2.5,
+        1
+    );
+
+    // Primera casilla
+
+    pollo.position.set(
+        -7,
+        2,
+        -4.5
+    );
+
+    escena.add(
+        pollo
+    );
 
     // =================================================
-    // 🐔 DIBUJAR POLLO
+    // 👤 PERSONAJE
     // =================================================
 
-    function dibujarPollo(
-        imagen,
-        casilla,
-        zona
+    let personajeImagen =
+        imagenes.mike;
+
+    if (
+        window.gamerproPersonaje ===
+        "micaela"
     ) {
 
-        if (!imagen)
-            return;
-
-
-        const centroX =
-            zona.x +
-            (
-                casilla.x +
-                casilla.w / 2
-            ) *
-            zona.w;
-
-
-        const centroY =
-            zona.y +
-            (
-                casilla.y +
-                casilla.h / 2
-            ) *
-            zona.h;
-
-
-        // Tamaño original de la casilla
-
-        let anchoMaximo =
-            zona.w *
-            casilla.w *
-            2.2;
-
-        let altoMaximo =
-            zona.h *
-            casilla.h *
-            2.2;
-
-
-        // Tamaño natural de la imagen
-
-        const iw =
-            imagen.naturalWidth;
-
-        const ih =
-            imagen.naturalHeight;
-
-        if (!iw || !ih)
-            return;
-
-
-        const proporcion =
-            iw / ih;
-
-
-        let ancho =
-            anchoMaximo;
-
-        let alto =
-            ancho / proporcion;
-
-
-        if (alto > altoMaximo) {
-
-            alto =
-                altoMaximo;
-
-            ancho =
-                alto * proporcion;
-        }
-
-
-        // Aplicar multiplicador
-
-        ancho *=
-            MULTIPLICADOR_POLLO;
-
-        alto *=
-            MULTIPLICADOR_POLLO;
-
-
-        // =============================================
-        // LÍMITES PARA QUE NO SE DESBORDE DEMASIADO
-        // =============================================
-
-        const limiteAncho =
-            zona.w *
-            casilla.w *
-            3.0;
-
-        const limiteAlto =
-            zona.h *
-            casilla.h *
-            3.0;
-
-
-        if (ancho > limiteAncho) {
-
-            ancho =
-                limiteAncho;
-
-            alto =
-                ancho / proporcion;
-        }
-
-
-        if (alto > limiteAlto) {
-
-            alto =
-                limiteAlto;
-
-            ancho =
-                alto * proporcion;
-        }
-
-
-        ctx.save();
-
-        ctx.drawImage(
-            imagen,
-
-            centroX -
-                ancho / 2,
-
-            centroY -
-                alto / 2,
-
-            ancho,
-            alto
-        );
-
-        ctx.restore();
+        personajeImagen =
+            imagenes.micaela;
     }
 
-
-    // =================================================
-    // 🎮 DIBUJAR GALLINERO
-    // =================================================
-
-    function dibujarGallinero() {
-
-        ctx.clearRect(
-            0,
-            0,
-            canvas.width,
-            canvas.height
+    const texturaPersonaje =
+        new THREE.TextureLoader().load(
+            personajeImagen.src
         );
 
+    texturaPersonaje.colorSpace =
+        THREE.SRGBColorSpace;
 
-        // Fondo negro
+    const personajeMaterial =
+        new THREE.SpriteMaterial({
+            map: texturaPersonaje,
+            transparent: true
+        });
 
-        ctx.fillStyle =
-            "#000";
-
-        ctx.fillRect(
-            0,
-            0,
-            canvas.width,
-            canvas.height
+    const personaje =
+        new THREE.Sprite(
+            personajeMaterial
         );
 
+    personaje.scale.set(
+        2.5,
+        3.5,
+        1
+    );
 
-        const zona =
-            obtenerZonaGallinero();
+    personaje.position.set(
+        0,
+        2,
+        7
+    );
 
-
-        // Fondo
-
-        dibujarFondo(zona);
-
-
-        // =============================================
-        // 🐔 POLLO GANADOR EN LA PRIMERA CASILLA
-        // =============================================
-
-        dibujarPollo(
-            pollo,
-            CASILLAS[0],
-            zona
-        );
-    }
-
+    escena.add(
+        personaje
+    );
 
     // =================================================
-    // 📐 AJUSTAR CANVAS
+    // 🎮 CONTROLES
     // =================================================
 
-    function ajustarCanvas() {
+    const teclas = {};
 
-        canvas.width =
-            window.innerWidth;
+    window.addEventListener(
+        "keydown",
+        function(event) {
+            teclas[event.key.toLowerCase()] =
+                true;
+        }
+    );
 
-        canvas.height =
+    window.addEventListener(
+        "keyup",
+        function(event) {
+            teclas[event.key.toLowerCase()] =
+                false;
+        }
+    );
+
+    // =================================================
+    // 📐 RESIZE
+    // =================================================
+
+    function ajustarPantalla() {
+
+        camara.aspect =
+            window.innerWidth /
             window.innerHeight;
 
-        dibujarGallinero();
+        camara.updateProjectionMatrix();
+
+        renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
+        );
     }
-
-
-    ajustarCanvas();
-
 
     window.addEventListener(
         "resize",
-        ajustarCanvas
+        ajustarPantalla
     );
 
+    // =================================================
+    // 🔄 ANIMACIÓN
+    // =================================================
 
-    // =================================================
-    // 🔄 BUCLE
-    // =================================================
+    const reloj =
+        new THREE.Clock();
 
     function actualizar() {
 
-        dibujarGallinero();
+        const delta =
+            reloj.getDelta();
+
+        const velocidad =
+            5 * delta;
+
+        if (teclas["w"]) {
+            personaje.position.z -=
+                velocidad;
+        }
+
+        if (teclas["s"]) {
+            personaje.position.z +=
+                velocidad;
+        }
+
+        if (teclas["a"]) {
+            personaje.position.x -=
+                velocidad;
+        }
+
+        if (teclas["d"]) {
+            personaje.position.x +=
+                velocidad;
+        }
+
+        // Cámara siguiendo al personaje
+
+        camara.position.x =
+            personaje.position.x;
+
+        camara.position.z =
+            personaje.position.z + 12;
+
+        camara.lookAt(
+            personaje.position.x,
+            2,
+            personaje.position.z
+        );
+
+        renderer.render(
+            escena,
+            camara
+        );
 
         requestAnimationFrame(
             actualizar
         );
     }
 
-
-    requestAnimationFrame(
-        actualizar
-    );
-
-
     // =================================================
-    // 🐔 INFORMACIÓN
+    // 🚀 INICIAR
     // =================================================
 
     console.log(
-        "🏠 GALLINERO ABIERTO"
+        "🏠 GALLINERO 3D INICIADO"
     );
 
-    console.log(
-        "🐔 POLLO GANADOR:",
-        polloGanador
-    );
-
-    console.log(
-        "📦 CASILLAS:",
-        CASILLAS.length
-    );
-
-            }
+    actualizar();
+}
