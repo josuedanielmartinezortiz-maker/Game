@@ -20,6 +20,8 @@ import { iniciarEscena3 }
 import { iniciarGallinero }
     from "./mecanicas/gallinero.js";
 
+import { iniciarSeleccionPersonaje }
+    from "./escenas/seleccionPersonaje.js";
 // =====================================================
 // 🎮 GAME
 // =====================================================
