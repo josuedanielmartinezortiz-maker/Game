@@ -1,505 +1,510 @@
 // =====================================================
-// 🎮 GAMERPRO GAME — PANTALLA DE CARGA
+// 🎮 GAMERPRO GAME — GALLINERO
 // =====================================================
 
-export function iniciarPantallaCarga(game, alIniciar) {
+export function iniciarGallinero(
+    game,
+    imagenes,
+    polloGanador
+) {
 
-    const pantalla = document.createElement("div");
+    // =================================================
+    // 🐔 CANVAS
+    // =================================================
 
-    pantalla.id = "pantallaCarga";
+    const canvas =
+        document.createElement("canvas");
 
-    Object.assign(pantalla.style, {
+    canvas.id =
+        "gallineroCanvas";
+
+    Object.assign(canvas.style, {
         position: "fixed",
         inset: "0",
         width: "100vw",
         height: "100dvh",
+        display: "block",
         background: "#000",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: "10000",
-        color: "#fff",
-        fontFamily: "Arial, sans-serif",
-        textAlign: "center"
+        zIndex: "9999"
     });
 
-    pantalla.innerHTML = `
+    game.appendChild(canvas);
 
-        <!-- =========================================
-             🎮 TÍTULO
-             ========================================= -->
-
-        <div style="
-            font-size: 38px;
-            font-weight: bold;
-            margin-bottom: 30px;
-        ">
-            GAMERPRO GAME
-        </div>
-
-
-        <!-- =========================================
-             ⏳ TEXTO DE CARGA
-             ========================================= -->
-
-        <div
-            id="textoCarga"
-            style="
-                font-size: 21px;
-                margin-bottom: 15px;
-            "
-        >
-            ⏳ Cargando...
-        </div>
-
-
-        <!-- =========================================
-             📊 BARRA DE CARGA
-             ========================================= -->
-
-        <div style="
-            width: 80%;
-            max-width: 500px;
-            height: 22px;
-            background: #222;
-            border: 2px solid #555;
-            border-radius: 20px;
-            overflow: hidden;
-        ">
-
-            <div
-                id="barraCarga"
-                style="
-                    width: 0%;
-                    height: 100%;
-                    background: #fff;
-                "
-            ></div>
-
-        </div>
-
-
-        <!-- =========================================
-             📈 PORCENTAJE
-             ========================================= -->
-
-        <div
-            id="porcentajeCarga"
-            style="
-                margin-top: 12px;
-                font-size: 18px;
-            "
-        >
-            0%
-        </div>
-
-
-        <!-- =========================================
-             📦 RECURSO ACTUAL
-             ========================================= -->
-
-        <div
-            id="recursoCarga"
-            style="
-                margin-top: 8px;
-                font-size: 14px;
-                color: #aaa;
-            "
-        >
-            Preparando...
-        </div>
-
-
-        <!-- =========================================
-             ❌ ERROR
-             ========================================= -->
-
-        <div
-            id="errorCarga"
-            style="
-                display: none;
-                margin-top: 20px;
-                color: #ff4444;
-            "
-        ></div>
-
-
-        <!-- =========================================
-             👆 BOTÓN INICIAR
-             ========================================= -->
-
-        <button
-            id="botonIniciar"
-            type="button"
-            disabled
-            style="
-                display: none;
-                margin-top: 30px;
-                padding: 16px 30px;
-                font-size: 20px;
-                font-weight: bold;
-                border: none;
-                border-radius: 12px;
-                cursor: pointer;
-            "
-        >
-            👆 TOCA PARA INICIAR
-        </button>
-
-
-        <!-- =========================================
-             📱 RECOMENDACIÓN HORIZONTAL
-             ========================================= -->
-
-        <div
-            id="recomendacionHorizontal"
-            style="
-                margin-top: 18px;
-                padding: 10px 16px;
-
-                max-width: 90%;
-
-                font-size: 14px;
-                line-height: 1.4;
-
-                color: #aaa;
-
-                text-align: center;
-            "
-        >
-            📱 Recomendación: juega en horizontal
-            para una mejor experiencia.
-        </div>
-
-
-        <!-- =========================================
-             🔒 CANDADO
-             ========================================= -->
-
-        <button
-            id="botonBloqueoPantalla"
-            type="button"
-            aria-label="Bloquear pantalla"
-            title="Bloquear pantalla"
-            style="
-                position: fixed;
-                right: 14px;
-                top: 14px;
-
-                width: 42px;
-                height: 42px;
-
-                padding: 0;
-
-                display: flex;
-                align-items: center;
-                justify-content: center;
-
-                border: 2px solid #555;
-                border-radius: 50%;
-
-                background: #151515;
-                color: #fff;
-
-                font-size: 21px;
-
-                cursor: pointer;
-
-                z-index: 10001;
-            "
-        >
-            🔓
-        </button>
-
-    `;
-
-    game.appendChild(pantalla);
+    const ctx =
+        canvas.getContext("2d");
 
 
     // =================================================
-    // 🔎 ELEMENTOS
+    // 🐔 POLLOS DISPONIBLES
     // =================================================
 
-    const textoCarga =
-        pantalla.querySelector("#textoCarga");
+    const POLLOS = {
 
-    const barraCarga =
-        pantalla.querySelector("#barraCarga");
+        "Pollo Noob":
+            imagenes.pollonoob,
 
-    const porcentajeCarga =
-        pantalla.querySelector("#porcentajeCarga");
+        "Pollo Zombie":
+            imagenes.pollozombie,
 
-    const recursoCarga =
-        pantalla.querySelector("#recursoCarga");
+        "Pollito Noob":
+            imagenes.pollitonoob
 
-    const errorCarga =
-        pantalla.querySelector("#errorCarga");
+    };
 
-    const boton =
-        pantalla.querySelector("#botonIniciar");
 
-    const botonBloqueo =
-        pantalla.querySelector(
-            "#botonBloqueoPantalla"
+    // =================================================
+    // 📦 22 CASILLAS
+    // =================================================
+
+    const CASILLAS = [
+
+        // FILA 1 — 8
+        { x: 0.02, y: 0.04, w: 0.10, h: 0.14 },
+        { x: 0.14, y: 0.04, w: 0.10, h: 0.14 },
+        { x: 0.26, y: 0.04, w: 0.10, h: 0.14 },
+        { x: 0.38, y: 0.04, w: 0.10, h: 0.14 },
+        { x: 0.50, y: 0.04, w: 0.10, h: 0.14 },
+        { x: 0.62, y: 0.04, w: 0.10, h: 0.14 },
+        { x: 0.74, y: 0.04, w: 0.10, h: 0.14 },
+        { x: 0.86, y: 0.04, w: 0.10, h: 0.14 },
+
+        // FILA 2 — 2
+        { x: 0.02, y: 0.20, w: 0.10, h: 0.14 },
+        { x: 0.86, y: 0.20, w: 0.10, h: 0.14 },
+
+        // FILA 3 — 2
+        { x: 0.02, y: 0.36, w: 0.10, h: 0.14 },
+        { x: 0.86, y: 0.36, w: 0.10, h: 0.14 },
+
+        // FILA 4 — 2
+        { x: 0.02, y: 0.52, w: 0.10, h: 0.14 },
+        { x: 0.86, y: 0.52, w: 0.10, h: 0.14 },
+
+        // FILA 5 — 8
+        { x: 0.02, y: 0.68, w: 0.10, h: 0.14 },
+        { x: 0.14, y: 0.68, w: 0.10, h: 0.14 },
+        { x: 0.26, y: 0.68, w: 0.10, h: 0.14 },
+        { x: 0.38, y: 0.68, w: 0.10, h: 0.14 },
+        { x: 0.50, y: 0.68, w: 0.10, h: 0.14 },
+        { x: 0.62, y: 0.68, w: 0.10, h: 0.14 },
+        { x: 0.74, y: 0.68, w: 0.10, h: 0.14 },
+        { x: 0.86, y: 0.68, w: 0.10, h: 0.14 }
+
+    ];
+
+
+    // =================================================
+    // 🐔 POLLO GANADOR
+    // =================================================
+
+    const pollo =
+        POLLOS[polloGanador];
+
+    if (!pollo) {
+
+        console.error(
+            "❌ No se encontró el pollo ganador:",
+            polloGanador
         );
 
-
-    // =================================================
-    // 🔐 ESTADO
-    // =================================================
-
-    let cargaCompleta = false;
-    let iniciado = false;
-
-    let pantallaBloqueada = false;
-
-    let configuracionPantalla = null;
+        return;
+    }
 
 
     // =================================================
-    // 📐 OBTENER CONFIGURACIÓN ACTUAL
+    // 📐 ZONA REAL DEL GALLINERO
     // =================================================
 
-    function obtenerConfiguracionPantalla() {
+    function obtenerZonaGallinero() {
 
-        const ancho =
-            window.visualViewport
-                ? window.visualViewport.width
-                : window.innerWidth;
+        const iw =
+            imagenes.gallinero.naturalWidth;
 
-        const alto =
-            window.visualViewport
-                ? window.visualViewport.height
-                : window.innerHeight;
+        const ih =
+            imagenes.gallinero.naturalHeight;
+
+        if (!iw || !ih) {
+
+            return {
+                x: 0,
+                y: 0,
+                w: canvas.width,
+                h: canvas.height
+            };
+        }
+
+
+        let ancho =
+            canvas.width;
+
+        let alto =
+            ancho * (ih / iw);
+
+
+        // =============================================
+        // 📱 VERTICAL
+        // =============================================
+
+        if (canvas.height > canvas.width) {
+
+            ancho =
+                canvas.width;
+
+            alto =
+                ancho * (ih / iw);
+
+            // Un pequeño zoom para aprovechar
+            // mejor la pantalla vertical.
+
+            if (alto < canvas.height) {
+
+                const zoom =
+                    1.12;
+
+                ancho *= zoom;
+                alto *= zoom;
+            }
+
+        }
+
+
+        // =============================================
+        // 🖥️ HORIZONTAL
+        // =============================================
+
+        else {
+
+            alto =
+                canvas.height;
+
+            ancho =
+                alto * (iw / ih);
+
+            // Evitar que se salga horizontalmente.
+
+            if (ancho > canvas.width) {
+
+                ancho =
+                    canvas.width;
+
+                alto =
+                    ancho * (ih / iw);
+            }
+        }
+
 
         return {
 
-            ancho: Math.round(ancho),
+            x:
+                (canvas.width - ancho) / 2,
 
-            alto: Math.round(alto),
+            y:
+                (canvas.height - alto) / 2,
 
-            orientacion:
-                ancho >= alto
-                    ? "horizontal"
-                    : "vertical"
+            w: ancho,
+
+            h: alto
         };
     }
 
 
     // =================================================
-    // 🔒 BLOQUEAR / DESBLOQUEAR
+    // 🥤 BEBEDERO
     // =================================================
 
-    function alternarBloqueo() {
+    const BEBEDERO = {
 
-        if (!pantallaBloqueada) {
-
-            configuracionPantalla =
-                obtenerConfiguracionPantalla();
-
-            pantallaBloqueada = true;
-
-            botonBloqueo.textContent =
-                "🔒";
-
-            botonBloqueo.style.background =
-                "#333";
-
-            botonBloqueo.style.borderColor =
-                "#fff";
-
-            window.gamerproPantallaBloqueada =
-                true;
-
-            window.gamerproConfiguracionPantalla =
-                configuracionPantalla;
-
-            console.log(
-                "🔒 PANTALLA BLOQUEADA:",
-                configuracionPantalla
-            );
-
-        } else {
-
-            pantallaBloqueada = false;
-
-            configuracionPantalla = null;
-
-            botonBloqueo.textContent =
-                "🔓";
-
-            botonBloqueo.style.background =
-                "#151515";
-
-            botonBloqueo.style.borderColor =
-                "#555";
-
-            window.gamerproPantallaBloqueada =
-                false;
-
-            window.gamerproConfiguracionPantalla =
-                null;
-
-            console.log(
-                "🔓 PANTALLA DESBLOQUEADA"
-            );
-        }
-    }
-
-
-    // =================================================
-    // 👆 EVENTO DEL CANDADO
-    // =================================================
-
-    botonBloqueo.addEventListener(
-        "click",
-        alternarBloqueo
-    );
-
-
-    // =================================================
-    // 📊 ACTUALIZAR CARGA
-    // =================================================
-
-    function actualizarCarga(
-        cargadas,
-        total,
-        nombre,
-        correcta
-    ) {
-
-        const porcentaje =
-            total > 0
-                ? Math.round(
-                    cargadas / total * 100
-                )
-                : 0;
-
-        barraCarga.style.width =
-            porcentaje + "%";
-
-        porcentajeCarga.textContent =
-            porcentaje + "%";
-
-
-        if (!correcta) {
-
-            cargaCompleta = false;
-
-            textoCarga.textContent =
-                "❌ ERROR AL CARGAR";
-
-            recursoCarga.textContent =
-                "❌ " + nombre;
-
-            errorCarga.style.display =
-                "block";
-
-            errorCarga.textContent =
-                "No se pudo cargar: " +
-                nombre;
-
-            boton.style.display =
-                "none";
-
-            boton.disabled =
-                true;
-
-            return;
-        }
-
-
-        textoCarga.textContent =
-            "⏳ Cargando...";
-
-        recursoCarga.textContent =
-            "✅ " + nombre;
-    }
-
-
-    // =================================================
-    // ✅ TODO LISTO
-    // =================================================
-
-    function marcarCargaCompleta() {
-
-        cargaCompleta = true;
-
-        textoCarga.textContent =
-            "✅ ¡Todo listo!";
-
-        barraCarga.style.width =
-            "100%";
-
-        porcentajeCarga.textContent =
-            "100%";
-
-        recursoCarga.textContent =
-            "🎮 Todos los recursos cargados";
-
-        boton.style.display =
-            "block";
-
-        boton.disabled =
-            false;
-    }
-
-
-    // =================================================
-    // 👆 INICIAR
-    // =================================================
-
-    function iniciar() {
-
-        if (!cargaCompleta)
-            return;
-
-        if (iniciado)
-            return;
-
-        iniciado = true;
-
-        boton.disabled =
-            true;
-
-        boton.textContent =
-            "🚀 INICIANDO...";
-
-
-        if (
-            typeof alIniciar ===
-            "function"
-        ) {
-
-            alIniciar();
-
-        }
-
-
-        pantalla.remove();
-    }
-
-
-    // =================================================
-    // 👆 EVENTO PLAY
-    // =================================================
-
-    boton.addEventListener(
-        "click",
-        iniciar
-    );
-
-
-    // =================================================
-    // 📤 DEVOLVER FUNCIONES
-    // =================================================
-
-    return {
-
-        actualizarCarga,
-
-        marcarCargaCompleta
+        x: 0.365,
+        y: 0.585
 
     };
-                }
+
+
+    // =================================================
+    // 🌽 COMEDERO
+    // =================================================
+
+    const COMEDERO = {
+
+        x: 0.635,
+        y: 0.585
+
+    };
+
+
+    // =================================================
+    // 🐔 TAMAÑO DEL POLLO
+    // =================================================
+
+    const MULTIPLICADOR_POLLO =
+        3.0;
+
+
+    // =================================================
+    // 🖼️ DIBUJAR FONDO
+    // =================================================
+
+    function dibujarFondo(zona) {
+
+        ctx.drawImage(
+            imagenes.gallinero,
+            zona.x,
+            zona.y,
+            zona.w,
+            zona.h
+        );
+    }
+
+
+    // =================================================
+    // 🐔 DIBUJAR POLLO
+    // =================================================
+
+    function dibujarPollo(
+        imagen,
+        casilla,
+        zona
+    ) {
+
+        if (!imagen)
+            return;
+
+
+        const centroX =
+            zona.x +
+            (
+                casilla.x +
+                casilla.w / 2
+            ) *
+            zona.w;
+
+
+        const centroY =
+            zona.y +
+            (
+                casilla.y +
+                casilla.h / 2
+            ) *
+            zona.h;
+
+
+        // Tamaño original de la casilla
+
+        let anchoMaximo =
+            zona.w *
+            casilla.w *
+            2.2;
+
+        let altoMaximo =
+            zona.h *
+            casilla.h *
+            2.2;
+
+
+        // Tamaño natural de la imagen
+
+        const iw =
+            imagen.naturalWidth;
+
+        const ih =
+            imagen.naturalHeight;
+
+        if (!iw || !ih)
+            return;
+
+
+        const proporcion =
+            iw / ih;
+
+
+        let ancho =
+            anchoMaximo;
+
+        let alto =
+            ancho / proporcion;
+
+
+        if (alto > altoMaximo) {
+
+            alto =
+                altoMaximo;
+
+            ancho =
+                alto * proporcion;
+        }
+
+
+        // Aplicar multiplicador
+
+        ancho *=
+            MULTIPLICADOR_POLLO;
+
+        alto *=
+            MULTIPLICADOR_POLLO;
+
+
+        // =============================================
+        // LÍMITES PARA QUE NO SE DESBORDE DEMASIADO
+        // =============================================
+
+        const limiteAncho =
+            zona.w *
+            casilla.w *
+            3.0;
+
+        const limiteAlto =
+            zona.h *
+            casilla.h *
+            3.0;
+
+
+        if (ancho > limiteAncho) {
+
+            ancho =
+                limiteAncho;
+
+            alto =
+                ancho / proporcion;
+        }
+
+
+        if (alto > limiteAlto) {
+
+            alto =
+                limiteAlto;
+
+            ancho =
+                alto * proporcion;
+        }
+
+
+        ctx.save();
+
+        ctx.drawImage(
+            imagen,
+
+            centroX -
+                ancho / 2,
+
+            centroY -
+                alto / 2,
+
+            ancho,
+            alto
+        );
+
+        ctx.restore();
+    }
+
+
+    // =================================================
+    // 🎮 DIBUJAR GALLINERO
+    // =================================================
+
+    function dibujarGallinero() {
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        // Fondo negro
+
+        ctx.fillStyle =
+            "#000";
+
+        ctx.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        const zona =
+            obtenerZonaGallinero();
+
+
+        // Fondo
+
+        dibujarFondo(zona);
+
+
+        // =============================================
+        // 🐔 POLLO GANADOR EN LA PRIMERA CASILLA
+        // =============================================
+
+        dibujarPollo(
+            pollo,
+            CASILLAS[0],
+            zona
+        );
+    }
+
+
+    // =================================================
+    // 📐 AJUSTAR CANVAS
+    // =================================================
+
+    function ajustarCanvas() {
+
+        canvas.width =
+            window.innerWidth;
+
+        canvas.height =
+            window.innerHeight;
+
+        dibujarGallinero();
+    }
+
+
+    ajustarCanvas();
+
+
+    window.addEventListener(
+        "resize",
+        ajustarCanvas
+    );
+
+
+    // =================================================
+    // 🔄 BUCLE
+    // =================================================
+
+    function actualizar() {
+
+        dibujarGallinero();
+
+        requestAnimationFrame(
+            actualizar
+        );
+    }
+
+
+    requestAnimationFrame(
+        actualizar
+    );
+
+
+    // =================================================
+    // 🐔 INFORMACIÓN
+    // =================================================
+
+    console.log(
+        "🏠 GALLINERO ABIERTO"
+    );
+
+    console.log(
+        "🐔 POLLO GANADOR:",
+        polloGanador
+    );
+
+    console.log(
+        "📦 CASILLAS:",
+        CASILLAS.length
+    );
+
+            }
