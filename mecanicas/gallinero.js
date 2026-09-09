@@ -562,4 +562,4 @@ export function iniciarGallinero(
 
         pollosColocados
     };
-         }
+        }
