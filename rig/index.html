@@ -1,18 +1,161 @@
-<!-- ================================================= -->
-<!-- 🦴 EDITOR DE RIG 3D -->
-<!-- ================================================= -->
+<!DOCTYPE html>
+<html lang="es">
 
-<script type="module">
+<head>
 
-    import {
-        iniciarRigEditor3D
-    } from "../mecanicas/rigEditor3D.js";
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>GAMERPRO — Editor de Rig 3D</title>
+
+    <style>
+
+        html,
+        body {
+
+            margin: 0;
+            padding: 0;
+
+            width: 100%;
+            height: 100%;
+
+            overflow: hidden;
+
+            background: #111;
+
+            font-family: Arial, sans-serif;
+        }
+
+        #editor {
+
+            position: fixed;
+
+            inset: 0;
+
+            width: 100%;
+            height: 100%;
+        }
+
+        #panel {
+
+            position: fixed;
+
+            top: 10px;
+            left: 10px;
+
+            z-index: 100;
+
+            padding: 12px;
+
+            background: rgba(0, 0, 0, 0.75);
+
+            color: white;
+
+            border-radius: 12px;
+        }
+
+        #estado {
+
+            margin-bottom: 8px;
+        }
+
+        button {
+
+            border: none;
+
+            border-radius: 8px;
+
+            padding: 9px 12px;
+
+            margin: 3px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- ================================================= -->
+    <!-- 🦴 CONTENEDOR DEL EDITOR -->
+    <!-- ================================================= -->
+
+    <div id="editor"></div>
 
 
-    const editor =
-        document.getElementById("editor");
+    <!-- ================================================= -->
+    <!-- 🎛️ PANEL -->
+    <!-- ================================================= -->
+
+    <div id="panel">
+
+        <div id="estado">
+
+            🟡 Cargando editor...
+
+        </div>
+
+        <button
+            id="reset"
+            type="button"
+        >
+
+            🔄 Reiniciar
+
+        </button>
+
+    </div>
 
 
-    iniciarRigEditor3D(editor);
+    <!-- ================================================= -->
+    <!-- 🌐 THREE.JS -->
+    <!-- ================================================= -->
 
-</script>
+    <script type="importmap">
+
+    {
+        "imports": {
+
+            "three":
+            "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
+
+        }
+    }
+
+    </script>
+
+
+    <!-- ================================================= -->
+    <!-- 🦴 EDITOR DE RIG 3D -->
+    <!-- ================================================= -->
+
+    <script type="module">
+
+        import {
+
+            iniciarRigEditor3D
+
+        } from "../mecanicas/rigEditor3D.js";
+
+
+        const editor =
+            document.getElementById("editor");
+
+
+        iniciarRigEditor3D(
+            editor
+        );
+
+    </script>
+
+</body>
+
+        </html>
