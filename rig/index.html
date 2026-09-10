@@ -16,7 +16,6 @@
 
         html,
         body {
-
             margin: 0;
             padding: 0;
 
@@ -31,7 +30,6 @@
         }
 
         #editor {
-
             position: fixed;
 
             inset: 0;
@@ -41,7 +39,6 @@
         }
 
         #panel {
-
             position: fixed;
 
             top: 10px;
@@ -59,12 +56,10 @@
         }
 
         #estado {
-
             margin-bottom: 8px;
         }
 
         button {
-
             border: none;
 
             border-radius: 8px;
@@ -76,6 +71,8 @@
             font-size: 14px;
 
             font-weight: bold;
+
+            cursor: pointer;
         }
 
     </style>
@@ -98,18 +95,21 @@
     <div id="panel">
 
         <div id="estado">
-
             🟡 Cargando editor...
-
         </div>
 
         <button
             id="reset"
             type="button"
         >
-
             🔄 Reiniciar
+        </button>
 
+        <button
+            id="volver"
+            type="button"
+        >
+            🎮 Volver al juego
         </button>
 
     </div>
@@ -120,16 +120,11 @@
     <!-- ================================================= -->
 
     <script type="importmap">
-
     {
         "imports": {
-
-            "three":
-            "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
-
+            "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
         }
     }
-
     </script>
 
 
@@ -140,9 +135,7 @@
     <script type="module">
 
         import {
-
             iniciarRigEditor3D
-
         } from "../mecanicas/rigEditor3D.js";
 
 
@@ -150,12 +143,29 @@
             document.getElementById("editor");
 
 
-        iniciarRigEditor3D(
-            editor
+        iniciarRigEditor3D(editor);
+
+
+        // =================================================
+        // 🎮 VOLVER AL JUEGO
+        // =================================================
+
+        const volver =
+            document.getElementById("volver");
+
+
+        volver.addEventListener(
+            "click",
+            () => {
+
+                window.location.href =
+                    "../";
+
+            }
         );
 
     </script>
 
 </body>
 
-        </html>
+    </html>
