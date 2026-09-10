@@ -1,6 +1,6 @@
 // =====================================================
 // 🎮 GAMERPRO GAME — EDITOR DE RIG 3D
-// 🦴 FASE 1: COLOCACIÓN MANUAL DE HUESOS
+// 🦴 FASE 1 — MODELO MOVIBLE + BLOQUEO
 // =====================================================
 
 import * as THREE from "three";
@@ -9,6 +9,11 @@ import {
     GLTFLoader
 } from
     "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js";
+
+import {
+    TransformControls
+} from
+    "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/TransformControls.js";
 
 
 // =====================================================
@@ -78,6 +83,9 @@ export function iniciarRigEditor3D(game) {
         window.innerHeight
     );
 
+    renderer.domElement.style.touchAction =
+        "none";
+
     game.appendChild(
         renderer.domElement
     );
@@ -87,7 +95,7 @@ export function iniciarRigEditor3D(game) {
     // 💡 ILUMINACIÓN
     // =================================================
 
-    const luz =
+    const luzAmbiente =
         new THREE.HemisphereLight(
             0xffffff,
             0x444444,
@@ -95,7 +103,7 @@ export function iniciarRigEditor3D(game) {
         );
 
     scene.add(
-        luz
+        luzAmbiente
     );
 
 
@@ -132,27 +140,276 @@ export function iniciarRigEditor3D(game) {
 
 
     // =================================================
-    // 🧍 MODELO MICAELA
+    // 🧍 MODELO
+    // =================================================
+
+    let modelo = null;
+
+    let modeloBloqueado = false;
+
+
+    // =================================================
+    // 🎛️ TRANSFORM CONTROLS
+    // =================================================
+
+    const transformControls =
+        new TransformControls(
+            camera,
+            renderer.domElement
+        );
+
+    transformControls.setMode(
+        "translate"
+    );
+
+    transformControls.setSpace(
+        "world"
+    );
+
+    transformControls.setSize(
+        0.8
+    );
+
+
+    scene.add(
+        transformControls.getHelper()
+    );
+
+
+    // =================================================
+    // 🦴 GRUPO DEL RIG
+    // =================================================
+
+    let grupoHuesos = null;
+
+
+    // =================================================
+    // 🎯 SELECCIÓN DEL MODELO
+    // =================================================
+
+    const raycaster =
+        new THREE.Raycaster();
+
+    const puntero =
+        new THREE.Vector2();
+
+
+    function obtenerPuntero(
+        evento
+    ) {
+
+        const rect =
+            renderer.domElement.getBoundingClientRect();
+
+
+        puntero.x =
+            (
+                evento.clientX -
+                rect.left
+            ) /
+            rect.width *
+            2 -
+            1;
+
+
+        puntero.y =
+            -(
+                (
+                    evento.clientY -
+                    rect.top
+                ) /
+                rect.height *
+                2 -
+                1
+            );
+
+    }
+
+
+    // =================================================
+    // 🖱️ / 👆 SELECCIONAR MICAELA
+    // =================================================
+
+    renderer.domElement.addEventListener(
+        "pointerdown",
+        (evento) => {
+
+            if (
+                modeloBloqueado
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                !modelo
+            ) {
+
+                return;
+
+            }
+
+
+            obtenerPuntero(
+                evento
+            );
+
+
+            raycaster.setFromCamera(
+                puntero,
+                camera
+            );
+
+
+            const objetos =
+                [];
+
+
+            modelo.traverse(
+                (objeto) => {
+
+                    if (
+                        objeto.isMesh
+                    ) {
+
+                        objetos.push(
+                            objeto
+                        );
+
+                    }
+
+                }
+            );
+
+
+            const impactos =
+                raycaster.intersectObjects(
+                    objetos,
+                    true
+                );
+
+
+            if (
+                impactos.length === 0
+            ) {
+
+                return;
+
+            }
+
+
+            transformControls.attach(
+                modelo
+            );
+
+        }
+    );
+
+
+    // =================================================
+    // 🔒 BLOQUEAR / DESBLOQUEAR
+    // =================================================
+
+    const botonBloqueo =
+        document.createElement(
+            "button"
+        );
+
+
+    botonBloqueo.type =
+        "button";
+
+
+    botonBloqueo.textContent =
+        "🔓 Micaela desbloqueada";
+
+
+    Object.assign(
+        botonBloqueo.style,
+        {
+
+            position: "fixed",
+
+            top: "70px",
+
+            left: "10px",
+
+            zIndex: "200",
+
+            padding: "10px 14px",
+
+            border: "none",
+
+            borderRadius: "10px",
+
+            background: "#222",
+
+            color: "#fff",
+
+            fontSize: "15px",
+
+            fontWeight: "bold",
+
+            cursor: "pointer"
+
+        }
+    );
+
+
+    game.appendChild(
+        botonBloqueo
+    );
+
+
+    botonBloqueo.addEventListener(
+        "click",
+        () => {
+
+            modeloBloqueado =
+                !modeloBloqueado;
+
+
+            if (
+                modeloBloqueado
+            ) {
+
+                transformControls.detach();
+
+
+                botonBloqueo.textContent =
+                    "🔒 Micaela bloqueada";
+
+
+                botonBloqueo.style.background =
+                    "#333";
+
+            } else {
+
+                botonBloqueo.textContent =
+                    "🔓 Micaela desbloqueada";
+
+
+                botonBloqueo.style.background =
+                    "#222";
+
+            }
+
+        }
+    );
+
+
+    // =================================================
+    // 🧍 CARGAR MICAELA
     // =================================================
 
     const loader =
         new GLTFLoader();
 
-    let modelo = null;
-
-
-    // =================================================
-    // 📦 CARGAR GLB
-    // =================================================
-    //
-    // IMPORTANTE:
-    // El editor está en /rig/
-    // El modelo está en /3D/
-    //
-    // Por eso usamos ../3D/
-    // =================================================
 
     loader.load(
+
         "../3D/micaela.glb",
 
         (gltf) => {
@@ -161,10 +418,25 @@ export function iniciarRigEditor3D(game) {
                 gltf.scene;
 
 
+            // -----------------------------------------
+            // 📍 POSICIÓN INICIAL
+            // -----------------------------------------
+
             modelo.position.set(
                 0,
-                0,
+                0.65,
                 0
+            );
+
+
+            // -----------------------------------------
+            // 📏 ESCALA
+            // -----------------------------------------
+
+            modelo.scale.set(
+                1,
+                1,
+                1
             );
 
 
@@ -173,9 +445,14 @@ export function iniciarRigEditor3D(game) {
             );
 
 
-            // =========================================
-            // 📊 INFORMACIÓN DEL MODELO
-            // =========================================
+            console.log(
+                "🧍 Micaela cargada"
+            );
+
+
+            // -----------------------------------------
+            // 🧩 MALLAS
+            // -----------------------------------------
 
             modelo.traverse(
                 (objeto) => {
@@ -195,9 +472,9 @@ export function iniciarRigEditor3D(game) {
             );
 
 
-            // =========================================
-            // 🦴 CREAR ESQUELETO
-            // =========================================
+            // -----------------------------------------
+            // 🦴 CREAR RIG
+            // -----------------------------------------
 
             crearEsqueleto(
                 modelo
@@ -215,6 +492,7 @@ export function iniciarRigEditor3D(game) {
             );
 
         }
+
     );
 
 
@@ -230,7 +508,7 @@ export function iniciarRigEditor3D(game) {
 
 
         // =============================================
-        // 🦴 HUESO RAÍZ
+        // ROOT
         // =============================================
 
         const root =
@@ -247,7 +525,7 @@ export function iniciarRigEditor3D(game) {
 
 
         // =============================================
-        // 🦴 COLUMNA
+        // PELVIS
         // =============================================
 
         const pelvis =
@@ -267,6 +545,10 @@ export function iniciarRigEditor3D(game) {
         );
 
 
+        // =============================================
+        // SPINE
+        // =============================================
+
         const spine =
             crearBone(
                 "spine",
@@ -283,6 +565,10 @@ export function iniciarRigEditor3D(game) {
             spine
         );
 
+
+        // =============================================
+        // CHEST
+        // =============================================
 
         const chest =
             crearBone(
@@ -302,7 +588,7 @@ export function iniciarRigEditor3D(game) {
 
 
         // =============================================
-        // 🧠 CUELLO + CABEZA
+        // NECK
         // =============================================
 
         const neck =
@@ -322,6 +608,10 @@ export function iniciarRigEditor3D(game) {
         );
 
 
+        // =============================================
+        // HEAD
+        // =============================================
+
         const head =
             crearBone(
                 "head",
@@ -340,7 +630,7 @@ export function iniciarRigEditor3D(game) {
 
 
         // =============================================
-        // 🦵 PIERNA IZQUIERDA
+        // LEGS
         // =============================================
 
         crearPierna(
@@ -351,10 +641,6 @@ export function iniciarRigEditor3D(game) {
         );
 
 
-        // =============================================
-        // 🦵 PIERNA DERECHA
-        // =============================================
-
         crearPierna(
             pelvis,
             bones,
@@ -364,7 +650,7 @@ export function iniciarRigEditor3D(game) {
 
 
         // =============================================
-        // 💪 BRAZO IZQUIERDO
+        // ARMS
         // =============================================
 
         crearBrazo(
@@ -375,10 +661,6 @@ export function iniciarRigEditor3D(game) {
         );
 
 
-        // =============================================
-        // 💪 BRAZO DERECHO
-        // =============================================
-
         crearBrazo(
             chest,
             bones,
@@ -388,11 +670,12 @@ export function iniciarRigEditor3D(game) {
 
 
         // =============================================
-        // 📦 GRUPO VISUAL
+        // GROUP
         // =============================================
 
-        const grupoHuesos =
+        grupoHuesos =
             new THREE.Group();
+
 
         grupoHuesos.name =
             "RIG_MICAELA";
@@ -409,15 +692,14 @@ export function iniciarRigEditor3D(game) {
 
 
         console.log(
-            "🦴 Rig creado:",
-            bones
+            "🦴 Rig Micaela creado"
         );
 
     }
 
 
     // =================================================
-    // 🦴 CREAR BONE
+    // 🔴 CREAR PUNTO / HUESO
     // =================================================
 
     function crearBone(
@@ -442,21 +724,20 @@ export function iniciarRigEditor3D(game) {
         );
 
 
-        // ---------------------------------------------
-        // 🔴 MARCADOR VISUAL
-        // ---------------------------------------------
-
         const marcador =
             new THREE.Mesh(
 
                 new THREE.SphereGeometry(
                     0.045,
-                    8,
-                    8
+                    12,
+                    12
                 ),
 
                 new THREE.MeshBasicMaterial({
-                    color: 0xff4444
+
+                    color:
+                        0xff3333
+
                 })
 
             );
@@ -478,7 +759,7 @@ export function iniciarRigEditor3D(game) {
 
 
     // =================================================
-    // 🦵 CREAR PIERNA
+    // 🦵 PIERNA
     // =================================================
 
     function crearPierna(
@@ -548,7 +829,7 @@ export function iniciarRigEditor3D(game) {
 
 
     // =================================================
-    // 💪 CREAR BRAZO
+    // 💪 BRAZO
     // =================================================
 
     function crearBrazo(
@@ -670,4 +951,4 @@ export function iniciarRigEditor3D(game) {
 
     animar();
 
-}
+        }
