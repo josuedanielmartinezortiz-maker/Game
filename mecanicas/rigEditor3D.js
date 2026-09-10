@@ -4,8 +4,12 @@
 // =====================================================
 
 import * as THREE from "three";
-import { GLTFLoader } from
+
+import {
+    GLTFLoader
+} from
     "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js";
+
 
 // =====================================================
 // 🚀 INICIAR EDITOR
@@ -14,6 +18,7 @@ import { GLTFLoader } from
 export function iniciarRigEditor3D(game) {
 
     game.innerHTML = "";
+
 
     // =================================================
     // 🌎 ESCENA
@@ -25,6 +30,7 @@ export function iniciarRigEditor3D(game) {
     scene.background =
         new THREE.Color(0x20252b);
 
+
     // =================================================
     // 📷 CÁMARA
     // =================================================
@@ -32,7 +38,8 @@ export function iniciarRigEditor3D(game) {
     const camera =
         new THREE.PerspectiveCamera(
             45,
-            window.innerWidth / window.innerHeight,
+            window.innerWidth /
+            window.innerHeight,
             0.01,
             1000
         );
@@ -49,6 +56,7 @@ export function iniciarRigEditor3D(game) {
         0
     );
 
+
     // =================================================
     // 🎨 RENDERER
     // =================================================
@@ -59,7 +67,10 @@ export function iniciarRigEditor3D(game) {
         });
 
     renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio, 2)
+        Math.min(
+            window.devicePixelRatio,
+            2
+        )
     );
 
     renderer.setSize(
@@ -70,6 +81,7 @@ export function iniciarRigEditor3D(game) {
     game.appendChild(
         renderer.domElement
     );
+
 
     // =================================================
     // 💡 ILUMINACIÓN
@@ -82,7 +94,10 @@ export function iniciarRigEditor3D(game) {
             2
         );
 
-    scene.add(luz);
+    scene.add(
+        luz
+    );
+
 
     const luzDireccional =
         new THREE.DirectionalLight(
@@ -100,6 +115,7 @@ export function iniciarRigEditor3D(game) {
         luzDireccional
     );
 
+
     // =================================================
     // 📐 GRID
     // =================================================
@@ -110,7 +126,10 @@ export function iniciarRigEditor3D(game) {
             20
         );
 
-    scene.add(grid);
+    scene.add(
+        grid
+    );
+
 
     // =================================================
     // 🧍 MODELO MICAELA
@@ -121,13 +140,26 @@ export function iniciarRigEditor3D(game) {
 
     let modelo = null;
 
+
+    // =================================================
+    // 📦 CARGAR GLB
+    // =================================================
+    //
+    // IMPORTANTE:
+    // El editor está en /rig/
+    // El modelo está en /3D/
+    //
+    // Por eso usamos ../3D/
+    // =================================================
+
     loader.load(
-        "./3D/micaela.glb",
+        "../3D/micaela.glb",
 
         (gltf) => {
 
             modelo =
                 gltf.scene;
+
 
             modelo.position.set(
                 0,
@@ -135,9 +167,11 @@ export function iniciarRigEditor3D(game) {
                 0
             );
 
+
             scene.add(
                 modelo
             );
+
 
             // =========================================
             // 📊 INFORMACIÓN DEL MODELO
@@ -146,7 +180,9 @@ export function iniciarRigEditor3D(game) {
             modelo.traverse(
                 (objeto) => {
 
-                    if (objeto.isMesh) {
+                    if (
+                        objeto.isMesh
+                    ) {
 
                         console.log(
                             "🧩 Malla:",
@@ -154,12 +190,19 @@ export function iniciarRigEditor3D(game) {
                         );
 
                     }
+
                 }
             );
+
+
+            // =========================================
+            // 🦴 CREAR ESQUELETO
+            // =========================================
 
             crearEsqueleto(
                 modelo
             );
+
         },
 
         undefined,
@@ -170,8 +213,10 @@ export function iniciarRigEditor3D(game) {
                 "❌ Error cargando Micaela:",
                 error
             );
+
         }
     );
+
 
     // =================================================
     // 🦴 CREAR ESQUELETO
@@ -182,6 +227,7 @@ export function iniciarRigEditor3D(game) {
     ) {
 
         const bones = [];
+
 
         // =============================================
         // 🦴 HUESO RAÍZ
@@ -198,6 +244,7 @@ export function iniciarRigEditor3D(game) {
         bones.push(
             root
         );
+
 
         // =============================================
         // 🦴 COLUMNA
@@ -219,6 +266,7 @@ export function iniciarRigEditor3D(game) {
             pelvis
         );
 
+
         const spine =
             crearBone(
                 "spine",
@@ -235,6 +283,7 @@ export function iniciarRigEditor3D(game) {
             spine
         );
 
+
         const chest =
             crearBone(
                 "chest",
@@ -250,6 +299,7 @@ export function iniciarRigEditor3D(game) {
         bones.push(
             chest
         );
+
 
         // =============================================
         // 🧠 CUELLO + CABEZA
@@ -271,6 +321,7 @@ export function iniciarRigEditor3D(game) {
             neck
         );
 
+
         const head =
             crearBone(
                 "head",
@@ -287,6 +338,7 @@ export function iniciarRigEditor3D(game) {
             head
         );
 
+
         // =============================================
         // 🦵 PIERNA IZQUIERDA
         // =============================================
@@ -297,6 +349,7 @@ export function iniciarRigEditor3D(game) {
             "L",
             -0.18
         );
+
 
         // =============================================
         // 🦵 PIERNA DERECHA
@@ -309,6 +362,7 @@ export function iniciarRigEditor3D(game) {
             0.18
         );
 
+
         // =============================================
         // 💪 BRAZO IZQUIERDO
         // =============================================
@@ -319,6 +373,7 @@ export function iniciarRigEditor3D(game) {
             "L",
             -0.45
         );
+
 
         // =============================================
         // 💪 BRAZO DERECHO
@@ -331,6 +386,7 @@ export function iniciarRigEditor3D(game) {
             0.45
         );
 
+
         // =============================================
         // 📦 GRUPO VISUAL
         // =============================================
@@ -341,19 +397,24 @@ export function iniciarRigEditor3D(game) {
         grupoHuesos.name =
             "RIG_MICAELA";
 
+
         grupoHuesos.add(
             root
         );
+
 
         scene.add(
             grupoHuesos
         );
 
+
         console.log(
             "🦴 Rig creado:",
             bones
         );
+
     }
+
 
     // =================================================
     // 🦴 CREAR BONE
@@ -369,8 +430,10 @@ export function iniciarRigEditor3D(game) {
         const bone =
             new THREE.Bone();
 
+
         bone.name =
             nombre;
+
 
         bone.position.set(
             x,
@@ -378,12 +441,14 @@ export function iniciarRigEditor3D(game) {
             z
         );
 
+
         // ---------------------------------------------
         // 🔴 MARCADOR VISUAL
         // ---------------------------------------------
 
         const marcador =
             new THREE.Mesh(
+
                 new THREE.SphereGeometry(
                     0.045,
                     8,
@@ -393,17 +458,24 @@ export function iniciarRigEditor3D(game) {
                 new THREE.MeshBasicMaterial({
                     color: 0xff4444
                 })
+
             );
 
+
         marcador.name =
-            "MARCADOR_" + nombre;
+            "MARCADOR_" +
+            nombre;
+
 
         bone.add(
             marcador
         );
 
+
         return bone;
+
     }
+
 
     // =================================================
     // 🦵 CREAR PIERNA
@@ -424,13 +496,16 @@ export function iniciarRigEditor3D(game) {
                 0
             );
 
+
         padre.add(
             cadera
         );
 
+
         bones.push(
             cadera
         );
+
 
         const rodilla =
             crearBone(
@@ -440,13 +515,16 @@ export function iniciarRigEditor3D(game) {
                 0
             );
 
+
         cadera.add(
             rodilla
         );
 
+
         bones.push(
             rodilla
         );
+
 
         const pie =
             crearBone(
@@ -456,14 +534,18 @@ export function iniciarRigEditor3D(game) {
                 0
             );
 
+
         rodilla.add(
             pie
         );
 
+
         bones.push(
             pie
         );
+
     }
+
 
     // =================================================
     // 💪 CREAR BRAZO
@@ -484,46 +566,60 @@ export function iniciarRigEditor3D(game) {
                 0
             );
 
+
         padre.add(
             hombro
         );
+
 
         bones.push(
             hombro
         );
 
+
         const codo =
             crearBone(
                 `elbow_${lado}`,
-                x > 0 ? 0.45 : -0.45,
+                x > 0
+                    ? 0.45
+                    : -0.45,
                 -0.05,
                 0
             );
+
 
         hombro.add(
             codo
         );
 
+
         bones.push(
             codo
         );
 
+
         const mano =
             crearBone(
                 `hand_${lado}`,
-                x > 0 ? 0.45 : -0.45,
+                x > 0
+                    ? 0.45
+                    : -0.45,
                 0,
                 0
             );
+
 
         codo.add(
             mano
         );
 
+
         bones.push(
             mano
         );
+
     }
+
 
     // =================================================
     // 📐 RESIZE
@@ -535,18 +631,23 @@ export function iniciarRigEditor3D(game) {
             window.innerWidth /
             window.innerHeight;
 
+
         camera.updateProjectionMatrix();
+
 
         renderer.setSize(
             window.innerWidth,
             window.innerHeight
         );
+
     }
+
 
     window.addEventListener(
         "resize",
         ajustarCanvas
     );
+
 
     // =================================================
     // 🔄 LOOP
@@ -558,11 +659,15 @@ export function iniciarRigEditor3D(game) {
             animar
         );
 
+
         renderer.render(
             scene,
             camera
         );
+
     }
 
+
     animar();
-                 }
+
+}
