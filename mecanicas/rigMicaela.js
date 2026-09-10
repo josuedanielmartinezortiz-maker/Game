@@ -1,26 +1,36 @@
 // =====================================================
 // 🎮 GAMERPRO GAME — RIG MICAELA
-// PASO 1 — CARGAR MODELO 3D
+// 🦴 EDITOR MANUAL DE HUESOS 3D
 // =====================================================
 
 import * as THREE from "three";
-import { GLTFLoader } from
-    "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js";
+
+import {
+    GLTFLoader
+} from "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js";
 
 
 // =====================================================
-// 🧍 FUNCIÓN PRINCIPAL
+// 🚀 INICIAR EDITOR
 // =====================================================
 
 export function iniciarRigMicaela(game) {
 
     // =================================================
+    // 🧹 LIMPIAR
+    // =================================================
+
+    game.innerHTML = "";
+
+
+    // =================================================
     // 🌎 ESCENA
     // =================================================
 
-    const scene = new THREE.Scene();
+    const escena =
+        new THREE.Scene();
 
-    scene.background =
+    escena.background =
         new THREE.Color(0x87ceeb);
 
 
@@ -28,15 +38,16 @@ export function iniciarRigMicaela(game) {
     // 📷 CÁMARA
     // =================================================
 
-    const camera =
+    const camara =
         new THREE.PerspectiveCamera(
             45,
-            window.innerWidth / window.innerHeight,
-            0.1,
+            window.innerWidth /
+                window.innerHeight,
+            0.01,
             1000
         );
 
-    camera.position.set(
+    camara.position.set(
         0,
         1.5,
         5
@@ -49,12 +60,14 @@ export function iniciarRigMicaela(game) {
 
     const renderer =
         new THREE.WebGLRenderer({
-            antialias: true,
-            alpha: false
+            antialias: true
         });
 
     renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio, 1.5)
+        Math.min(
+            window.devicePixelRatio,
+            1.5
+        )
     );
 
     renderer.setSize(
@@ -65,19 +78,25 @@ export function iniciarRigMicaela(game) {
     renderer.outputColorSpace =
         THREE.SRGBColorSpace;
 
-    Object.assign(renderer.domElement.style, {
-        position: "fixed",
-        inset: "0",
-        width: "100%",
-        height: "100%",
-        zIndex: "999"
-    });
+    Object.assign(
+        renderer.domElement.style,
+        {
+            position: "fixed",
+            inset: "0",
+            width: "100%",
+            height: "100%",
+            zIndex: "9999",
+            touchAction: "none"
+        }
+    );
 
-    game.appendChild(renderer.domElement);
+    game.appendChild(
+        renderer.domElement
+    );
 
 
     // =================================================
-    // 💡 ILUMINACIÓN
+    // 💡 LUCES
     // =================================================
 
     const luzAmbiente =
@@ -87,91 +106,108 @@ export function iniciarRigMicaela(game) {
             2
         );
 
-    scene.add(luzAmbiente);
+    escena.add(
+        luzAmbiente
+    );
 
 
-    const luzPrincipal =
+    const luz =
         new THREE.DirectionalLight(
             0xffffff,
             3
         );
 
-    luzPrincipal.position.set(
+    luz.position.set(
         3,
         6,
-        4
+        5
     );
 
-    scene.add(luzPrincipal);
+    escena.add(luz);
 
 
     // =================================================
-    // 📦 CARGAR MICAELA.GLB
+    // 🧍 CARGAR MICAELA
     // =================================================
 
     const loader =
         new GLTFLoader();
+
+    let micaela = null;
 
     loader.load(
         "./3D/micaela.glb",
 
         (gltf) => {
 
-            const micaela =
+            micaela =
                 gltf.scene;
 
-            micaela.position.set(
+            escena.add(
+                micaela
+            );
+
+
+            // -----------------------------------------
+            // CENTRAR MODELO
+            // -----------------------------------------
+
+            const caja =
+                new THREE.Box3()
+                    .setFromObject(
+                        micaela
+                    );
+
+            const centro =
+                new THREE.Vector3();
+
+            caja.getCenter(
+                centro
+            );
+
+            micaela.position.sub(
+                centro
+            );
+
+
+            // -----------------------------------------
+            // AJUSTAR CÁMARA
+            // -----------------------------------------
+
+            const tamaño =
+                new THREE.Vector3();
+
+            caja.getSize(
+                tamaño
+            );
+
+            const mayor =
+                Math.max(
+                    tamaño.x,
+                    tamaño.y,
+                    tamaño.z
+                );
+
+            camara.position.set(
                 0,
+                mayor * 0.45,
+                mayor * 2.8
+            );
+
+            camara.lookAt(
                 0,
+                mayor * 0.45,
                 0
             );
 
-            micaela.scale.setScalar(1);
 
-            scene.add(micaela);
-
-
-            // =========================================
-            // 🔍 INFORMACIÓN DEL MODELO
-            // =========================================
-
-            let numeroMeshes = 0;
-            let numeroVertices = 0;
-
-            micaela.traverse(
-                (objeto) => {
-
-                    if (
-                        objeto.isMesh &&
-                        objeto.geometry
-                    ) {
-
-                        numeroMeshes++;
-
-                        const posicion =
-                            objeto.geometry
-                                .getAttribute("position");
-
-                        if (posicion) {
-                            numeroVertices +=
-                                posicion.count;
-                        }
-                    }
-                }
+            console.log(
+                "🧍 MICAELA 3D CARGADA"
             );
 
             console.log(
-                "🐰 Micaela cargada"
-            );
-
-            console.log(
-                "Meshes:",
-                numeroMeshes
-            );
-
-            console.log(
-                "Vértices:",
-                numeroVertices
+                "📦 Tamaño:",
+                tamaño
             );
         },
 
@@ -180,7 +216,7 @@ export function iniciarRigMicaela(game) {
         (error) => {
 
             console.error(
-                "❌ Error cargando micaela.glb:",
+                "❌ ERROR CARGANDO MICAELA:",
                 error
             );
         }
@@ -188,16 +224,418 @@ export function iniciarRigMicaela(game) {
 
 
     // =================================================
-    // 📱 RESPONSIVE
+    // 🦴 ESQUELETO MANUAL
+    // =================================================
+
+    const huesos = [];
+
+    const nombres =
+        [
+            "Pelvis",
+            "Spine",
+            "Chest",
+            "Neck",
+            "Head",
+
+            "Shoulder_L",
+            "UpperArm_L",
+            "LowerArm_L",
+            "Hand_L",
+
+            "Shoulder_R",
+            "UpperArm_R",
+            "LowerArm_R",
+            "Hand_R",
+
+            "UpperLeg_L",
+            "LowerLeg_L",
+            "Foot_L",
+
+            "UpperLeg_R",
+            "LowerLeg_R",
+            "Foot_R"
+        ];
+
+
+    // =================================================
+    // 📍 POSICIONES INICIALES
+    // =================================================
+
+    const posiciones =
+        {
+
+            Pelvis:
+                [0, 0.9, 0],
+
+            Spine:
+                [0, 1.25, 0],
+
+            Chest:
+                [0, 1.6, 0],
+
+            Neck:
+                [0, 1.95, 0],
+
+            Head:
+                [0, 2.25, 0],
+
+
+            Shoulder_L:
+                [-0.35, 1.7, 0],
+
+            UpperArm_L:
+                [-0.65, 1.55, 0],
+
+            LowerArm_L:
+                [-0.9, 1.3, 0],
+
+            Hand_L:
+                [-1.05, 1.05, 0],
+
+
+            Shoulder_R:
+                [0.35, 1.7, 0],
+
+            UpperArm_R:
+                [0.65, 1.55, 0],
+
+            LowerArm_R:
+                [0.9, 1.3, 0],
+
+            Hand_R:
+                [1.05, 1.05, 0],
+
+
+            UpperLeg_L:
+                [-0.2, 0.65, 0],
+
+            LowerLeg_L:
+                [-0.2, 0.3, 0],
+
+            Foot_L:
+                [-0.2, 0.05, 0],
+
+
+            UpperLeg_R:
+                [0.2, 0.65, 0],
+
+            LowerLeg_R:
+                [0.2, 0.3, 0],
+
+            Foot_R:
+                [0.2, 0.05, 0]
+        };
+
+
+    // =================================================
+    // 🎨 CREAR MARCADORES
+    // =================================================
+
+    const geometriaHueso =
+        new THREE.SphereGeometry(
+            0.07,
+            12,
+            12
+        );
+
+
+    nombres.forEach(
+        (nombre) => {
+
+            const material =
+                new THREE.MeshBasicMaterial({
+                    color: 0xff3333
+                });
+
+            const marcador =
+                new THREE.Mesh(
+                    geometriaHueso,
+                    material
+                );
+
+            const p =
+                posiciones[nombre];
+
+            marcador.position.set(
+                p[0],
+                p[1],
+                p[2]
+            );
+
+            marcador.userData.nombre =
+                nombre;
+
+            escena.add(
+                marcador
+            );
+
+            huesos.push(
+                marcador
+            );
+        }
+    );
+
+
+    // =================================================
+    // 🦴 LÍNEAS ENTRE HUESOS
+    // =================================================
+
+    const conexiones = [
+
+        ["Pelvis", "Spine"],
+        ["Spine", "Chest"],
+        ["Chest", "Neck"],
+        ["Neck", "Head"],
+
+        ["Chest", "Shoulder_L"],
+        ["Shoulder_L", "UpperArm_L"],
+        ["UpperArm_L", "LowerArm_L"],
+        ["LowerArm_L", "Hand_L"],
+
+        ["Chest", "Shoulder_R"],
+        ["Shoulder_R", "UpperArm_R"],
+        ["UpperArm_R", "LowerArm_R"],
+        ["LowerArm_R", "Hand_R"],
+
+        ["Pelvis", "UpperLeg_L"],
+        ["UpperLeg_L", "LowerLeg_L"],
+        ["LowerLeg_L", "Foot_L"],
+
+        ["Pelvis", "UpperLeg_R"],
+        ["UpperLeg_R", "LowerLeg_R"],
+        ["LowerLeg_R", "Foot_R"]
+    ];
+
+
+    const lineas =
+        new THREE.Group();
+
+    escena.add(
+        lineas
+    );
+
+
+    function actualizarHuesosVisuales() {
+
+        lineas.clear();
+
+        conexiones.forEach(
+            ([a, b]) => {
+
+                const huesoA =
+                    huesos.find(
+                        h =>
+                            h.userData.nombre === a
+                    );
+
+                const huesoB =
+                    huesos.find(
+                        h =>
+                            h.userData.nombre === b
+                    );
+
+                if (!huesoA || !huesoB)
+                    return;
+
+
+                const puntos = [
+                    huesoA.position.clone(),
+                    huesoB.position.clone()
+                ];
+
+
+                const geometria =
+                    new THREE.BufferGeometry()
+                        .setFromPoints(
+                            puntos
+                        );
+
+
+                const linea =
+                    new THREE.Line(
+                        geometria,
+                        new THREE.LineBasicMaterial({
+                            color: 0xffff00
+                        })
+                    );
+
+
+                lineas.add(
+                    linea
+                );
+            }
+        );
+    }
+
+    actualizarHuesosVisuales();
+
+
+    // =================================================
+    // 👆 CONTROL TÁCTIL
+    // =================================================
+
+    const raycaster =
+        new THREE.Raycaster();
+
+    const mouse =
+        new THREE.Vector2();
+
+    let seleccionado = null;
+
+
+    renderer.domElement.addEventListener(
+        "pointerdown",
+        (evento) => {
+
+            const rect =
+                renderer.domElement
+                    .getBoundingClientRect();
+
+            mouse.x =
+                (
+                    (evento.clientX - rect.left)
+                    / rect.width
+                ) * 2 - 1;
+
+            mouse.y =
+                -(
+                    (evento.clientY - rect.top)
+                    / rect.height
+                ) * 2 + 1;
+
+
+            raycaster.setFromCamera(
+                mouse,
+                camara
+            );
+
+
+            const impactos =
+                raycaster.intersectObjects(
+                    huesos
+                );
+
+
+            if (
+                impactos.length > 0
+            ) {
+
+                seleccionado =
+                    impactos[0].object;
+
+                seleccionado.material.color
+                    .set(0x00ff00);
+
+                console.log(
+                    "🦴 SELECCIONADO:",
+                    seleccionado.userData.nombre
+                );
+            }
+        }
+    );
+
+
+    renderer.domElement.addEventListener(
+        "pointermove",
+        (evento) => {
+
+            if (!seleccionado)
+                return;
+
+
+            const rect =
+                renderer.domElement
+                    .getBoundingClientRect();
+
+            mouse.x =
+                (
+                    (evento.clientX - rect.left)
+                    / rect.width
+                ) * 2 - 1;
+
+            mouse.y =
+                -(
+                    (evento.clientY - rect.top)
+                    / rect.height
+                ) * 2 + 1;
+
+
+            const distancia =
+                seleccionado.position
+                    .distanceTo(
+                        camara.position
+                    );
+
+
+            const punto =
+                new THREE.Vector3(
+                    mouse.x,
+                    mouse.y,
+                    0.5
+                )
+                    .unproject(
+                        camara
+                    );
+
+
+            const direccion =
+                punto.sub(
+                    camara.position
+                )
+                .normalize();
+
+
+            const posicion =
+                camara.position.clone()
+                    .add(
+                        direccion.multiplyScalar(
+                            distancia
+                        )
+                    );
+
+
+            seleccionado.position.copy(
+                posicion
+            );
+
+
+            actualizarHuesosVisuales();
+        }
+    );
+
+
+    renderer.domElement.addEventListener(
+        "pointerup",
+        () => {
+
+            if (seleccionado) {
+
+                seleccionado.material.color
+                    .set(0xff3333);
+
+                console.log(
+                    "📍 POSICIÓN:",
+                    seleccionado.userData.nombre,
+                    seleccionado.position
+                );
+            }
+
+            seleccionado = null;
+        }
+    );
+
+
+    // =================================================
+    // 📱 RESIZE
     // =================================================
 
     function ajustarPantalla() {
 
-        camera.aspect =
+        camara.aspect =
             window.innerWidth /
             window.innerHeight;
 
-        camera.updateProjectionMatrix();
+        camara.updateProjectionMatrix();
 
         renderer.setSize(
             window.innerWidth,
@@ -212,18 +650,20 @@ export function iniciarRigMicaela(game) {
 
 
     // =================================================
-    // 🔄 BUCLE
+    // 🔄 LOOP
     // =================================================
 
     function animar() {
 
-        requestAnimationFrame(animar);
+        requestAnimationFrame(
+            animar
+        );
 
         renderer.render(
-            scene,
-            camera
+            escena,
+            camara
         );
     }
 
     animar();
-      }
+        }
