@@ -1,1 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
 
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>GAMERPRO — Rig Micaela</title>
+
+    <style>
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #111;
+            font-family: Arial, sans-serif;
+        }
+
+        #editor {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #panel {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+
+            padding: 12px;
+
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+
+            border-radius: 12px;
+
+            font-size: 14px;
+        }
+
+        #estado {
+            margin-bottom: 8px;
+        }
+
+        button {
+            border: 0;
+            border-radius: 8px;
+
+            padding: 9px 12px;
+            margin: 3px;
+
+            font-size: 14px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div id="editor"></div>
+
+    <div id="panel">
+
+        <div id="estado">
+            🟡 Cargando Micaela...
+        </div>
+
+        <button
+            id="reset"
+            type="button"
+        >
+            🔄 Reiniciar
+        </button>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- 🌐 THREE.JS -->
+    <!-- ================================================= -->
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
+        }
+    }
+    </script>
+
+
+    <!-- ================================================= -->
+    <!-- 🦴 EDITOR -->
+    <!-- ================================================= -->
+
+    <script
+        type="module"
+        src="./rigMicaela.js"
+    ></script>
+
+</body>
+
+</html>
