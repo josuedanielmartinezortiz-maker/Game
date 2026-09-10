@@ -1,134 +1,18 @@
-<!DOCTYPE html>
-<html lang="es">
+<!-- ================================================= -->
+<!-- 🦴 EDITOR DE RIG 3D -->
+<!-- ================================================= -->
 
-<head>
+<script type="module">
 
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>GAMERPRO — Rig Micaela</title>
-
-    <style>
-
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-
-            width: 100%;
-            height: 100%;
-
-            overflow: hidden;
-
-            background: #111;
-
-            font-family: Arial, sans-serif;
-        }
-
-        #editor {
-            position: fixed;
-
-            inset: 0;
-
-            width: 100%;
-            height: 100%;
-        }
-
-        #panel {
-            position: fixed;
-
-            top: 10px;
-            left: 10px;
-
-            z-index: 100;
-
-            padding: 12px;
-
-            background: rgba(0, 0, 0, 0.75);
-
-            color: white;
-
-            border-radius: 12px;
-        }
-
-        #estado {
-            margin-bottom: 8px;
-        }
-
-        button {
-            border: none;
-
-            border-radius: 8px;
-
-            padding: 9px 12px;
-
-            margin: 3px;
-
-            font-size: 14px;
-
-            font-weight: bold;
-        }
-
-    </style>
-
-</head>
-
-<body>
-
-    <div id="editor"></div>
-
-    <div id="panel">
-
-        <div id="estado">
-            🟡 Cargando Micaela...
-        </div>
-
-        <button
-            id="reset"
-            type="button"
-        >
-            🔄 Reiniciar
-        </button>
-
-    </div>
+    import {
+        iniciarRigEditor3D
+    } from "../mecanicas/rigEditor3D.js";
 
 
-    <!-- ================================================= -->
-    <!-- 🌐 THREE.JS -->
-    <!-- ================================================= -->
-
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
-        }
-    }
-    </script>
+    const editor =
+        document.getElementById("editor");
 
 
-    <!-- ================================================= -->
-    <!-- 🦴 EDITOR DE RIG -->
-    <!-- ================================================= -->
+    iniciarRigEditor3D(editor);
 
-    <script type="module">
-
-        import {
-            iniciarRigMicaela
-        } from "./rigMicaela.js";
-
-
-        const editor =
-            document.getElementById("editor");
-
-
-        iniciarRigMicaela(editor);
-
-    </script>
-
-</body>
-
-</html>
+</script>
