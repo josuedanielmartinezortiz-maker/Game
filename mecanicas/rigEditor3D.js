@@ -293,7 +293,7 @@ export function iniciarRigEditor3D(editor) {
 
 
     // =================================================
-    // CARGAR MICAELA
+    // 🧍 CARGAR MICAELA
     // =================================================
 
     const loader =
@@ -312,20 +312,12 @@ export function iniciarRigEditor3D(editor) {
                 "Micaela";
 
 
-            // -----------------------------------------
-            // POSICIÓN
-            // -----------------------------------------
-
             modelo.position.set(
                 0,
                 0.65,
                 0
             );
 
-
-            // -----------------------------------------
-            // ESCALA
-            // -----------------------------------------
 
             modelo.scale.set(
                 1,
@@ -334,18 +326,10 @@ export function iniciarRigEditor3D(editor) {
             );
 
 
-            // -----------------------------------------
-            // AÑADIR A ESCENA
-            // -----------------------------------------
-
             scene.add(
                 modelo
             );
 
-
-            // -----------------------------------------
-            // SOMBRAS
-            // -----------------------------------------
 
             modelo.traverse(
                 (obj) => {
@@ -364,10 +348,6 @@ export function iniciarRigEditor3D(editor) {
             );
 
 
-            // -----------------------------------------
-            // CONTROLAR MICAELA
-            // -----------------------------------------
-
             controles.attach(
                 modelo
             );
@@ -375,7 +355,6 @@ export function iniciarRigEditor3D(editor) {
 
             estado.textContent =
                 "🟢 Micaela cargada";
-
 
             console.log(
                 "✅ Micaela cargada correctamente"
@@ -397,9 +376,9 @@ export function iniciarRigEditor3D(editor) {
     );
 
 
-    // =====================================================
+    // =================================================
     // 🦴 ESQUELETO MANUAL
-    // =====================================================
+    // =================================================
 
     const esqueleto =
         new THREE.Group();
@@ -407,13 +386,24 @@ export function iniciarRigEditor3D(editor) {
     esqueleto.name =
         "Esqueleto_Micaela";
 
+
+    // =================================================
+    // POSICIÓN DEL ESQUELETO
+    // =================================================
+
+    esqueleto.position.set(
+        0,
+        0.65,
+        0
+    );
+
     scene.add(
         esqueleto
     );
 
 
     // =================================================
-    // CREAR HUESO
+    // CREAR HUESO + PUNTO ROJO
     // =================================================
 
     function crearHueso(
@@ -446,17 +436,23 @@ export function iniciarRigEditor3D(editor) {
         const marcador =
             new THREE.Mesh(
                 new THREE.SphereGeometry(
-                    0.055,
-                    12,
-                    12
+                    0.075,
+                    16,
+                    16
                 ),
+
                 new THREE.MeshBasicMaterial({
-                    color: 0xff3333
+                    color: 0xff2222,
+                    depthTest: false,
+                    depthWrite: false
                 })
             );
 
         marcador.name =
             "Punto_" + nombre;
+
+        marcador.renderOrder =
+            999;
 
         hueso.add(
             marcador
@@ -707,6 +703,30 @@ export function iniciarRigEditor3D(editor) {
 
 
     // =================================================
+    // 🦴 HELPER VISUAL DEL ESQUELETO
+    // =================================================
+
+    const helperEsqueleto =
+        new THREE.SkeletonHelper(
+            esqueleto
+        );
+
+    helperEsqueleto.visible =
+        true;
+
+    helperEsqueleto.material.color.set(
+        0x00ff66
+    );
+
+    helperEsqueleto.material.linewidth =
+        3;
+
+    scene.add(
+        helperEsqueleto
+    );
+
+
+    // =================================================
     // RESIZE
     // =================================================
 
@@ -740,6 +760,10 @@ export function iniciarRigEditor3D(editor) {
             animar
         );
 
+        helperEsqueleto.updateMatrixWorld(
+            true
+        );
+
         renderer.render(
             scene,
             camera
@@ -759,6 +783,7 @@ export function iniciarRigEditor3D(editor) {
         renderer,
         modelo,
         esqueleto,
-        controles
+        controles,
+        helperEsqueleto
     };
 }
