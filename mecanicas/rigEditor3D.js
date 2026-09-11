@@ -1,482 +1,225 @@
-// =====================================================
-// 🧪 BLOQUE 5 — DIAGNÓSTICO VISUAL SEGURO
-// =====================================================
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js";
+import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js";
 
-let panelDiagnostico = null;
+export function iniciarRigEditor3D(contenedor) {
 
+    contenedor.innerHTML = "";
 
-// =====================================================
-// CREAR PANEL
-// =====================================================
+    const escena = new THREE.Scene();
+    escena.background = new THREE.Color(0x111111);
 
-function crearPanelDiagnostico() {
+    const camara = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.01,
+        100
+    );
 
-    if (panelDiagnostico) {
-        return panelDiagnostico;
-    }
+    camara.position.set(0, 1, 3);
 
-    panelDiagnostico =
-        document.createElement("div");
+    const renderer = new THREE.WebGLRenderer({
+        antialias: true
+    });
 
-    panelDiagnostico.id =
-        "panelDiagnosticoRig";
+    renderer.setPixelRatio(
+        Math.min(window.devicePixelRatio, 2)
+    );
 
-    Object.assign(
-        panelDiagnostico.style,
-        {
-            position: "fixed",
-
-            right: "10px",
-            top: "10px",
-
-            zIndex: "2000",
-
-            width: "260px",
-            maxWidth:
-                "calc(100vw - 20px)",
-
-            maxHeight: "65vh",
-
-            overflowY: "auto",
-
-            padding: "12px",
-
-            background:
-                "rgba(10,10,15,0.96)",
-
-            border:
-                "1px solid rgba(255,255,255,0.18)",
-
-            borderRadius: "12px",
-
-            color: "#ffffff",
-
-            fontFamily:
-                "Arial, sans-serif",
-
-            fontSize: "12px",
-
-            boxSizing:
-                "border-box",
-
-            boxShadow:
-                "0 8px 30px rgba(0,0,0,0.5)"
-        }
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
     );
 
     contenedor.appendChild(
-        panelDiagnostico
-    );
-
-    return panelDiagnostico;
-}
-
-
-// =====================================================
-// DIAGNÓSTICO
-// =====================================================
-
-function mostrarDiagnosticoRig() {
-
-    const panel =
-        crearPanelDiagnostico();
-
-    panel.innerHTML = "";
-
-
-    // =================================================
-    // TÍTULO
-    // =================================================
-
-    const titulo =
-        document.createElement("div");
-
-    titulo.textContent =
-        "🧪 DIAGNÓSTICO DE MICAELA";
-
-    Object.assign(
-        titulo.style,
-        {
-            fontSize: "16px",
-            fontWeight: "bold",
-            marginBottom: "10px"
-        }
-    );
-
-    panel.appendChild(
-        titulo
+        renderer.domElement
     );
 
 
-    // =================================================
-    // ESPERAR MODELO
-    // =================================================
+    // LUZ
+    escena.add(
+        new THREE.HemisphereLight(
+            0xffffff,
+            0x444444,
+            2
+        )
+    );
 
-    if (!modelo) {
 
-        const espera =
-            document.createElement("div");
-
-        espera.textContent =
-            "⏳ Cargando Micaela...";
-
-        espera.style.color =
-            "#ffd166";
-
-        panel.appendChild(
-            espera
+    // CONTROLES
+    const controles =
+        new OrbitControls(
+            camara,
+            renderer.domElement
         );
 
-        return;
-    }
+    controles.enableDamping = true;
+
+    controles.target.set(
+        0,
+        0.7,
+        0
+    );
 
 
-    // =================================================
-    // CONTADORES
-    // =================================================
+    // DIAGNÓSTICO
+    const panel =
+        document.createElement("div");
 
-    let meshes = 0;
+    Object.assign(panel.style, {
+        position: "fixed",
+        top: "10px",
+        left: "10px",
+        zIndex: "10",
+        padding: "10px",
+        width: "230px",
+        background: "rgba(0,0,0,.85)",
+        color: "white",
+        borderRadius: "10px",
+        fontFamily: "Arial",
+        fontSize: "13px"
+    });
 
-    let skinnedMeshes = 0;
+    panel.textContent =
+        "⏳ Cargando Micaela...";
 
-    let esqueletos = 0;
-
-    const huesos =
-        [];
-
-    const esqueletosVistos =
-        new Set();
-
-
-    // =================================================
-    // RECORRER MODELO
-    // =================================================
-
-    modelo.traverse(
-        objeto => {
-
-            // -----------------------------------------
-            // MESH
-            // -----------------------------------------
-
-            if (
-                objeto.isMesh
-            ) {
-
-                meshes++;
-            }
+    contenedor.appendChild(panel);
 
 
-            // -----------------------------------------
-            // SKINNED MESH
-            // -----------------------------------------
+    // CARGAR MICAELA
+    const loader =
+        new GLTFLoader();
 
-            if (
-                objeto.isSkinnedMesh
-            ) {
+    loader.load(
 
-                skinnedMeshes++;
+        "../3D/micaela.glb",
 
+        gltf => {
 
-                // MUY IMPORTANTE:
-                // comprobar que realmente
-                // exista skeleton.
+            const modelo =
+                gltf.scene;
 
-                if (
-                    !objeto.skeleton
-                ) {
+            modelo.position.set(
+                0,
+                0,
+                0
+            );
 
-                    return;
-                }
-
-
-                const skeleton =
-                    objeto.skeleton;
+            escena.add(modelo);
 
 
-                // Evitar contar el mismo
-                // skeleton varias veces.
+            let meshes = 0;
+            let skinned = 0;
+            let huesos = [];
 
-                if (
-                    !esqueletosVistos
-                        .has(skeleton)
-                ) {
 
-                    esqueletosVistos
-                        .add(skeleton);
+            modelo.traverse(
+                objeto => {
 
-                    esqueletos++;
+                    if (objeto.isMesh) {
+                        meshes++;
+                    }
 
                     if (
-                        Array.isArray(
-                            skeleton.bones
-                        )
+                        objeto.isSkinnedMesh
                     ) {
 
-                        skeleton.bones
-                            .forEach(
-                                bone => {
+                        skinned++;
 
-                                    if (
-                                        bone &&
-                                        bone.name
-                                    ) {
+                        if (
+                            objeto.skeleton
+                        ) {
 
-                                        if (
-                                            !huesos
-                                                .includes(
-                                                    bone.name
-                                                )
-                                        ) {
+                            objeto.skeleton.bones
+                                .forEach(
+                                    bone => {
 
-                                            huesos
-                                                .push(
-                                                    bone.name
-                                                );
-                                        }
+                                        huesos.push(
+                                            bone.name
+                                        );
                                     }
-                                }
-                            );
+                                );
+                        }
                     }
                 }
+            );
+
+
+            panel.innerHTML = `
+                <b>🦴 GAMERPRO RIG</b>
+                <br><br>
+                🧍 Micaela: ✅
+                <br>
+                🧩 Meshes: ${meshes}
+                <br>
+                🦴 SkinnedMesh: ${skinned}
+                <br>
+                💀 Huesos: ${huesos.length}
+            `;
+
+            if (huesos.length > 0) {
+
+                panel.innerHTML +=
+                    "<hr><b>Huesos reales:</b><br>" +
+                    huesos.slice(0, 15).join("<br>");
+
+                if (huesos.length > 15) {
+                    panel.innerHTML +=
+                        "<br>...";
+                }
             }
+
+        },
+
+        undefined,
+
+        error => {
+
+            panel.innerHTML = `
+                <b>❌ ERROR</b>
+                <br><br>
+                No se pudo cargar
+                micaela.glb.
+            `;
         }
     );
 
 
-    // =================================================
-    // RESUMEN
-    // =================================================
+    // RESIZE
+    function ajustar() {
 
-    const resumen =
-        document.createElement("div");
+        camara.aspect =
+            window.innerWidth /
+            window.innerHeight;
 
-    resumen.innerHTML =
+        camara.updateProjectionMatrix();
 
-        "🧍 Modelo: <b>Cargado</b><br>" +
-
-        "🧩 Meshes: <b>" +
-        meshes +
-        "</b><br>" +
-
-        "🦴 SkinnedMesh: <b>" +
-        skinnedMeshes +
-        "</b><br>" +
-
-        "💀 Esqueletos: <b>" +
-        esqueletos +
-        "</b><br>" +
-
-        "🦴 Huesos reales: <b>" +
-        huesos.length +
-        "</b>";
-
-
-    Object.assign(
-        resumen.style,
-        {
-            lineHeight: "1.7",
-            marginBottom: "10px"
-        }
-    );
-
-
-    panel.appendChild(
-        resumen
-    );
-
-
-    // =================================================
-    // ESTADO
-    // =================================================
-
-    const estado =
-        document.createElement("div");
-
-
-    if (
-        skinnedMeshes > 0 &&
-        esqueletos > 0 &&
-        huesos.length > 0
-    ) {
-
-        estado.textContent =
-            "✅ Micaela tiene un esqueleto real.";
-
-        estado.style.color =
-            "#55ff88";
-
-    } else {
-
-        estado.textContent =
-            "⚠️ No se encontró un esqueleto válido.";
-
-        estado.style.color =
-            "#ffd166";
-    }
-
-
-    Object.assign(
-        estado.style,
-        {
-            padding: "8px",
-
-            marginBottom: "10px",
-
-            background:
-                "rgba(255,255,255,0.06)",
-
-            borderRadius: "7px"
-        }
-    );
-
-
-    panel.appendChild(
-        estado
-    );
-
-
-    // =================================================
-    // LISTA DE HUESOS
-    // =================================================
-
-    if (
-        huesos.length > 0
-    ) {
-
-        const tituloHuesos =
-            document.createElement("div");
-
-        tituloHuesos.textContent =
-            "🦴 HUESOS DEL GLB";
-
-        tituloHuesos.style.fontWeight =
-            "bold";
-
-        tituloHuesos.style.marginBottom =
-            "6px";
-
-
-        panel.appendChild(
-            tituloHuesos
-        );
-
-
-        const lista =
-            document.createElement("div");
-
-
-        huesos.forEach(
-            (
-                nombre,
-                indice
-            ) => {
-
-                const fila =
-                    document.createElement("div");
-
-                fila.textContent =
-                    `${indice + 1}. ${nombre}`;
-
-
-                Object.assign(
-                    fila.style,
-                    {
-                        padding: "4px 6px",
-
-                        marginBottom: "2px",
-
-                        background:
-                            "rgba(255,255,255,0.05)",
-
-                        borderRadius: "5px",
-
-                        overflow:
-                            "hidden",
-
-                        textOverflow:
-                            "ellipsis",
-
-                        whiteSpace:
-                            "nowrap"
-                    }
-                );
-
-
-                lista.appendChild(
-                    fila
-                );
-            }
-        );
-
-
-        panel.appendChild(
-            lista
+        renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
         );
     }
 
-
-    // =================================================
-    // GUARDAR DIAGNÓSTICO
-    // =================================================
-
-    modelo.userData
-        .rigDiagnostico = {
-
-        meshes:
-            meshes,
-
-        skinnedMeshes:
-            skinnedMeshes,
-
-        esqueletos:
-            esqueletos,
-
-        huesos:
-            huesos
-    };
-}
+    window.addEventListener(
+        "resize",
+        ajustar
+    );
 
 
-// =====================================================
-// EJECUTAR
-// =====================================================
+    // LOOP
+    function animar() {
 
-mostrarDiagnosticoRig();
+        requestAnimationFrame(
+            animar
+        );
 
+        controles.update();
 
-// =====================================================
-// ACTUALIZAR DESPUÉS DE CARGAR
-// =====================================================
-
-setTimeout(
-    mostrarDiagnosticoRig,
-    500
-);
-
-setTimeout(
-    mostrarDiagnosticoRig,
-    1500
-);
-
-
-// =====================================================
-// MÓVIL
-// =====================================================
-
-if (
-    window.innerWidth < 600
-) {
-
-    if (panelDiagnostico) {
-
-        panelDiagnostico.style.width =
-            "205px";
-
-        panelDiagnostico.style.right =
-            "8px";
-
-        panelDiagnostico.style.top =
-            "8px";
+        renderer.render(
+            escena,
+            camara
+        );
     }
+
+    animar();
 }
