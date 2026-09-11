@@ -39,7 +39,7 @@ export function iniciarRigEditor3D(contenedor) {
     );
 
     // =====================================================
-    // RENDER
+    // RENDERER
     // =====================================================
 
     const renderer =
@@ -76,7 +76,7 @@ export function iniciarRigEditor3D(contenedor) {
     );
 
     // =====================================================
-    // CONTROLES
+    // CONTROLES DE CÁMARA
     // =====================================================
 
     const controles =
@@ -108,17 +108,20 @@ export function iniciarRigEditor3D(contenedor) {
             color: "white",
             borderRadius: "10px",
             fontFamily: "Arial",
-            fontSize: "13px"
+            fontSize: "13px",
+            lineHeight: "1.4"
         }
     );
 
     panel.innerHTML =
         "⏳ Cargando Micaela...";
 
-    contenedor.appendChild(panel);
+    contenedor.appendChild(
+        panel
+    );
 
     // =====================================================
-    // GRUPO DEL RIG
+    // GRUPO PRINCIPAL DEL RIG
     // =====================================================
 
     const rig =
@@ -127,13 +130,19 @@ export function iniciarRigEditor3D(contenedor) {
     rig.name =
         "Micaela_Rig";
 
-    escena.add(rig);
+    escena.add(
+        rig
+    );
 
     // =====================================================
-    // HUESOS
+    // LISTA DE HUESOS
     // =====================================================
 
     const huesos = [];
+
+    // =====================================================
+    // CREAR HUESO
+    // =====================================================
 
     function crearHueso(
         nombre,
@@ -156,18 +165,27 @@ export function iniciarRigEditor3D(contenedor) {
         );
 
         if (padre) {
-            padre.add(hueso);
+
+            padre.add(
+                hueso
+            );
+
         } else {
-            rig.add(hueso);
+
+            rig.add(
+                hueso
+            );
         }
 
-        huesos.push(hueso);
+        huesos.push(
+            hueso
+        );
 
         return hueso;
     }
 
     // =====================================================
-    // MARCADORES
+    // MARCADORES ROJOS
     // =====================================================
 
     const marcadores =
@@ -176,7 +194,9 @@ export function iniciarRigEditor3D(contenedor) {
     marcadores.name =
         "Marcadores_Rig";
 
-    rig.add(marcadores);
+    rig.add(
+        marcadores
+    );
 
     function crearMarcador(
         hueso,
@@ -202,13 +222,11 @@ export function iniciarRigEditor3D(contenedor) {
                 material
             );
 
-        esfera.renderOrder = 999;
+        esfera.renderOrder =
+            999;
 
-        esfera.position.copy(
-            hueso.getWorldPosition(
-                new THREE.Vector3()
-            )
-        );
+        esfera.userData.hueso =
+            hueso;
 
         marcadores.add(
             esfera
@@ -216,7 +234,7 @@ export function iniciarRigEditor3D(contenedor) {
     }
 
     // =====================================================
-    // CREAR CADENA CENTRAL
+    // CONSTRUIR ESQUELETO
     // =====================================================
 
     function construirColumna(
@@ -225,31 +243,18 @@ export function iniciarRigEditor3D(contenedor) {
         centroZ
     ) {
 
-        // -------------------------------------------------
+        // =================================================
         // PROPORCIONES CHIBI
-        // -------------------------------------------------
+        // =================================================
 
         const suelo = 0;
 
-        // Cadera aproximadamente al 42%
         const alturaCadera =
             altura * 0.42;
 
-        // Inicio del tórax
-        const alturaTorax =
-            altura * 0.54;
-
-        // Cuello
-        const alturaCuello =
-            altura * 0.76;
-
-        // Cabeza
-        const alturaCabeza =
-            altura * 0.82;
-
-        // -------------------------------------------------
+        // =================================================
         // HIPS
-        // -------------------------------------------------
+        // =================================================
 
         const hips =
             crearHueso(
@@ -265,15 +270,12 @@ export function iniciarRigEditor3D(contenedor) {
             0.035
         );
 
-        // -------------------------------------------------
+        // =================================================
         // LUMBAR — 5
-        // -------------------------------------------------
+        // =================================================
 
         let padre =
             hips;
-
-        const lumbarInicio =
-            alturaCadera;
 
         const lumbarPaso =
             (altura * 0.10) / 5;
@@ -298,9 +300,12 @@ export function iniciarRigEditor3D(contenedor) {
             );
         }
 
-        // -------------------------------------------------
+        // =================================================
         // TORÁCICAS — 12
-        // -------------------------------------------------
+        // =================================================
+
+        const toracicas =
+            [];
 
         const toraxPaso =
             (altura * 0.18) / 12;
@@ -320,19 +325,23 @@ export function iniciarRigEditor3D(contenedor) {
                     0
                 );
 
+            toracicas.push(
+                padre
+            );
+
             crearMarcador(
                 padre
             );
         }
 
-        // -------------------------------------------------
-        // ESTERNÓN CENTRAL
-        // -------------------------------------------------
+        // =================================================
+        // ESTERNÓN
+        // =================================================
 
         const esternon =
             crearHueso(
                 "Sternum",
-                padre,
+                toracicas[11],
                 0,
                 0,
                 -0.035
@@ -343,12 +352,123 @@ export function iniciarRigEditor3D(contenedor) {
             0.028
         );
 
-        // -------------------------------------------------
+        // =================================================
+        // COSTILLAS
+        // 12 PARES × 3 SEGMENTOS
+        // =================================================
+
+        const costillas =
+            [];
+
+        for (
+            let lado = -1;
+            lado <= 1;
+            lado += 2
+        ) {
+
+            const nombreLado =
+                lado < 0
+                    ? "Left"
+                    : "Right";
+
+            for (
+                let i = 1;
+                i <= 12;
+                i++
+            ) {
+
+                const toracica =
+                    toracicas[
+                        i - 1
+                    ];
+
+                // -----------------------------------------
+                // FORMA DE LA COSTILLA
+                // -----------------------------------------
+
+                const progreso =
+                    (i - 1) / 11;
+
+                const ancho =
+                    altura *
+                    (
+                        0.075 -
+                        progreso * 0.018
+                    );
+
+                const profundidad =
+                    altura *
+                    (
+                        0.018 +
+                        progreso * 0.006
+                    );
+
+                // -----------------------------------------
+                // COSTILLA — SEGMENTO 1
+                // -----------------------------------------
+
+                let costilla =
+                    crearHueso(
+                        `${nombreLado}Rib${i}_1`,
+                        toracica,
+                        lado * ancho,
+                        0,
+                        0
+                    );
+
+                crearMarcador(
+                    costilla,
+                    0.018
+                );
+
+                // -----------------------------------------
+                // COSTILLA — SEGMENTO 2
+                // -----------------------------------------
+
+                costilla =
+                    crearHueso(
+                        `${nombreLado}Rib${i}_2`,
+                        costilla,
+                        lado * ancho * 0.75,
+                        -altura * 0.004,
+                        -profundidad
+                    );
+
+                crearMarcador(
+                    costilla,
+                    0.018
+                );
+
+                // -----------------------------------------
+                // COSTILLA — SEGMENTO 3
+                // -----------------------------------------
+
+                costilla =
+                    crearHueso(
+                        `${nombreLado}Rib${i}_3`,
+                        costilla,
+                        -lado * ancho * 0.45,
+                        0,
+                        -profundidad
+                    );
+
+                crearMarcador(
+                    costilla,
+                    0.018
+                );
+
+                costillas.push(
+                    costilla
+                );
+            }
+        }
+
+        // =================================================
         // CERVICALES — 7
-        // -------------------------------------------------
+        // =================================================
 
         padre =
-            esternon;
+            toracicas[11];
 
         const cervicalPaso =
             (altura * 0.10) / 7;
@@ -373,9 +493,9 @@ export function iniciarRigEditor3D(contenedor) {
             );
         }
 
-        // -------------------------------------------------
+        // =================================================
         // CUELLO
-        // -------------------------------------------------
+        // =================================================
 
         const cuello =
             crearHueso(
@@ -391,9 +511,9 @@ export function iniciarRigEditor3D(contenedor) {
             0.032
         );
 
-        // -------------------------------------------------
+        // =================================================
         // CABEZA
-        // -------------------------------------------------
+        // =================================================
 
         const head =
             crearHueso(
@@ -409,9 +529,9 @@ export function iniciarRigEditor3D(contenedor) {
             0.07
         );
 
-        // -------------------------------------------------
-        // CONTROL CENTRAL DE CRÁNEO
-        // -------------------------------------------------
+        // =================================================
+        // CENTRO DEL CRÁNEO
+        // =================================================
 
         const skull =
             crearHueso(
@@ -427,9 +547,17 @@ export function iniciarRigEditor3D(contenedor) {
             0.055
         );
 
+        // =================================================
+        // RESULTADO
+        // =================================================
+
         return {
             suelo,
             hips,
+            toracicas,
+            esternon,
+            costillas,
+            cuello,
             head,
             skull
         };
@@ -455,7 +583,7 @@ export function iniciarRigEditor3D(contenedor) {
             );
 
             // =============================================
-            // CALCULAR TAMAÑO REAL DE MICAELA
+            // CALCULAR CAJA DEL MODELO
             // =============================================
 
             const caja =
@@ -482,7 +610,7 @@ export function iniciarRigEditor3D(contenedor) {
                 tamano.y;
 
             // =============================================
-            // CENTRAR RIG CON MODELO
+            // COLOCAR EL RIG EN EL SUELO DEL MODELO
             // =============================================
 
             rig.position.set(
@@ -492,7 +620,7 @@ export function iniciarRigEditor3D(contenedor) {
             );
 
             // =============================================
-            // CONSTRUIR COLUMNA
+            // CONSTRUIR RIG
             // =============================================
 
             construirColumna(
@@ -502,12 +630,15 @@ export function iniciarRigEditor3D(contenedor) {
             );
 
             // =============================================
-            // SKELETON HELPER
+            // HELPER VERDE
             // =============================================
+
+            const raizRig =
+                huesos[0];
 
             const helper =
                 new THREE.SkeletonHelper(
-                    rig.children[0]
+                    raizRig
                 );
 
             helper.material.color.set(
@@ -536,7 +667,7 @@ export function iniciarRigEditor3D(contenedor) {
                 🦴 Huesos creados: ${huesos.length}
                 <br><br>
 
-                <b>ETAPA 1</b>
+                <b>ETAPA 2</b>
                 <br>
                 ✅ Hips
                 <br>
@@ -545,6 +676,10 @@ export function iniciarRigEditor3D(contenedor) {
                 ✅ Thoracic ×12
                 <br>
                 ✅ Sternum
+                <br>
+                ✅ Costillas ×24
+                <br>
+                ✅ 3 segmentos por costilla
                 <br>
                 ✅ Cervical ×7
                 <br>
@@ -556,7 +691,7 @@ export function iniciarRigEditor3D(contenedor) {
             `;
 
             // =============================================
-            // AJUSTAR CÁMARA
+            // CÁMARA
             // =============================================
 
             controles.target.set(
@@ -577,36 +712,6 @@ export function iniciarRigEditor3D(contenedor) {
             camara.lookAt(
                 controles.target
             );
-
-            // =============================================
-            // ACTUALIZAR MARCADORES
-            // =============================================
-
-            function actualizarMarcadores() {
-
-                marcadores
-                    .children
-                    .forEach(
-                        (esfera, indice) => {
-
-                            const hueso =
-                                huesos[indice];
-
-                            if (!hueso) return;
-
-                            esfera.position.copy(
-                                hueso.getWorldPosition(
-                                    new THREE.Vector3()
-                                )
-                            );
-                        }
-                    );
-            }
-
-            // Guardamos la función
-            escena.userData
-                .actualizarMarcadores =
-                actualizarMarcadores;
         },
 
         undefined,
@@ -661,15 +766,6 @@ export function iniciarRigEditor3D(contenedor) {
 
         controles.update();
 
-        if (
-            escena.userData
-                .actualizarMarcadores
-        ) {
-
-            escena.userData
-                .actualizarMarcadores();
-        }
-
         renderer.render(
             escena,
             camara
@@ -677,4 +773,4 @@ export function iniciarRigEditor3D(contenedor) {
     }
 
     animar();
-            }
+                }
