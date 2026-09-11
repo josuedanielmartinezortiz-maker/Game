@@ -1,6 +1,6 @@
 // =====================================================
 // 🎮 GAMERPRO GAME — RIG EDITOR 3D
-// 🦴 Editor de esqueleto de Micaela
+// 🦴 MICAELA CHIBI
 // =====================================================
 
 import * as THREE from "three";
@@ -19,7 +19,7 @@ import {
 
 
 // =====================================================
-// 🚀 EDITOR
+// 🚀 INICIAR EDITOR
 // =====================================================
 
 export function iniciarRigEditor3D(contenedor) {
@@ -32,230 +32,11 @@ export function iniciarRigEditor3D(contenedor) {
 
 
     // =================================================
-    // 🎨 ESTILOS DEL EDITOR
-    // =================================================
-
-    const estilo = document.createElement("style");
-
-    estilo.textContent = `
-        #rigEditorRoot {
-            position: fixed;
-            inset: 0;
-            overflow: hidden;
-            background: #111;
-            font-family: Arial, sans-serif;
-        }
-
-        #rigCanvas {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        #rigPanel {
-            position: absolute;
-            top: 14px;
-            left: 14px;
-
-            width: 250px;
-            max-width: calc(100vw - 28px);
-
-            padding: 14px;
-
-            background: rgba(20, 20, 24, 0.94);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 14px;
-
-            color: white;
-
-            box-sizing: border-box;
-
-            z-index: 20;
-
-            box-shadow:
-                0 10px 30px rgba(0,0,0,0.35);
-        }
-
-        #rigTitle {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        #rigStatus {
-            font-size: 13px;
-            color: #bdbdbd;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-
-        #rigSelected {
-            padding: 8px;
-            margin-bottom: 10px;
-
-            background: rgba(255,255,255,0.06);
-            border-radius: 8px;
-
-            font-size: 13px;
-        }
-
-        .rigRow {
-            display: flex;
-            gap: 7px;
-            margin-top: 7px;
-        }
-
-        .rigButton {
-            flex: 1;
-
-            border: 0;
-            border-radius: 8px;
-
-            padding: 9px 7px;
-
-            color: white;
-            background: #292932;
-
-            cursor: pointer;
-
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .rigButton:hover {
-            background: #3a3a46;
-        }
-
-        .rigButton.active {
-            background: #4b75ff;
-        }
-
-        .rigButton.locked {
-            background: #9b3030;
-        }
-
-        #rigBack {
-            margin-top: 9px;
-            width: 100%;
-        }
-
-        #rigHint {
-            margin-top: 10px;
-
-            font-size: 11px;
-            line-height: 1.4;
-
-            color: #999;
-        }
-    `;
-
-    document.head.appendChild(estilo);
-
-
-    // =================================================
-    // 🖥️ RAÍZ
-    // =================================================
-
-    const root = document.createElement("div");
-
-    root.id = "rigEditorRoot";
-
-    contenedor.appendChild(root);
-
-
-    // =================================================
-    // 🎨 CANVAS
-    // =================================================
-
-    const canvas = document.createElement("canvas");
-
-    canvas.id = "rigCanvas";
-
-    root.appendChild(canvas);
-
-
-    // =================================================
-    // 🧰 PANEL
-    // =================================================
-
-    const panel = document.createElement("div");
-
-    panel.id = "rigPanel";
-
-    panel.innerHTML = `
-        <div id="rigTitle">
-            🦴 RIG MICAELA
-        </div>
-
-        <div id="rigStatus">
-            Cargando modelo...
-        </div>
-
-        <div id="rigSelected">
-            Hueso seleccionado:
-            <strong>Ninguno</strong>
-        </div>
-
-        <div class="rigRow">
-            <button id="rigLock" class="rigButton">
-                🔓 Micaela
-            </button>
-        </div>
-
-        <div class="rigRow">
-            <button id="rigMove" class="rigButton active">
-                ↔ Mover
-            </button>
-
-            <button id="rigRotate" class="rigButton">
-                ⟳ Rotar
-            </button>
-        </div>
-
-        <div class="rigRow">
-            <button id="rigReset" class="rigButton">
-                ↩ Restablecer
-            </button>
-        </div>
-
-        <button id="rigBack" class="rigButton">
-            🎮 Volver al juego
-        </button>
-
-        <div id="rigHint">
-            🖱️ Arrastra para mover la cámara.<br>
-            🦴 Toca un punto rojo para seleccionar un hueso.<br>
-            🔒 Con Micaela bloqueada puedes editar los huesos.
-        </div>
-    `;
-
-    root.appendChild(panel);
-
-
-    // =================================================
-    // 🔎 REFERENCIAS UI
-    // =================================================
-
-    const status = panel.querySelector("#rigStatus");
-    const selectedLabel = panel.querySelector("#rigSelected strong");
-
-    const lockButton = panel.querySelector("#rigLock");
-
-    const moveButton = panel.querySelector("#rigMove");
-    const rotateButton = panel.querySelector("#rigRotate");
-
-    const resetButton = panel.querySelector("#rigReset");
-
-    const backButton = panel.querySelector("#rigBack");
-
-
-    // =================================================
     // 🌎 ESCENA
     // =================================================
 
-    const scene = new THREE.Scene();
+    const scene =
+        new THREE.Scene();
 
     scene.background =
         new THREE.Color(0x111111);
@@ -276,64 +57,49 @@ export function iniciarRigEditor3D(contenedor) {
 
     camera.position.set(
         0,
-        1.5,
-        3.2
-    );
-
-
-    // =================================================
-    // 💡 LUCES
-    // =================================================
-
-    const luzAmbiente =
-        new THREE.HemisphereLight(
-            0xffffff,
-            0x333333,
-            2
-        );
-
-    scene.add(luzAmbiente);
-
-
-    const luzPrincipal =
-        new THREE.DirectionalLight(
-            0xffffff,
-            3
-        );
-
-    luzPrincipal.position.set(
-        2,
-        4,
+        1.15,
         3
     );
 
-    scene.add(luzPrincipal);
 
+    // =================================================
+    // 🎨 CANVAS
+    // =================================================
 
-    const luzRelleno =
-        new THREE.DirectionalLight(
-            0x88aaff,
-            1
-        );
+    const canvas =
+        document.createElement("canvas");
 
-    luzRelleno.position.set(
-        -3,
-        2,
-        -2
+    canvas.id =
+        "rigCanvas";
+
+    canvas.style.position =
+        "fixed";
+
+    canvas.style.inset =
+        "0";
+
+    canvas.style.width =
+        "100%";
+
+    canvas.style.height =
+        "100%";
+
+    canvas.style.display =
+        "block";
+
+    contenedor.appendChild(
+        canvas
     );
-
-    scene.add(luzRelleno);
 
 
     // =================================================
-    // 🎥 RENDERER
+    // 🖥️ RENDERER
     // =================================================
 
     const renderer =
         new THREE.WebGLRenderer({
             canvas,
-            antialias: true,
-            alpha: false
+            antialias: true
         });
 
     renderer.setPixelRatio(
@@ -350,7 +116,40 @@ export function iniciarRigEditor3D(contenedor) {
 
 
     // =================================================
-    // 🌀 CONTROLES DE CÁMARA
+    // 💡 ILUMINACIÓN
+    // =================================================
+
+    const luzAmbiente =
+        new THREE.HemisphereLight(
+            0xffffff,
+            0x444444,
+            2
+        );
+
+    scene.add(
+        luzAmbiente
+    );
+
+
+    const luzPrincipal =
+        new THREE.DirectionalLight(
+            0xffffff,
+            3
+        );
+
+    luzPrincipal.position.set(
+        2,
+        4,
+        3
+    );
+
+    scene.add(
+        luzPrincipal
+    );
+
+
+    // =================================================
+    // 🌀 CÁMARA ORBITAL
     // =================================================
 
     const orbit =
@@ -359,13 +158,15 @@ export function iniciarRigEditor3D(contenedor) {
             canvas
         );
 
-    orbit.enableDamping = true;
+    orbit.enableDamping =
+        true;
 
-    orbit.dampingFactor = 0.08;
+    orbit.dampingFactor =
+        0.08;
 
     orbit.target.set(
         0,
-        1.0,
+        0.9,
         0
     );
 
@@ -380,11 +181,17 @@ export function iniciarRigEditor3D(contenedor) {
             canvas
         );
 
-    transform.setMode("translate");
+    transform.setMode(
+        "translate"
+    );
 
-    transform.setSpace("local");
+    transform.setSpace(
+        "local"
+    );
 
-    transform.setSize(0.8);
+    transform.setSize(
+        0.7
+    );
 
     scene.add(
         transform.getHelper()
@@ -392,486 +199,63 @@ export function iniciarRigEditor3D(contenedor) {
 
 
     // =================================================
-    // 📦 VARIABLES
+    // 📦 VARIABLES DEL RIG
     // =================================================
 
     let modelo = null;
 
-    let modeloBloqueado = false;
-
-    let huesos = {};
+    let esqueleto = null;
 
     let huesoSeleccionado = null;
 
-    let markers = [];
+    let modeloBloqueado = true;
 
-    let skeletonHelper = null;
+    let modo =
+        "translate";
 
-    let rigGroup = null;
+    const huesos = {};
 
-    let modo = "translate";
+    const marcadores = [];
 
 
     // =================================================
-    // 🦴 CREAR RIG
+    // 🧠 PROPORCIONES CHIBI
     // =================================================
+    //
+    // NO usamos una escala global.
+    //
+    // La cabeza será grande y el cuerpo compacto.
+    //
 
-    function crearRigBasico() {
+    const CHIBI = {
 
-        rigGroup =
-            new THREE.Group();
+        cabeza: 0.38,
 
-        rigGroup.name =
-            "Esqueleto_Micaela";
+        cuello: 0.07,
 
-        scene.add(rigGroup);
+        torax: 0.24,
 
+        pelvis: 0.18,
 
-        // ---------------------------------------------
-        // RAÍZ
-        // ---------------------------------------------
+        brazo: 0.25,
 
-        const rootBone =
-            new THREE.Bone();
+        antebrazo: 0.20,
 
-        rootBone.name =
-            "root";
+        mano: 0.10,
 
-        rootBone.position.set(
-            0,
-            0,
-            0
-        );
+        muslo: 0.28,
 
-        rigGroup.add(
-            rootBone
-        );
+        pierna: 0.25,
 
-        huesos.root =
-            rootBone;
-
-
-        // ---------------------------------------------
-        // PELVIS
-        // ---------------------------------------------
-
-        const pelvis =
-            crearBone(
-                "pelvis",
-                rootBone,
-                0,
-                0.85,
-                0
-            );
-
-
-        // ---------------------------------------------
-        // COLUMNA
-        // ---------------------------------------------
-
-        let padre =
-            pelvis;
-
-        for (
-            let i = 1;
-            i <= 5;
-            i++
-        ) {
-
-            padre =
-                crearBone(
-                    `lumbar_${i}`,
-                    padre,
-                    0,
-                    0.10,
-                    0
-                );
-        }
-
-
-        for (
-            let i = 1;
-            i <= 12;
-            i++
-        ) {
-
-            padre =
-                crearBone(
-                    `toracica_${i}`,
-                    padre,
-                    0,
-                    0.09,
-                    0
-                );
-        }
-
-
-        for (
-            let i = 1;
-            i <= 7;
-            i++
-        ) {
-
-            padre =
-                crearBone(
-                    `cervical_${i}`,
-                    padre,
-                    0,
-                    0.08,
-                    0
-                );
-        }
-
-
-        // ---------------------------------------------
-        // CABEZA
-        // ---------------------------------------------
-
-        const cabeza =
-            crearBone(
-                "craneo",
-                padre,
-                0,
-                0.22,
-                0
-            );
-
-
-        // ---------------------------------------------
-        // CUELLO / HIOIDES
-        // ---------------------------------------------
-
-        crearBone(
-            "hioides",
-            padre,
-            0,
-            0.03,
-            0
-        );
-
-
-        // ---------------------------------------------
-        // TÓRAX
-        // ---------------------------------------------
-
-        const torax =
-            crearBone(
-                "esternon",
-                huesos.toracica_6,
-                0,
-                0,
-                0.08
-            );
-
-
-        // ---------------------------------------------
-        // COSTILLAS
-        // ---------------------------------------------
-
-        for (
-            let i = 1;
-            i <= 12;
-            i++
-        ) {
-
-            const vertebra =
-                huesos[
-                    `toracica_${i}`
-                ];
-
-            crearBone(
-                `costilla_${i}_izq`,
-                vertebra,
-                -0.18,
-                0,
-                0
-            );
-
-            crearBone(
-                `costilla_${i}_der`,
-                vertebra,
-                0.18,
-                0,
-                0
-            );
-        }
-
-
-        // ---------------------------------------------
-        // BRAZO IZQUIERDO
-        // ---------------------------------------------
-
-        const hombroIzq =
-            crearBone(
-                "clavicula_izq",
-                torax,
-                -0.20,
-                0.05,
-                0
-            );
-
-        const brazoIzq =
-            crearBone(
-                "humero_izq",
-                hombroIzq,
-                -0.25,
-                -0.05,
-                0
-            );
-
-        const antebrazoIzq =
-            crearBone(
-                "radio_izq",
-                brazoIzq,
-                -0.35,
-                0,
-                0
-            );
-
-        crearBone(
-            "cubito_izq",
-            brazoIzq,
-            -0.34,
-            -0.02,
-            0
-        );
-
-        const manoIzq =
-            crearBone(
-                "mano_izq",
-                antebrazoIzq,
-                -0.32,
-                0,
-                0
-            );
-
-        crearDedos(
-            manoIzq,
-            "izq"
-        );
-
-
-        // ---------------------------------------------
-        // BRAZO DERECHO
-        // ---------------------------------------------
-
-        const hombroDer =
-            crearBone(
-                "clavicula_der",
-                torax,
-                0.20,
-                0.05,
-                0
-            );
-
-        const brazoDer =
-            crearBone(
-                "humero_der",
-                hombroDer,
-                0.25,
-                -0.05,
-                0
-            );
-
-        const antebrazoDer =
-            crearBone(
-                "radio_der",
-                brazoDer,
-                0.35,
-                0,
-                0
-            );
-
-        crearBone(
-            "cubito_der",
-            brazoDer,
-            0.34,
-            -0.02,
-            0
-        );
-
-        const manoDer =
-            crearBone(
-                "mano_der",
-                antebrazoDer,
-                0.32,
-                0,
-                0
-            );
-
-        crearDedos(
-            manoDer,
-            "der"
-        );
-
-
-        // ---------------------------------------------
-        // PIERNA IZQUIERDA
-        // ---------------------------------------------
-
-        const caderaIzq =
-            crearBone(
-                "pelvis_izq",
-                pelvis,
-                -0.16,
-                -0.08,
-                0
-            );
-
-        const femurIzq =
-            crearBone(
-                "femur_izq",
-                caderaIzq,
-                0,
-                -0.42,
-                0
-            );
-
-        const rodillaIzq =
-            crearBone(
-                "rotula_izq",
-                femurIzq,
-                0,
-                -0.42,
-                0
-            );
-
-        const tibiaIzq =
-            crearBone(
-                "tibia_izq",
-                rodillaIzq,
-                0,
-                -0.40,
-                0
-            );
-
-        crearBone(
-            "perone_izq",
-            rodillaIzq,
-            -0.05,
-            -0.40,
-            0
-        );
-
-        const pieIzq =
-            crearBone(
-                "pie_izq",
-                tibiaIzq,
-                0,
-                -0.12,
-                0.12
-            );
-
-        crearDedosPie(
-            pieIzq,
-            "izq"
-        );
-
-
-        // ---------------------------------------------
-        // PIERNA DERECHA
-        // ---------------------------------------------
-
-        const caderaDer =
-            crearBone(
-                "pelvis_der",
-                pelvis,
-                0.16,
-                -0.08,
-                0
-            );
-
-        const femurDer =
-            crearBone(
-                "femur_der",
-                caderaDer,
-                0,
-                -0.42,
-                0
-            );
-
-        const rodillaDer =
-            crearBone(
-                "rotula_der",
-                femurDer,
-                0,
-                -0.42,
-                0
-            );
-
-        const tibiaDer =
-            crearBone(
-                "tibia_der",
-                rodillaDer,
-                0,
-                -0.40,
-                0
-            );
-
-        crearBone(
-            "perone_der",
-            rodillaDer,
-            0.05,
-            -0.40,
-            0
-        );
-
-        const pieDer =
-            crearBone(
-                "pie_der",
-                tibiaDer,
-                0,
-                -0.12,
-                0.12
-            );
-
-        crearDedosPie(
-            pieDer,
-            "der"
-        );
-
-
-        // ---------------------------------------------
-        // HELPER
-        // ---------------------------------------------
-
-        skeletonHelper =
-            new THREE.SkeletonHelper(
-                rigGroup
-            );
-
-        skeletonHelper.material.color.set(
-            0x00ff66
-        );
-
-        skeletonHelper.material.linewidth = 2;
-
-        scene.add(
-            skeletonHelper
-        );
-
-
-        // ---------------------------------------------
-        // PUNTOS
-        // ---------------------------------------------
-
-        Object.values(
-            huesos
-        ).forEach(
-            crearMarcador
-        );
-
-
-        status.textContent =
-            `Rig creado: ${Object.keys(huesos).length} elementos`;
-    }
+        pie: 0.12
+    };
 
 
     // =================================================
     // 🦴 CREAR HUESO
     // =================================================
 
-    function crearBone(
+    function crearHueso(
         nombre,
         padre,
         x,
@@ -903,107 +287,17 @@ export function iniciarRigEditor3D(contenedor) {
 
 
     // =================================================
-    // ✋ DEDOS
-    // =================================================
-
-    function crearDedos(
-        mano,
-        lado
-    ) {
-
-        const nombres = [
-            "pulgar",
-            "indice",
-            "medio",
-            "anular",
-            "menique"
-        ];
-
-        nombres.forEach(
-            (
-                nombre,
-                indice
-            ) => {
-
-                const dedo =
-                    crearBone(
-                        `${nombre}_${lado}`,
-                        mano,
-                        lado === "izq"
-                            ? -0.05 - indice * 0.015
-                            : 0.05 + indice * 0.015,
-                        -0.02,
-                        0.04
-                    );
-
-                crearBone(
-                    `${nombre}_${lado}_distal`,
-                    dedo,
-                    0,
-                    -0.055,
-                    0
-                );
-            }
-        );
-    }
-
-
-    // =================================================
-    // 🦶 DEDOS DEL PIE
-    // =================================================
-
-    function crearDedosPie(
-        pie,
-        lado
-    ) {
-
-        const nombres = [
-            "dedo_gordo",
-            "dedo_2",
-            "dedo_3",
-            "dedo_4",
-            "dedo_5"
-        ];
-
-        nombres.forEach(
-            (
-                nombre,
-                indice
-            ) => {
-
-                const dedo =
-                    crearBone(
-                        `${nombre}_${lado}`,
-                        pie,                    lado === "izq"
-                        ? -0.05 + indice * 0.025
-                        : 0.05 - indice * 0.025,
-                    0,
-                    0.06
-                );
-
-                crearBone(
-                    `${nombre}_${lado}_distal`,
-                    dedo,
-                    0,
-                    0,
-                    0.045
-                );
-            }
-        );
-    }
-
-
-    // =================================================
-    // 🔴 MARCADOR
+    // 🔴 CREAR PELOTA DEL HUESO
     // =================================================
 
     function crearMarcador(
-        bone
+        bone,
+        radio = 0.045
     ) {
 
         const geometry =
             new THREE.SphereGeometry(
-                0.045,
+                radio,
                 12,
                 12
             );
@@ -1011,445 +305,2032 @@ export function iniciarRigEditor3D(contenedor) {
         const material =
             new THREE.MeshBasicMaterial({
                 color: 0xff2222,
+
                 depthTest: false,
+
                 depthWrite: false
             });
 
-        const marker =
+        const marcador =
             new THREE.Mesh(
                 geometry,
                 material
             );
 
-        marker.name =
+        marcador.name =
             `marker_${bone.name}`;
 
-        marker.userData.bone =
+        marcador.userData.bone =
             bone;
 
-        marker.renderOrder =
+        marcador.renderOrder =
             999;
 
         bone.add(
-            marker
+            marcador
         );
 
-        markers.push(
-            marker
+        marcadores.push(
+            marcador
         );
+
+        return marcador;
     }
 
 
     // =================================================
-    // 🧍 CARGAR MICAELA
+    // 🧠 CABEZA CHIBI
     // =================================================
 
-    const loader =
-        new GLTFLoader();
+    function crearCabezaChibi(
+        padre
+    ) {
 
-    loader.load(
-        "../3D/micaela.glb",
-
-        (gltf) => {
-
-            modelo =
-                gltf.scene;
-
-            modelo.name =
-                "Micaela";
-
-            modelo.position.set(
+        const craneo =
+            crearHueso(
+                "craneo",
+                padre,
                 0,
-                0.65,
+                CHIBI.cabeza,
                 0
             );
 
-            modelo.scale.set(
-                1,
-                1,
-                1
-            );
-
-            scene.add(
-                modelo
-            );
-
-
-            // -----------------------------------------
-            // SOMBRAS
-            // -----------------------------------------
-
-            modelo.traverse(
-                objeto => {
-
-                    if (
-                        objeto.isMesh
-                    ) {
-
-                        objeto.castShadow =
-                            true;
-
-                        objeto.receiveShadow =
-                            true;
-                    }
-                }
-            );
-
-
-            // -----------------------------------------
-            // CREAR ESQUELETO
-            // -----------------------------------------
-
-            crearRigBasico();
-
-
-            status.textContent =
-                "Micaela lista. Selecciona un punto rojo.";
-        },
-
-        undefined,
-
-        error => {
-
-            console.error(
-                "Error cargando Micaela:",
-                error
-            );
-
-            status.textContent =
-                "❌ Error cargando micaela.glb";
-        }
-    );
-
-
-    // =================================================
-    // 🎯 RAYCASTER
-    // =================================================
-
-    const raycaster =
-        new THREE.Raycaster();
-
-    const pointer =
-        new THREE.Vector2();
-
-
-    // =================================================
-    // 🖱️ SELECCIONAR HUESO
-    // =================================================
-
-    canvas.addEventListener(
-        "pointerdown",
-
-        event => {
-
-            const rect =
-                canvas.getBoundingClientRect();
-
-            pointer.x =
-                (
-                    (event.clientX - rect.left)
-                    /
-                    rect.width
-                ) * 2 - 1;
-
-            pointer.y =
-                -(
-                    (event.clientY - rect.top)
-                    /
-                    rect.height
-                ) * 2 + 1;
-
-
-            raycaster.setFromCamera(
-                pointer,
-                camera
-            );
-
-
-            const impactos =
-                raycaster.intersectObjects(
-                    markers,
-                    false
-                );
-
-
-            if (
-                impactos.length === 0
-            ) {
-                return;
-            }
-
-
-            const marker =
-                impactos[0].object;
-
-            const bone =
-                marker.userData.bone;
-
-
-            seleccionarHueso(
-                bone
-            );
-        }
-    );
-
-
-    // =================================================
-    // 🦴 SELECCIONAR HUESO
-    // =================================================
-
-    function seleccionarHueso(
-        bone
-    ) {
-
-        huesoSeleccionado =
-            bone;
-
-        selectedLabel.textContent =
-            bone.name;
-
-
-        // ---------------------------------------------
-        // REINICIAR COLOR DE MARCADORES
-        // ---------------------------------------------
-
-        markers.forEach(
-            marker => {
-
-                marker.material.color.set(
-                    0xff2222
-                );
-            }
+        // 🔴 PELOTA CENTRAL DEL CRÁNEO
+        crearMarcador(
+            craneo,
+            0.075
         );
 
 
         // ---------------------------------------------
-        // MARCADOR SELECCIONADO
+        // 🧠 HUESOS PRINCIPALES DEL CRÁNEO
         // ---------------------------------------------
 
-        const marker =
-            markers.find(
-                m =>
-                    m.userData.bone === bone
-            );
-
-        if (marker) {
-
-            marker.material.color.set(
-                0xffff00
-            );
-        }
-
-
-        // ---------------------------------------------
-        // ACTIVAR CONTROLES
-        // ---------------------------------------------
-
-        transform.attach(
-            bone
+        crearHueso(
+            "frontal",
+            craneo,
+            0,
+            0.05,
+            0.025
         );
 
-        transform.setMode(
-            modo
+        crearHueso(
+            "parietal_izq",
+            craneo,
+            -0.10,
+            0.02,
+            0
         );
+
+        crearHueso(
+            "parietal_der",
+            craneo,
+            0.10,
+            0.02,
+            0
+        );
+
+        crearHueso(
+            "temporal_izq",
+            craneo,
+            -0.15,
+            -0.03,
+            0
+        );
+
+        crearHueso(
+            "temporal_der",
+            craneo,
+            0.15,
+            -0.03,
+            0
+        );
+
+        crearHueso(
+            "occipital",
+            craneo,
+            0,
+            -0.04,
+            -0.12
+        );
+
+        crearHueso(
+            "esfenoides",
+            craneo,
+            0,
+            -0.02,
+            0.08
+        );
+
+        crearHueso(
+            "etmoides",
+            craneo,
+            0,
+            0.01,
+            0.10
+        );
+
+
+        // ---------------------------------------------
+        // 👄 MANDÍBULA
+        // ---------------------------------------------
+
+        crearHueso(
+            "mandibula",
+            craneo,
+            0,
+            -0.16,
+            0.08
+        );
+
+
+        // ---------------------------------------------
+        // 👁️ CONTROLES FACIALES
+        // ---------------------------------------------
+
+        crearHueso(
+            "ojo_izq",
+            craneo,
+            -0.10,
+            -0.02,
+            0.16
+        );
+
+        crearHueso(
+            "ojo_der",
+            craneo,
+            0.10,
+            -0.02,
+            0.16
+        );
+
+
+        return craneo;
     }
 
 
     // =================================================
-    // ↔ MODO MOVER
+    // 🦴 CONSTRUIR ESQUELETO CHIBI
     // =================================================
 
-    moveButton.onclick =
+    function crearEsqueletoChibi() {
+
+        esqueleto =
+            new THREE.Group();
+
+        esqueleto.name =
+            "Esqueleto_Micaela";
+
+        scene.add(
+            esqueleto
+        );
+
+
+        // ---------------------------------------------
+        // ROOT
+        // ---------------------------------------------
+
+        const root =
+            crearHueso(
+                "root",
+                esqueleto,
+                0,
+                0,
+                0
+            );
+
+        crearMarcador(
+            root,
+            0.05
+        );
+
+
+        // ---------------------------------------------
+        // 🦴 PELVIS
+        // ---------------------------------------------
+
+        const pelvis =
+            crearHueso(
+                "pelvis",
+                root,
+                0,
+                CHIBI.pelvis,
+                0
+            );
+
+        crearMarcador(
+            pelvis
+        );
+
+
+        // ---------------------------------------------
+        // 🫁 TÓRAX
+        // ---------------------------------------------
+
+        const torax =
+            crearHueso(
+                "torax",
+                pelvis,
+                0,
+                CHIBI.torax,
+                0
+            );
+
+        crearMarcador(
+            torax
+        );
+
+
+        // ---------------------------------------------
+        // 🦴 CUELLO
+        // ---------------------------------------------
+
+        const cuello =
+            crearHueso(
+                "cuello",
+                torax,
+                0,
+                CHIBI.cuello,
+                0
+            );
+
+        crearMarcador(
+            cuello
+        );
+
+
+        // ---------------------------------------------
+        // 🧠 CABEZA
+        // ---------------------------------------------
+
+        crearCabezaChibi(
+            cuello
+        );
+
+
+        console.log(
+            "🦴 Esqueleto chibi creado:",
+            Object.keys(huesos).length,
+            "huesos"
+        );
+}
+    // =====================================================
+// 🫁 TÓRAX Y COSTILLAS
+// =====================================================
+
+function crearCostillas(
+    torax
+) {
+
+    for (
+        let i = 1;
+        i <= 12;
+        i++
+    ) {
+
+        const altura =
+            0.015 * (i - 1);
+
+        const costillaIzq =
+            crearHueso(
+                `costilla_${i}_izq`,
+                torax,
+                -0.08,
+                altura,
+                0
+            );
+
+        const costillaDer =
+            crearHueso(
+                `costilla_${i}_der`,
+                torax,
+                0.08,
+                altura,
+                0
+            );
+
+        crearMarcador(
+            costillaIzq,
+            0.025
+        );
+
+        crearMarcador(
+            costillaDer,
+            0.025
+        );
+    }
+}
+
+
+// =====================================================
+// 💪 BRAZO IZQUIERDO
+// =====================================================
+
+function crearBrazoIzquierdo(
+    torax
+) {
+
+    const clavicula =
+        crearHueso(
+            "clavicula_izq",
+            torax,
+            -0.12,
+            0.04,
+            0
+        );
+
+    crearMarcador(
+        clavicula
+    );
+
+
+    const humero =
+        crearHueso(
+            "humero_izq",
+            clavicula,
+            -CHIBI.brazo,
+            -0.03,
+            0
+        );
+
+    crearMarcador(
+        humero
+    );
+
+
+    const radio =
+        crearHueso(
+            "radio_izq",
+            humero,
+            -CHIBI.antebrazo,
+            0,
+            0
+        );
+
+    crearMarcador(
+        radio
+    );
+
+
+    const cubito =
+        crearHueso(
+            "cubito_izq",
+            humero,
+            -CHIBI.antebrazo,
+            -0.025,
+            0
+        );
+
+    crearMarcador(
+        cubito
+    );
+
+
+    const mano =
+        crearHueso(
+            "mano_izq",
+            radio,
+            -CHIBI.mano,
+            0,
+            0
+        );
+
+    crearMarcador(
+        mano,
+        0.035
+    );
+
+
+    crearDedosMano(
+        mano,
+        "izq"
+    );
+}
+
+
+// =====================================================
+// 💪 BRAZO DERECHO
+// =====================================================
+
+function crearBrazoDerecho(
+    torax
+) {
+
+    const clavicula =
+        crearHueso(
+            "clavicula_der",
+            torax,
+            0.12,
+            0.04,
+            0
+        );
+
+    crearMarcador(
+        clavicula
+    );
+
+
+    const humero =
+        crearHueso(
+            "humero_der",
+            clavicula,
+            CHIBI.brazo,
+            -0.03,
+            0
+        );
+
+    crearMarcador(
+        humero
+    );
+
+
+    const radio =
+        crearHueso(
+            "radio_der",
+            humero,
+            CHIBI.antebrazo,
+            0,
+            0
+        );
+
+    crearMarcador(
+        radio
+    );
+
+
+    const cubito =
+        crearHueso(
+            "cubito_der",
+            humero,
+            CHIBI.antebrazo,
+            -0.025,
+            0
+        );
+
+    crearMarcador(
+        cubito
+    );
+
+
+    const mano =
+        crearHueso(
+            "mano_der",
+            radio,
+            CHIBI.mano,
+            0,
+            0
+        );
+
+    crearMarcador(
+        mano,
+        0.035
+    );
+
+
+    crearDedosMano(
+        mano,
+        "der"
+    );
+}
+
+
+// =====================================================
+// ✋ DEDOS DE LAS MANOS
+// =====================================================
+
+function crearDedosMano(
+    mano,
+    lado
+) {
+
+    const dedos = [
+        "pulgar",
+        "indice",
+        "medio",
+        "anular",
+        "menique"
+    ];
+
+
+    dedos.forEach(
+        (
+            nombre,
+            indice
+        ) => {
+
+            const separacion =
+                (indice - 2) *
+                0.025;
+
+            const x =
+                lado === "izq"
+                    ? separacion
+                    : -separacion;
+
+
+            const dedo =
+                crearHueso(
+                    `${nombre}_${lado}`,
+                    mano,
+                    x,
+                    -0.025,
+                    0.035
+                );
+
+            crearMarcador(
+                dedo,
+                0.022
+            );
+
+
+            const falange =
+                crearHueso(
+                    `${nombre}_${lado}_media`,
+                    dedo,
+                    0,
+                    -0.045,
+                    0
+                );
+
+            crearMarcador(
+                falange,
+                0.018
+            );
+
+
+            crearHueso(
+                `${nombre}_${lado}_distal`,
+                falange,
+                0,
+                -0.035,
+                0
+            );
+        }
+    );
+}
+
+
+// =====================================================
+// 🦵 PIERNA IZQUIERDA
+// =====================================================
+
+function crearPiernaIzquierda(
+    pelvis
+) {
+
+    const cadera =
+        crearHueso(
+            "pelvis_izq",
+            pelvis,
+            -0.10,
+            -0.04,
+            0
+        );
+
+    crearMarcador(
+        cadera
+    );
+
+
+    const femur =
+        crearHueso(
+            "femur_izq",
+            cadera,
+            0,
+            -CHIBI.muslo,
+            0
+        );
+
+    crearMarcador(
+        femur
+    );
+
+
+    const rotula =
+        crearHueso(
+            "rotula_izq",
+            femur,
+            0,
+            -0.025,
+            0.035
+        );
+
+    crearMarcador(
+        rotula,
+        0.035
+    );
+
+
+    const tibia =
+        crearHueso(
+            "tibia_izq",
+            rotula,
+            0,
+            -CHIBI.pierna,
+            0
+        );
+
+    crearMarcador(
+        tibia
+    );
+
+
+    const perone =
+        crearHueso(
+            "perone_izq",
+            rotula,
+            -0.025,
+            -CHIBI.pierna,
+            0
+        );
+
+    crearMarcador(
+        perone,
+        0.025
+    );
+
+
+    const pie =
+        crearHueso(
+            "pie_izq",
+            tibia,
+            0,
+            -CHIBI.pie,
+            0.07
+        );
+
+    crearMarcador(
+        pie,
+        0.035
+    );
+
+
+    crearDedosPie(
+        pie,
+        "izq"
+    );
+}
+
+
+// =====================================================
+// 🦵 PIERNA DERECHA
+// =====================================================
+
+function crearPiernaDerecha(
+    pelvis
+) {
+
+    const cadera =
+        crearHueso(
+            "pelvis_der",
+            pelvis,
+            0.10,
+            -0.04,
+            0
+        );
+
+    crearMarcador(
+        cadera
+    );
+
+
+    const femur =
+        crearHueso(
+            "femur_der",
+            cadera,
+            0,
+            -CHIBI.muslo,
+            0
+        );
+
+    crearMarcador(
+        femur
+    );
+
+
+    const rotula =
+        crearHueso(
+            "rotula_der",
+            femur,
+            0,
+            -0.025,
+            0.035
+        );
+
+    crearMarcador(
+        rotula,
+        0.035
+    );
+
+
+    const tibia =
+        crearHueso(
+            "tibia_der",
+            rotula,
+            0,
+            -CHIBI.pierna,
+            0
+        );
+
+    crearMarcador(
+        tibia
+    );
+
+
+    const perone =
+        crearHueso(
+            "perone_der",
+            rotula,
+            0.025,
+            -CHIBI.pierna,
+            0
+        );
+
+    crearMarcador(
+        perone,
+        0.025
+    );
+
+
+    const pie =
+        crearHueso(
+            "pie_der",
+            tibia,
+            0,
+            -CHIBI.pie,
+            0.07
+        );
+
+    crearMarcador(
+        pie,
+        0.035
+    );
+
+
+    crearDedosPie(
+        pie,
+        "der"
+    );
+}
+
+
+// =====================================================
+// 🦶 DEDOS DE LOS PIES
+// =====================================================
+
+function crearDedosPie(
+    pie,
+    lado
+) {
+
+    const dedos = [
+        "dedo_gordo",
+        "dedo_2",
+        "dedo_3",
+        "dedo_4",
+        "dedo_5"
+    ];
+
+
+    dedos.forEach(
+        (
+            nombre,
+            indice
+        ) => {
+
+            const separacion =
+                (indice - 2) *
+                0.025;
+
+            const x =
+                lado === "izq"
+                    ? separacion
+                    : -separacion;
+
+
+            const dedo =
+                crearHueso(
+                    `${nombre}_${lado}`,
+                    pie,
+                    x,
+                    0,
+                    0.06
+                );
+
+            crearMarcador(
+                dedo,
+                0.020
+            );
+
+
+            crearHueso(
+                `${nombre}_${lado}_distal`,
+                dedo,
+                0,
+                0,
+                0.045
+            );
+        }
+    );
+        }
+    // =====================================================
+// 🦴 BLOQUE 3 — TERMINAR ESQUELETO + MICAELA
+// =====================================================
+
+// =====================================================
+// COMPLETAR EL ESQUELETO CHIBI
+// =====================================================
+
+crearCostillas(torax);
+
+crearBrazoIzquierdo(torax);
+crearBrazoDerecho(torax);
+
+crearPiernaIzquierda(pelvis);
+crearPiernaDerecha(pelvis);
+
+
+// =====================================================
+// 🦴 HELPER VISUAL DEL ESQUELETO
+// =====================================================
+
+const skeletonHelper =
+    new THREE.SkeletonHelper(esqueleto);
+
+skeletonHelper.visible = true;
+
+// Verde para distinguir claramente
+// las líneas del esqueleto.
+skeletonHelper.material.color.set(0x00ff66);
+
+scene.add(skeletonHelper);
+
+
+// =====================================================
+// 🎯 RAYCASTER PARA SELECCIONAR HUESOS
+// =====================================================
+
+const raycaster =
+    new THREE.Raycaster();
+
+const mouse =
+    new THREE.Vector2();
+
+
+// =====================================================
+// 🔴 SELECCIONAR HUESO
+// =====================================================
+
+function seleccionarHueso(bone) {
+
+    if (!bone) {
+        huesoSeleccionado = null;
+
+        transform.detach();
+
+        return;
+    }
+
+    huesoSeleccionado = bone;
+
+    transform.attach(bone);
+
+    transform.setMode(modo);
+
+    // Actualizar marcadores
+    marcadores.forEach(marcador => {
+
+        const hueso =
+            marcador.userData.bone;
+
+        if (hueso === bone) {
+
+            marcador.material.color
+                .set(0xffff00);
+
+            marcador.scale.setScalar(1.6);
+
+        } else {
+
+            marcador.material.color
+                .set(0xff2222);
+
+            marcador.scale.setScalar(1);
+
+        }
+    });
+
+    console.log(
+        "🦴 Hueso seleccionado:",
+        bone.name
+    );
+}
+
+
+// =====================================================
+// 🖱️ CLICK / TOQUE SOBRE LOS PUNTOS
+// =====================================================
+
+function seleccionarConMouse(event) {
+
+    const rect =
+        renderer.domElement.getBoundingClientRect();
+
+    mouse.x =
+        ((event.clientX - rect.left) /
+            rect.width) * 2 - 1;
+
+    mouse.y =
+        -((event.clientY - rect.top) /
+            rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(
+        mouse,
+        camera
+    );
+
+
+    // Buscar solamente los puntos rojos
+    const impactos =
+        raycaster.intersectObjects(
+            marcadores,
+            false
+        );
+
+
+    if (impactos.length > 0) {
+
+        const marcador =
+            impactos[0].object;
+
+        const bone =
+            marcador.userData.bone;
+
+        seleccionarHueso(bone);
+
+        return;
+    }
+
+
+    // Si no tocamos un punto,
+    // no cambiar selección.
+}
+
+
+// Mouse
+renderer.domElement.addEventListener(
+    "pointerdown",
+    seleccionarConMouse
+);
+
+
+// =====================================================
+// 🎮 TRANSFORM CONTROLS
+// =====================================================
+
+transform.addEventListener(
+    "dragging-changed",
+    event => {
+
+        orbit.enabled =
+            !event.value;
+    }
+);
+
+
+// Cuando cambia un hueso,
+// actualizar el helper visual.
+
+transform.addEventListener(
+    "objectChange",
+    () => {
+
+        if (!huesoSeleccionado) {
+            return;
+        }
+
+        skeletonHelper.update();
+    }
+);
+
+
+// =====================================================
+// 🧍 CARGAR MICAELA
+// =====================================================
+
+const loader =
+    new GLTFLoader();
+
+loader.load(
+
+    "../3D/micaela.glb",
+
+    gltf => {
+
+        modelo =
+            gltf.scene;
+
+        modelo.name =
+            "Micaela";
+
+        // Posición base
+        modelo.position.set(
+            0,
+            0.65,
+            0
+        );
+
+        scene.add(modelo);
+
+
+        // =============================================
+        // SOMBRAS
+        // =============================================
+
+        modelo.traverse(
+            objeto => {
+
+                if (
+                    objeto.isMesh ||
+                    objeto.isSkinnedMesh
+                ) {
+
+                    objeto.castShadow = true;
+                    objeto.receiveShadow = true;
+                }
+            }
+        );
+
+
+        console.log(
+            "🧍 Micaela cargada correctamente"
+        );
+
+    },
+
+    progreso => {
+
+        if (progreso.total > 0) {
+
+            const porcentaje =
+                (progreso.loaded /
+                    progreso.total) * 100;
+
+            console.log(
+                "Micaela:",
+                porcentaje.toFixed(1) + "%"
+            );
+        }
+
+    },
+
+    error => {
+
+        console.error(
+            "❌ Error cargando micaela.glb",
+            error
+        );
+    }
+);
+
+
+// =====================================================
+// 📷 AJUSTE INICIAL DE CÁMARA
+// =====================================================
+
+camera.position.set(
+    0,
+    1.05,
+    2.7
+);
+
+orbit.target.set(
+    0,
+    0.65,
+    0
+);
+
+orbit.update();
+
+
+// =====================================================
+// 🧭 EJES DE REFERENCIA
+// =====================================================
+
+const ejes =
+    new THREE.AxesHelper(0.5);
+
+ejes.position.set(
+    -0.6,
+    0,
+    0
+);
+
+scene.add(ejes);
+
+
+// =====================================================
+// 🌐 GRID DEL EDITOR
+// =====================================================
+
+const grid =
+    new THREE.GridHelper(
+        2,
+        20,
+        0x444444,
+        0x222222
+    );
+
+grid.position.y = 0;
+
+scene.add(grid);
+
+
+// =====================================================
+// 🖥️ RESIZE
+// =====================================================
+
+function ajustarVentana() {
+
+    const ancho =
+        contenedor.clientWidth ||
+        window.innerWidth;
+
+    const alto =
+        contenedor.clientHeight ||
+        window.innerHeight;
+
+    camera.aspect =
+        ancho / alto;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+        ancho,
+        alto
+    );
+}
+
+window.addEventListener(
+    "resize",
+    ajustarVentana
+);
+
+ajustarVentana();
+
+
+// =====================================================
+// 🔄 BUCLE PRINCIPAL
+// =====================================================
+
+function animar() {
+
+    requestAnimationFrame(animar);
+
+    orbit.update();
+
+    skeletonHelper.update();
+
+    renderer.render(
+        scene,
+        camera
+    );
+}
+
+animar();
+
+
+console.log(
+    "🦴 GAMERPRO RIG — Esqueleto chibi listo"
+);
+    // =====================================================
+// 🎮 BLOQUE 4 — PANEL DEL RIG EDITOR
+// =====================================================
+
+
+// =====================================================
+// 🖥️ PANEL PRINCIPAL
+// =====================================================
+
+const panel = document.createElement("div");
+
+Object.assign(panel.style, {
+    position: "fixed",
+    top: "12px",
+    left: "12px",
+    zIndex: "1000",
+
+    width: "230px",
+    maxWidth: "calc(100vw - 24px)",
+
+    padding: "12px",
+
+    background: "rgba(15, 15, 20, 0.94)",
+
+    border: "1px solid rgba(255,255,255,0.15)",
+    borderRadius: "12px",
+
+    color: "#ffffff",
+
+    fontFamily:
+        "Arial, sans-serif",
+
+    boxSizing: "border-box",
+
+    boxShadow:
+        "0 8px 30px rgba(0,0,0,0.45)"
+});
+
+contenedor.appendChild(panel);
+
+
+// =====================================================
+// 🏷️ TÍTULO
+// =====================================================
+
+const titulo =
+    document.createElement("div");
+
+titulo.textContent =
+    "🦴 GAMERPRO RIG";
+
+Object.assign(titulo.style, {
+    fontSize: "18px",
+    fontWeight: "bold",
+    marginBottom: "8px"
+});
+
+panel.appendChild(titulo);
+
+
+// =====================================================
+// 📌 ESTADO
+// =====================================================
+
+const estado =
+    document.createElement("div");
+
+estado.textContent =
+    "Hueso: ninguno";
+
+Object.assign(estado.style, {
+    fontSize: "13px",
+    color: "#cccccc",
+    marginBottom: "10px",
+
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap"
+});
+
+panel.appendChild(estado);
+
+
+// =====================================================
+// 🔘 CONTENEDOR DE BOTONES
+// =====================================================
+
+const botones =
+    document.createElement("div");
+
+Object.assign(botones.style, {
+    display: "grid",
+    gridTemplateColumns:
+        "1fr 1fr",
+    gap: "7px"
+});
+
+panel.appendChild(botones);
+
+
+// =====================================================
+// 🧩 CREAR BOTÓN
+// =====================================================
+
+function crearBoton(
+    texto,
+    funcion
+) {
+
+    const boton =
+        document.createElement("button");
+
+    boton.textContent =
+        texto;
+
+    Object.assign(boton.style, {
+        border: "none",
+        borderRadius: "8px",
+
+        padding: "9px 7px",
+
+        background: "#292933",
+        color: "#ffffff",
+
+        fontSize: "12px",
+        fontWeight: "bold",
+
+        cursor: "pointer",
+
+        touchAction: "manipulation"
+    });
+
+    boton.addEventListener(
+        "pointerdown",
+        event => {
+
+            event.stopPropagation();
+        }
+    );
+
+    boton.addEventListener(
+        "click",
+        funcion
+    );
+
+    botones.appendChild(boton);
+
+    return boton;
+}
+
+
+// =====================================================
+// ✋ MODO MOVER
+// =====================================================
+
+const botonMover =
+    crearBoton(
+        "✋ Mover",
         () => {
 
-            modo =
-                "translate";
+            modo = "translate";
 
             transform.setMode(
                 "translate"
             );
 
-            moveButton.classList.add(
-                "active"
-            );
-
-            rotateButton.classList.remove(
-                "active"
-            );
-        };
+            actualizarEstado();
+        }
+    );
 
 
-    // =================================================
-    // ⟳ MODO ROTAR
-    // =================================================
+// =====================================================
+// 🔄 MODO ROTAR
+// =====================================================
 
-    rotateButton.onclick =
+const botonRotar =
+    crearBoton(
+        "🔄 Rotar",
         () => {
 
-            modo =
-                "rotate";
+            modo = "rotate";
 
             transform.setMode(
                 "rotate"
             );
 
-            rotateButton.classList.add(
-                "active"
-            );
-
-            moveButton.classList.remove(
-                "active"
-            );
-        };
+            actualizarEstado();
+        }
+    );
 
 
-    // =================================================
-    // 🔒 BLOQUEAR / DESBLOQUEAR MICAELA
-    // =================================================
+// =====================================================
+// 🔒 BLOQUEAR / DESBLOQUEAR MICAELA
+// =====================================================
 
-    lockButton.onclick =
+const botonBloqueo =
+    crearBoton(
+        "🔒 Micaela",
         () => {
 
             modeloBloqueado =
                 !modeloBloqueado;
 
-
-            if (
-                modeloBloqueado
-            ) {
-
-                lockButton.textContent =
-                    "🔒 Micaela bloqueada";
-
-                lockButton.classList.add(
-                    "locked"
-                );
-
-            } else {
-
-                lockButton.textContent =
-                    "🔓 Micaela desbloqueada";
-
-                lockButton.classList.remove(
-                    "locked"
-                );
-            }
-        };
-
-
-    // =================================================
-    // ↩ RESTABLECER HUESO
-    // =================================================
-
-    resetButton.onclick =
-        () => {
-
-            if (
-                !huesoSeleccionado
-            ) {
-                return;
-            }
-
-            huesoSeleccionado.position.set(
-                0,
-                huesoSeleccionado.position.y,
-                0
-            );
-
-            huesoSeleccionado.rotation.set(
-                0,
-                0,
-                0
-            );
-
-            huesoSeleccionado.scale.set(
-                1,
-                1,
-                1
-            );
-
-            huesoSeleccionado.updateMatrixWorld(
-                true
-            );
-        };
-
-
-    // =================================================
-    // 🎮 VOLVER AL JUEGO
-    // =================================================
-
-    backButton.onclick =
-        () => {
-
-            window.location.href =
-                "../";
-        };
-
-
-    // =================================================
-    // 🌀 TRANSFORM CONTROLS + CÁMARA
-    // =================================================
-
-    transform.addEventListener(
-        "dragging-changed",
-
-        event => {
-
-            orbit.enabled =
-                !event.value;
+            actualizarEstado();
         }
     );
 
 
-    // =================================================
-    // 📐 RESIZE
-    // =================================================
+// =====================================================
+// ↩️ REINICIAR HUESO
+// =====================================================
 
-    function resize() {
+const botonReset =
+    crearBoton(
+        "↩️ Reset",
+        () => {
 
-        camera.aspect =
-            window.innerWidth /
-            window.innerHeight;
+            if (!huesoSeleccionado) {
+                return;
+            }
 
-        camera.updateProjectionMatrix();
+            huesoSeleccionado
+                .position
+                .set(0, 0, 0);
 
-        renderer.setSize(
-            window.innerWidth,
-            window.innerHeight
-        );
+            huesoSeleccionado
+                .rotation
+                .set(0, 0, 0);
 
-        renderer.setPixelRatio(
-            Math.min(
-                window.devicePixelRatio,
-                2
-            )
-        );
-    }
+            huesoSeleccionado
+                .scale
+                .set(1, 1, 1);
 
-    window.addEventListener(
-        "resize",
-        resize
+            skeletonHelper.update();
+
+            actualizarEstado();
+        }
     );
 
 
-    // =================================================
-    // 🎬 BUCLE PRINCIPAL
-    // =================================================
+// =====================================================
+// 🎯 CENTRAR HUESO SELECCIONADO
+// =====================================================
 
-    function animar() {
+const botonCentrar =
+    crearBoton(
+        "🎯 Centrar",
+        () => {
 
-        requestAnimationFrame(
-            animar
-        );
+            if (!huesoSeleccionado) {
+                return;
+            }
 
-        orbit.update();
+            const posicion =
+                new THREE.Vector3();
 
-        renderer.render(
-            scene,
+            huesoSeleccionado
+                .getWorldPosition(
+                    posicion
+                );
+
+            orbit.target.copy(
+                posicion
+            );
+
+            orbit.update();
+        }
+    );
+
+
+// =====================================================
+// ❌ DESELECCIONAR
+// =====================================================
+
+const botonDeseleccionar =
+    crearBoton(
+        "❌ Quitar",
+        () => {
+
+            seleccionarHueso(null);
+
+            actualizarEstado();
+        }
+    );
+
+
+// =====================================================
+// 🔄 ACTUALIZAR TEXTO DEL PANEL
+// =====================================================
+
+function actualizarEstado() {
+
+    if (huesoSeleccionado) {
+
+        estado.textContent =
+            "🦴 " +
+            huesoSeleccionado.name +
+            " | " +
+            (
+                modo === "translate"
+                    ? "Mover"
+                    : "Rotar"
+            );
+
+    } else {
+
+        estado.textContent =
+            modeloBloqueado
+                ? "🔒 Micaela bloqueada"
+                : "🔓 Micaela desbloqueada";
+    }
+
+
+    botonMover.style.background =
+        modo === "translate"
+            ? "#1769aa"
+            : "#292933";
+
+
+    botonRotar.style.background =
+        modo === "rotate"
+            ? "#8e44ad"
+            : "#292933";
+
+
+    botonBloqueo.textContent =
+        modeloBloqueado
+            ? "🔒 Micaela"
+            : "🔓 Micaela";
+}
+
+
+// =====================================================
+// 🦴 ACTUALIZAR PANEL AL SELECCIONAR HUESO
+// =====================================================
+
+// Reemplazamos la función anterior
+// para que también actualice el panel.
+
+const seleccionarHuesoOriginal =
+    seleccionarHueso;
+
+
+// =====================================================
+// NUEVA FUNCIÓN DE SELECCIÓN
+// =====================================================
+
+function seleccionarHuesoConPanel(
+    bone
+) {
+
+    seleccionarHuesoOriginal(
+        bone
+    );
+
+    actualizarEstado();
+}
+
+
+// =====================================================
+// REEMPLAZAR LA SELECCIÓN DEL MOUSE
+// =====================================================
+
+renderer.domElement.removeEventListener(
+    "pointerdown",
+    seleccionarConMouse
+);
+
+
+renderer.domElement.addEventListener(
+    "pointerdown",
+    event => {
+
+        const rect =
+            renderer.domElement
+                .getBoundingClientRect();
+
+
+        mouse.x =
+            ((event.clientX -
+                rect.left) /
+                rect.width) * 2 - 1;
+
+
+        mouse.y =
+            -((event.clientY -
+                rect.top) /
+                rect.height) * 2 + 1;
+
+
+        raycaster.setFromCamera(
+            mouse,
             camera
         );
+
+
+        const impactos =
+            raycaster.intersectObjects(
+                marcadores,
+                false
+            );
+
+
+        if (
+            impactos.length === 0
+        ) {
+
+            return;
+        }
+
+
+        const marcador =
+            impactos[0].object;
+
+
+        const bone =
+            marcador.userData.bone;
+
+
+        seleccionarHuesoConPanel(
+            bone
+        );
+    }
+);
+
+
+// =====================================================
+// 🎨 ESTILO EXTRA PARA MÓVIL
+// =====================================================
+
+if (
+    window.innerWidth < 600
+) {
+
+    panel.style.width =
+        "205px";
+
+    panel.style.top =
+        "8px";
+
+    panel.style.left =
+        "8px";
+}
+
+
+// =====================================================
+// 🚫 EVITAR QUE EL PANEL AFECTE AL EDITOR 3D
+// =====================================================
+
+panel.addEventListener(
+    "pointerdown",
+    event => {
+
+        event.stopPropagation();
+    }
+);
+
+
+// =====================================================
+// ESTADO INICIAL
+// =====================================================
+
+actualizarEstado();
+
+
+// =====================================================
+// 🧪 MENSAJE DE DEPURACIÓN
+// =====================================================
+
+console.log(
+    "🎮 Panel del Rig Editor listo"
+);
+    // =====================================================
+// 🧪 BLOQUE 5 — DIAGNÓSTICO VISUAL DEL RIG DE MICAELA
+// =====================================================
+
+function crearPanelDiagnostico() {
+
+    const panel =
+        document.createElement("div");
+
+    panel.id =
+        "panelDiagnosticoRig";
+
+    Object.assign(panel.style, {
+        position: "fixed",
+        right: "12px",
+        top: "12px",
+        zIndex: "1001",
+
+        width: "270px",
+        maxWidth: "calc(100vw - 24px)",
+        maxHeight: "70vh",
+
+        overflowY: "auto",
+
+        padding: "12px",
+
+        background:
+            "rgba(12,12,18,0.95)",
+
+        border:
+            "1px solid rgba(255,255,255,0.15)",
+
+        borderRadius: "12px",
+
+        color: "#fff",
+
+        fontFamily:
+            "Arial, sans-serif",
+
+        fontSize: "12px",
+
+        boxSizing: "border-box",
+
+        boxShadow:
+            "0 8px 30px rgba(0,0,0,0.45)"
+    });
+
+    contenedor.appendChild(panel);
+
+    return panel;
+}
+
+
+const panelDiagnostico =
+    crearPanelDiagnostico();
+
+
+// =====================================================
+// ACTUALIZAR DIAGNÓSTICO
+// =====================================================
+
+function mostrarDiagnosticoRig() {
+
+    panelDiagnostico.innerHTML = "";
+
+    const titulo =
+        document.createElement("div");
+
+    titulo.textContent =
+        "🧪 DIAGNÓSTICO DE MICAELA";
+
+    Object.assign(titulo.style, {
+        fontSize: "16px",
+        fontWeight: "bold",
+        marginBottom: "10px"
+    });
+
+    panelDiagnostico.appendChild(
+        titulo
+    );
+
+
+    // =============================================
+    // SI MICAELA NO CARGÓ
+    // =============================================
+
+    if (!modelo) {
+
+        const mensaje =
+            document.createElement("div");
+
+        mensaje.textContent =
+            "⏳ Esperando a que cargue Micaela...";
+
+        mensaje.style.color =
+            "#ffd166";
+
+        panelDiagnostico.appendChild(
+            mensaje
+        );
+
+        return;
     }
 
-    animar();
+
+    // =============================================
+    // CONTADORES
+    // =============================================
+
+    let meshes = 0;
+    let skinnedMeshes = 0;
+
+    const esqueletos = [];
+    const huesosReales = [];
+
+
+    // =============================================
+    // RECORRER MICAELA
+    // =============================================
+
+    modelo.traverse(
+        objeto => {
+
+            if (objeto.isMesh) {
+                meshes++;
+            }
+
+
+            if (objeto.isSkinnedMesh) {
+
+                skinnedMeshes++;
+
+                if (objeto.skeleton) {
+
+                    if (
+                        !esqueletos
+                            .includes(
+                                objeto.skeleton
+                            )
+                    ) {
+
+                        esqueletos.push(
+                            objeto.skeleton
+                        );
+                    }
+
+
+                    objeto.skeleton.bones
+                        .forEach(
+                            bone => {
+
+                                if (
+                                    !huesosReales
+                                        .includes(
+                                            bone.name
+                                        )
+                                ) {
+
+                                    huesosReales
+                                        .push(
+                                            bone.name
+                                        );
+                                }
+                            }
+                        );
+                }
+            }
+        }
+    );
+
+
+    // =============================================
+    // RESUMEN
+    // =============================================
+
+    const resumen =
+        document.createElement("div");
+
+    resumen.innerHTML = `
+        <div>🧍 Modelo: <b>Cargado</b></div>
+        <div>🧩 Meshes: <b>${meshes}</b></div>
+        <div>🦴 SkinnedMesh: <b>${skinnedMeshes}</b></div>
+        <div>💀 Esqueletos: <b>${esqueletos.length}</b></div>
+        <div>🦴 Huesos reales: <b>${huesosReales.length}</b></div>
+    `;
+
+    Object.assign(resumen.style, {
+        lineHeight: "1.6",
+        marginBottom: "10px"
+    });
+
+    panelDiagnostico.appendChild(
+        resumen
+    );
+
+
+    // =============================================
+    // ESTADO
+    // =============================================
+
+    const estado =
+        document.createElement("div");
+
+
+    if (skinnedMeshes > 0) {
+
+        estado.textContent =
+            "✅ El modelo tiene skinning.";
+
+        estado.style.color =
+            "#62ff8b";
+
+    } else {
+
+        estado.textContent =
+            "⚠️ El modelo no tiene SkinnedMesh.";
+
+        estado.style.color =
+            "#ffd166";
     }
-         
+
+
+    estado.style.marginBottom =
+        "10px";
+
+    panelDiagnostico.appendChild(
+        estado
+    );
+
+
+    // =============================================
+    // LISTA DE HUESOS REALES
+    // =============================================
+
+    if (
+        huesosReales.length > 0
+    ) {
+
+        const subtitulo =
+            document.createElement("div");
+
+        subtitulo.textContent =
+            "🦴 HUESOS DEL GLB";
+
+        Object.assign(subtitulo.style, {
+            fontWeight: "bold",
+            marginBottom: "6px"
+        });
+
+        panelDiagnostico.appendChild(
+            subtitulo
+        );
+
+
+        const lista =
+            document.createElement("div");
+
+
+        huesosReales.forEach(
+            (nombre, indice) => {
+
+                const fila =
+                    document.createElement("div");
+
+                fila.textContent =
+                    `${indice + 1}. ${nombre}`;
+
+                Object.assign(fila.style, {
+                    padding: "4px 6px",
+                    marginBottom: "2px",
+
+                    background:
+                        "rgba(255,255,255,0.06)",
+
+                    borderRadius: "5px",
+
+                    overflow: "hidden",
+                    textOverflow:
+                        "ellipsis",
+                    whiteSpace:
+                        "nowrap"
+                });
+
+                lista.appendChild(
+                    fila
+                );
+            }
+        );
+
+
+        panelDiagnostico.appendChild(
+            lista
+        );
+    }
+
+
+    // =============================================
+    // GUARDAR INFORMACIÓN
+    // =============================================
+
+    modelo.userData.rigDiagnostico = {
+
+        meshes,
+
+        skinnedMeshes,
+
+        esqueletos:
+            esqueletos.length,
+
+        huesos:
+            huesosReales
+    };
+}
+
+
+// =====================================================
+// MOSTRAR DIAGNÓSTICO
+// =====================================================
+
+mostrarDiagnosticoRig();
+
+
+// =====================================================
+// VOLVER A COMPROBAR DESPUÉS DE CARGAR
+// =====================================================
+
+setTimeout(
+    mostrarDiagnosticoRig,
+    500
+);
+
+
+// =====================================================
+// ACTUALIZAR TAMBIÉN DESPUÉS
+// =====================================================
+
+setTimeout(
+    mostrarDiagnosticoRig,
+    1500
+);
+
+
+// =====================================================
+// MÓVIL
+// =====================================================
+
+if (
+    window.innerWidth < 600
+) {
+
+    panelDiagnostico.style.width =
+        "210px";
+
+    panelDiagnostico.style.right =
+        "8px";
+
+    panelDiagnostico.style.top =
+        "8px";
+        }
