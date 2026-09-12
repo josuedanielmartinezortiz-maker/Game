@@ -5,7 +5,7 @@ import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.180.0/exampl
 export function iniciarRigEditor3D(contenedor) {
 
     // =====================================================
-    // LIMPIAR EDITOR
+    // LIMPIAR
     // =====================================================
 
     contenedor.innerHTML = "";
@@ -76,7 +76,7 @@ export function iniciarRigEditor3D(contenedor) {
     );
 
     // =====================================================
-    // CONTROLES DE CÁMARA
+    // CONTROLES
     // =====================================================
 
     const controles =
@@ -88,7 +88,7 @@ export function iniciarRigEditor3D(contenedor) {
     controles.enableDamping = true;
 
     // =====================================================
-    // PANEL
+    // PANEL PRINCIPAL
     // =====================================================
 
     const panel =
@@ -100,11 +100,11 @@ export function iniciarRigEditor3D(contenedor) {
             position: "fixed",
             top: "10px",
             left: "10px",
-            zIndex: "10",
+            zIndex: "20",
             padding: "10px",
             width: "240px",
             background:
-                "rgba(0,0,0,.85)",
+                "rgba(0,0,0,.88)",
             color: "white",
             borderRadius: "10px",
             fontFamily: "Arial",
@@ -121,7 +121,7 @@ export function iniciarRigEditor3D(contenedor) {
     );
 
     // =====================================================
-    // GRUPO PRINCIPAL DEL RIG
+    // RIG PRINCIPAL
     // =====================================================
 
     const rig =
@@ -135,7 +135,21 @@ export function iniciarRigEditor3D(contenedor) {
     );
 
     // =====================================================
-    // LISTA DE HUESOS
+    // CONTROLADOR EXCLUSIVO DEL TÓRAX
+    // =====================================================
+
+    const toraxControl =
+        new THREE.Group();
+
+    toraxControl.name =
+        "Thorax_Control";
+
+    rig.add(
+        toraxControl
+    );
+
+    // =====================================================
+    // HUESOS
     // =====================================================
 
     const huesos = [];
@@ -185,7 +199,7 @@ export function iniciarRigEditor3D(contenedor) {
     }
 
     // =====================================================
-    // MARCADORES ROJOS
+    // MARCADORES
     // =====================================================
 
     const marcadores =
@@ -234,7 +248,7 @@ export function iniciarRigEditor3D(contenedor) {
     }
 
     // =====================================================
-    // CONSTRUIR ESQUELETO
+    // CONSTRUIR COLUMNA + COSTILLAS
     // =====================================================
 
     function construirColumna(
@@ -243,18 +257,14 @@ export function iniciarRigEditor3D(contenedor) {
         centroZ
     ) {
 
-        // =================================================
-        // PROPORCIONES CHIBI
-        // =================================================
-
         const suelo = 0;
-
-        const alturaCadera =
-            altura * 0.42;
 
         // =================================================
         // HIPS
         // =================================================
+
+        const alturaCadera =
+            altura * 0.42;
 
         const hips =
             crearHueso(
@@ -271,7 +281,7 @@ export function iniciarRigEditor3D(contenedor) {
         );
 
         // =================================================
-        // LUMBAR — 5
+        // LUMBAR ×5
         // =================================================
 
         let padre =
@@ -301,11 +311,10 @@ export function iniciarRigEditor3D(contenedor) {
         }
 
         // =================================================
-        // TORÁCICAS — 12
+        // THORACIC ×12
         // =================================================
 
-        const toracicas =
-            [];
+        const toracicas = [];
 
         const toraxPaso =
             (altura * 0.18) / 12;
@@ -353,12 +362,10 @@ export function iniciarRigEditor3D(contenedor) {
         );
 
         // =================================================
-        // COSTILLAS
-        // 12 PARES × 3 SEGMENTOS
+        // COSTILLAS ×24 ×3
         // =================================================
 
-        const costillas =
-            [];
+        const costillas = [];
 
         for (
             let lado = -1;
@@ -378,13 +385,7 @@ export function iniciarRigEditor3D(contenedor) {
             ) {
 
                 const toracica =
-                    toracicas[
-                        i - 1
-                    ];
-
-                // -----------------------------------------
-                // FORMA DE LA COSTILLA
-                // -----------------------------------------
+                    toracicas[i - 1];
 
                 const progreso =
                     (i - 1) / 11;
@@ -404,7 +405,7 @@ export function iniciarRigEditor3D(contenedor) {
                     );
 
                 // -----------------------------------------
-                // COSTILLA — SEGMENTO 1
+                // SEGMENTO 1
                 // -----------------------------------------
 
                 let costilla =
@@ -422,7 +423,7 @@ export function iniciarRigEditor3D(contenedor) {
                 );
 
                 // -----------------------------------------
-                // COSTILLA — SEGMENTO 2
+                // SEGMENTO 2
                 // -----------------------------------------
 
                 costilla =
@@ -440,7 +441,7 @@ export function iniciarRigEditor3D(contenedor) {
                 );
 
                 // -----------------------------------------
-                // COSTILLA — SEGMENTO 3
+                // SEGMENTO 3
                 // -----------------------------------------
 
                 costilla =
@@ -464,7 +465,34 @@ export function iniciarRigEditor3D(contenedor) {
         }
 
         // =================================================
-        // CERVICALES — 7
+        // MOVER COSTILLAS A SU CONTROLADOR
+        // =================================================
+        //
+        // attach() mantiene la posición mundial actual.
+        // Así podemos mover todo el tórax sin mover Hips,
+        // lumbar, cuello ni cabeza.
+        // =================================================
+
+        toraxControl.updateWorldMatrix(
+            true,
+            true
+        );
+
+        costillas.forEach(
+            costilla => {
+
+                toraxControl.attach(
+                    costilla
+                );
+            }
+        );
+
+        toraxControl.attach(
+            esternon
+        );
+
+        // =================================================
+        // CERVICALES ×7
         // =================================================
 
         padre =
@@ -494,7 +522,7 @@ export function iniciarRigEditor3D(contenedor) {
         }
 
         // =================================================
-        // CUELLO
+        // NECK
         // =================================================
 
         const cuello =
@@ -512,7 +540,7 @@ export function iniciarRigEditor3D(contenedor) {
         );
 
         // =================================================
-        // CABEZA
+        // HEAD
         // =================================================
 
         const head =
@@ -530,7 +558,7 @@ export function iniciarRigEditor3D(contenedor) {
         );
 
         // =================================================
-        // CENTRO DEL CRÁNEO
+        // SKULL CENTER
         // =================================================
 
         const skull =
@@ -547,21 +575,127 @@ export function iniciarRigEditor3D(contenedor) {
             0.055
         );
 
-        // =================================================
-        // RESULTADO
-        // =================================================
-
         return {
             suelo,
             hips,
             toracicas,
             esternon,
             costillas,
+            toraxControl,
             cuello,
             head,
             skull
         };
     }
+
+    // =====================================================
+    // PANEL DE ARRASTRE DEL TÓRAX
+    // =====================================================
+
+    const panelCostillas =
+        document.createElement("div");
+
+    Object.assign(
+        panelCostillas.style,
+        {
+            position: "fixed",
+            top: "10px",
+            right: "10px",
+            zIndex: "30",
+            width: "250px",
+            padding: "12px",
+            background:
+                "rgba(0,0,0,.92)",
+            color: "white",
+            borderRadius: "12px",
+            fontFamily: "Arial",
+            fontSize: "13px"
+        }
+    );
+
+    panelCostillas.innerHTML = `
+        <b>🦴 POSICIÓN DEL TÓRAX</b>
+
+        <br>
+        <small>
+        Mueve todas las costillas juntas.
+        </small>
+
+        <br><br>
+
+        <b>X</b>
+        <br>
+
+        <input
+            id="toraxX"
+            type="range"
+            min="-0.5"
+            max="0.5"
+            step="0.001"
+            value="0"
+            style="width:170px"
+        >
+
+        <span id="toraxXValor">
+            0.000
+        </span>
+
+        <br><br>
+
+        <b>Y</b>
+        <br>
+
+        <input
+            id="toraxY"
+            type="range"
+            min="-0.5"
+            max="0.5"
+            step="0.001"
+            value="0"
+            style="width:170px"
+        >
+
+        <span id="toraxYValor">
+            0.000
+        </span>
+
+        <br><br>
+
+        <b>Z</b>
+        <br>
+
+        <input
+            id="toraxZ"
+            type="range"
+            min="-0.5"
+            max="0.5"
+            step="0.001"
+            value="0"
+            style="width:170px"
+        >
+
+        <span id="toraxZValor">
+            0.000
+        </span>
+
+        <br><br>
+
+        <button id="guardarTorax">
+            💾 Guardar
+        </button>
+
+        <button id="cargarTorax">
+            🔄 Cargar
+        </button>
+
+        <button id="resetTorax">
+            ↩️ Reset
+        </button>
+    `;
+
+    contenedor.appendChild(
+        panelCostillas
+    );
 
     // =====================================================
     // CARGAR MICAELA
@@ -583,8 +717,13 @@ export function iniciarRigEditor3D(contenedor) {
             );
 
             // =============================================
-            // CALCULAR CAJA DEL MODELO
+            // CAJA DEL MODELO
             // =============================================
+
+            modelo.updateWorldMatrix(
+                true,
+                false
+            );
 
             const caja =
                 new THREE.Box3()
@@ -610,7 +749,7 @@ export function iniciarRigEditor3D(contenedor) {
                 tamano.y;
 
             // =============================================
-            // COLOCAR EL RIG EN EL SUELO DEL MODELO
+            // POSICIÓN DEL RIG
             // =============================================
 
             rig.position.set(
@@ -620,25 +759,23 @@ export function iniciarRigEditor3D(contenedor) {
             );
 
             // =============================================
-            // CONSTRUIR RIG
+            // CONSTRUIR ESQUELETO
             // =============================================
 
-            construirColumna(
-                altura,
-                0,
-                0
-            );
+            const resultado =
+                construirColumna(
+                    altura,
+                    0,
+                    0
+                );
 
             // =============================================
-            // HELPER VERDE
+            // HELPER
             // =============================================
-
-            const raizRig =
-                huesos[0];
 
             const helper =
                 new THREE.SkeletonHelper(
-                    raizRig
+                    resultado.hips
                 );
 
             helper.material.color.set(
@@ -653,39 +790,266 @@ export function iniciarRigEditor3D(contenedor) {
             );
 
             // =============================================
-            // PANEL
+            // GUARDAR REFERENCIA
+            // =============================================
+
+            escena.userData.toraxControl =
+                resultado.toraxControl;
+
+            // =============================================
+            // CONTROLES DEL PANEL
+            // =============================================
+
+            const inputX =
+                document.getElementById(
+                    "toraxX"
+                );
+
+            const inputY =
+                document.getElementById(
+                    "toraxY"
+                );
+
+            const inputZ =
+                document.getElementById(
+                    "toraxZ"
+                );
+
+            const valorX =
+                document.getElementById(
+                    "toraxXValor"
+                );
+
+            const valorY =
+                document.getElementById(
+                    "toraxYValor"
+                );
+
+            const valorZ =
+                document.getElementById(
+                    "toraxZValor"
+                );
+
+            function actualizarPanel() {
+
+                valorX.textContent =
+                    Number(
+                        inputX.value
+                    ).toFixed(3);
+
+                valorY.textContent =
+                    Number(
+                        inputY.value
+                    ).toFixed(3);
+
+                valorZ.textContent =
+                    Number(
+                        inputZ.value
+                    ).toFixed(3);
+            }
+
+            function moverTorax() {
+
+                resultado.toraxControl
+                    .position.set(
+                        Number(
+                            inputX.value
+                        ),
+                        Number(
+                            inputY.value
+                        ),
+                        Number(
+                            inputZ.value
+                        )
+                    );
+
+                actualizarPanel();
+            }
+
+            inputX.addEventListener(
+                "input",
+                moverTorax
+            );
+
+            inputY.addEventListener(
+                "input",
+                moverTorax
+            );
+
+            inputZ.addEventListener(
+                "input",
+                moverTorax
+            );
+
+              =============================================
+            // GUARDAR POSICIÓN
+            // =============================================
+
+            document
+                .getElementById(
+                    "guardarTorax"
+                )
+                .addEventListener(
+                    "click",
+                    () => {
+
+                        const posicion = {
+                            x:
+                                resultado
+                                    .toraxControl
+                                    .position.x,
+
+                            y:
+                                resultado
+                                    .toraxControl
+                                    .position.y,
+
+                            z:
+                                resultado
+                                    .toraxControl
+                                    .position.z
+                        };
+
+                        localStorage.setItem(
+                            "GAMERPRO_TORAX_POSITION",
+                            JSON.stringify(
+                                posicion
+                            )
+                        );
+                    }
+                );
+
+            // =============================================
+            // CARGAR POSICIÓN
+            // =============================================
+
+            document
+                .getElementById(
+                    "cargarTorax"
+                )
+                .addEventListener(
+                    "click",
+                    () => {
+
+                        const guardado =
+                            localStorage.getItem(
+                                "GAMERPRO_TORAX_POSITION"
+                            );
+
+                        if (!guardado) {
+                            return;
+                        }
+
+                        const posicion =
+                            JSON.parse(
+                                guardado
+                            );
+
+                        resultado
+                            .toraxControl
+                            .position.set(
+                                posicion.x,
+                                posicion.y,
+                                posicion.z
+                            );
+
+                        inputX.value =
+                            posicion.x;
+
+                        inputY.value =
+                            posicion.y;
+
+                        inputZ.value =
+                            posicion.z;
+
+                        actualizarPanel();
+                    }
+                );
+
+            // =============================================
+            // RESET
+            // =============================================
+
+            document
+                .getElementById(
+                    "resetTorax"
+                )
+                .addEventListener(
+                    "click",
+                    () => {
+
+                        resultado
+                            .toraxControl
+                            .position.set(
+                                0,
+                                0,
+                                0
+                            );
+
+                        inputX.value =
+                            0;
+
+                        inputY.value =
+                            0;
+
+                        inputZ.value =
+                            0;
+
+                        actualizarPanel();
+                    }
+                );
+
+            // =============================================
+            // PANEL PRINCIPAL
             // =============================================
 
             panel.innerHTML = `
                 <b>🦴 GAMERPRO RIG</b>
+
                 <br><br>
 
                 🧍 Micaela: ✅
                 <br>
-                📏 Altura: ${altura.toFixed(2)}
+
+                📏 Altura:
+                ${altura.toFixed(2)}
+
                 <br>
-                🦴 Huesos creados: ${huesos.length}
+
+                🦴 Huesos creados:
+                ${huesos.length}
+
                 <br><br>
 
                 <b>ETAPA 2</b>
+
                 <br>
                 ✅ Hips
+
                 <br>
                 ✅ Lumbar ×5
+
                 <br>
                 ✅ Thoracic ×12
+
                 <br>
                 ✅ Sternum
+
                 <br>
                 ✅ Costillas ×24
+
                 <br>
                 ✅ 3 segmentos por costilla
+
                 <br>
                 ✅ Cervical ×7
+
                 <br>
                 ✅ Neck
+
                 <br>
                 ✅ Head
+
                 <br>
                 ✅ Skull Center
             `;
@@ -773,4 +1137,4 @@ export function iniciarRigEditor3D(contenedor) {
     }
 
     animar();
-                }
+        }
