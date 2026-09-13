@@ -664,153 +664,266 @@ export async function iniciarMicaelaRig(contenedor) {
             skinned.scale.copy(
                 mesh.scale
             );
+ // ------------------------------------------------
+// PESOS DE DEFORMACIÓN DEL CUERPO
+// ------------------------------------------------
 
-            // ------------------------------------------------
-            // PESOS AUTOMÁTICOS POR CERCANÍA
-            // ------------------------------------------------
+// No usamos costillas, dedos, cara, cabello ni dedos
+// de los pies como influencias principales.
+// Esto evita que el cuerpo se parta al animar.
 
-            const posiciones =
-                geometry.attributes.position;
+const nombresDeformacion = [
 
-            const indices = [];
-            const pesos = [];
+    "Root",
 
-            const worldBones =
-                bones.map(
-                    b => {
+    "Hips",
 
-                        const p =
-                            new THREE.Vector3();
+    "Spine_1",
+    "Spine_2",
+    "Spine_3",
+    "Spine_4",
+    "Spine_5",
 
-                        b.getWorldPosition(p);
+    "Chest",
+    "Neck",
+    "Head",
 
-                        return p;
-                    }
-                );
+    "LeftShoulder",
+    "LeftArm",
+    "LeftForeArm",
+    "LeftHand",
 
-            for (
-                let i = 0;
-                i < posiciones.count;
-                i++
-            ) {
+    "RightShoulder",
+    "RightArm",
+    "RightForeArm",
+    "RightHand",
 
-                const v =
-                    new THREE.Vector3()
-                        .fromBufferAttribute(
-                            posiciones,
-                            i
-                        );
+    "LeftUpLeg",
+    "LeftLeg",
+    "LeftAnkle",
+    "LeftFoot",
 
-                const distancias =
-                    bones.map(
-                        (b, bi) => {
+    "RightUpLeg",
+    "RightLeg",
+    "RightAnkle",
+    "RightFoot"
 
-                            const p =
-                                worldBones[bi];
+];
 
-                            return {
-                                bi,
-                                d:
-                                    v.distanceToSquared(
-                                        p
-                                    )
-                            };
-                        }
-                    );
 
-                distancias.sort(
-                    (a, b) =>
-                        a.d - b.d
-                );
+const huesosDeformacion =
+    nombresDeformacion
+        .map(
+            nombre =>
+                porNombre[nombre]
+        )
+        .filter(
+            Boolean
+        );
 
-                const cuatro =
-                    distancias.slice(
-                        0,
-                        4
-                    );
 
-                let suma = 0;
+const indicesHuesos =
+    huesosDeformacion.map(
+        hueso =>
+            bones.indexOf(hueso)
+    );
 
-                cuatro.forEach(
-                    item => {
 
-                        item.w =
-                            1 /
-                            (
-                                Math.sqrt(
-                                    item.d
-                                ) +
-                                0.0001
-                            );
+const posiciones =
+    geometry.attributes.position;
 
-                        suma +=
-                            item.w;
-                    }
-                );
+const indices = [];
+const pesos = [];
 
-                const ids =
-                    [0, 0, 0, 0];
 
-                const ws =
-                    [0, 0, 0, 0];
+// ------------------------------------------------
+// POSICIÓN DE LOS HUESOS PRINCIPALES
+// ------------------------------------------------
 
-                cuatro.forEach(
-                    (item, n) => {
+const posicionesHuesos =
+    huesosDeformacion.map(
+        hueso => {
 
-                        ids[n] =
-                            item.bi;
+            const posicion =
+                new THREE.Vector3();
 
-                        ws[n] =
-                            item.w /
-                            suma;
-                    }
-                );
-
-                indices.push(
-                    ...ids
-                );
-
-                pesos.push(
-                    ...ws
-                );
-            }
-
-            geometry.setAttribute(
-                "skinIndex",
-                new THREE.Uint16BufferAttribute(
-                    indices,
-                    4
-                )
+            hueso.getWorldPosition(
+                posicion
             );
 
-            geometry.setAttribute(
-                "skinWeight",
-                new THREE.Float32BufferAttribute(
-                    pesos,
-                    4
-                )
-            );
-
-            skinned.add(
-                root
-            );
-
-            skinned.bind(
-                skeleton
-            );
-
-            skinned.normalizeSkinWeights();
-
-            mesh.parent.add(
-                skinned
-            );
-
-            mesh.parent.remove(
-                mesh
-            );
+            return posicion;
         }
     );
 
+
+// ------------------------------------------------
+// CALCULAR PESOS
+// ------------------------------------------------
+
+for (
+    let i = 0;
+    i < posiciones.count;
+    i++
+) {
+
+    const vertice =
+        new THREE.Vector3()
+            .fromBufferAttribute(
+                posiciones,
+                i
+            );
+
+
+    const candidatos = [];
+
+
+    for (
+        let h = 0;
+        h < posicionesHuesos.length;
+        h++
+    ) {
+
+        const distancia =
+            vertice.distanceToSquared(
+                posicionesHuesos[h]
+            );
+
+
+        candidatos.push({
+
+            indice:
+                indicesHuesos[h],
+
+            distancia:
+                distancia
+
+        });
+
+    }
+
+
+    // Los cuatro huesos corporales
+    // más cercanos.
+
+    candidatos.sort(
+        (a, b) =>
+            a.distancia -
+            b.distancia
+    );
+
+
+    const cuatro =
+        candidatos.slice(
+            0,
+            4
+        );
+
+
+    let suma = 0;
+
+
+    for (
+        const candidato
+        of cuatro
+    ) {
+
+        candidato.peso =
+            1 /
+            (
+                Math.sqrt(
+                    candidato.distancia
+                ) +
+                0.0001
+            );
+
+
+        suma +=
+            candidato.peso;
+
+    }
+
+
+    const ids =
+        [0, 0, 0, 0];
+
+    const ws =
+        [0, 0, 0, 0];
+
+
+    for (
+        let n = 0;
+        n < cuatro.length;
+        n++
+    ) {
+
+        ids[n] =
+            cuatro[n].indice;
+
+
+        ws[n] =
+            cuatro[n].peso /
+            suma;
+
+    }
+
+
+    indices.push(
+        ...ids
+    );
+
+
+    pesos.push(
+        ...ws
+    );
+
+}
+
+
+geometry.setAttribute(
+
+    "skinIndex",
+
+    new THREE.Uint16BufferAttribute(
+        indices,
+        4
+    )
+
+);
+
+
+geometry.setAttribute(
+
+    "skinWeight",
+
+    new THREE.Float32BufferAttribute(
+        pesos,
+        4
+    )
+
+);
+
+
+skinned.add(
+    root
+);
+
+
+skinned.bind(
+    skeleton
+);
+
+
+skinned.normalizeSkinWeights();
+
+
+mesh.parent.add(
+    skinned
+);
+
+
+mesh.parent.remove(
+    mesh
+);
     // ========================================================
     // ANIMACIONES PROCEDURALES
     // ========================================================
