@@ -924,245 +924,1049 @@ mesh.parent.add(
 mesh.parent.remove(
     mesh
 );
-    // ========================================================
-    // ANIMACIONES PROCEDURALES
-    // ========================================================
+// ========================================================
+// ANIMACIONES PROCEDURALES — CUERPO COMPLETO
+// ========================================================
 
-    let animacion =
-        "idle";
+let animacion =
+    "idle";
 
-    let tiempo =
-        0;
+let tiempo =
+    0;
 
-    const baseRot =
-        new Map();
+
+// --------------------------------------------------------
+// GUARDAR ROTACIONES BASE
+// --------------------------------------------------------
+
+const baseRot =
+    new Map();
+
+
+bones.forEach(
+    b => {
+
+        baseRot.set(
+            b.name,
+            b.rotation.clone()
+        );
+
+    }
+);
+
+
+// --------------------------------------------------------
+// RESTAURAR POSE
+// --------------------------------------------------------
+
+function restaurarPose() {
 
     bones.forEach(
         b => {
 
-            baseRot.set(
-                b.name,
-                b.rotation.clone()
-            );
+            const r =
+                baseRot.get(
+                    b.name
+                );
+
+
+            if (r) {
+
+                b.rotation.copy(
+                    r
+                );
+
+            }
+
         }
     );
 
-    function restaurarPose() {
+}
 
-        bones.forEach(
-            b => {
 
-                const r =
-                    baseRot.get(
-                        b.name
-                    );
+// --------------------------------------------------------
+// ROTAR SI EXISTE
+// --------------------------------------------------------
 
-                if (r) {
-                    b.rotation.copy(r);
-                }
-            }
-        );
+function rotar(
+    nombre,
+    x = 0,
+    y = 0,
+    z = 0
+) {
+
+    const b =
+        porNombre[nombre];
+
+
+    if (!b) {
+        return;
     }
 
-    function actualizarAnimacion(
-        delta
+
+    b.rotation.x += x;
+    b.rotation.y += y;
+    b.rotation.z += z;
+
+}
+
+
+// --------------------------------------------------------
+// COLUMNA COMPLETA
+// --------------------------------------------------------
+
+function columna(
+    x = 0,
+    y = 0,
+    z = 0
+) {
+
+    rotar(
+        "Spine_1",
+        x * 0.10,
+        y * 0.10,
+        z * 0.10
+    );
+
+
+    rotar(
+        "Spine_2",
+        x * 0.15,
+        y * 0.15,
+        z * 0.15
+    );
+
+
+    rotar(
+        "Spine_3",
+        x * 0.20,
+        y * 0.20,
+        z * 0.20
+    );
+
+
+    rotar(
+        "Spine_4",
+        x * 0.25,
+        y * 0.25,
+        z * 0.25
+    );
+
+
+    rotar(
+        "Spine_5",
+        x * 0.30,
+        y * 0.30,
+        z * 0.30
+    );
+
+
+    rotar(
+        "Chest",
+        x * 0.25,
+        y * 0.25,
+        z * 0.25
+    );
+
+}
+
+
+// --------------------------------------------------------
+// ANIMACIÓN
+// --------------------------------------------------------
+
+function actualizarAnimacion(
+    delta
+) {
+
+    tiempo +=
+        delta;
+
+
+    restaurarPose();
+
+
+    // ====================================================
+    // HUESOS PRINCIPALES
+    // ====================================================
+
+    const hips =
+        porNombre.Hips;
+
+    const head =
+        porNombre.Head;
+
+    const neck =
+        porNombre.Neck;
+
+
+    // ====================================================
+    // IDLE
+    // ====================================================
+
+    if (
+        animacion ===
+        "idle"
     ) {
 
-        tiempo += delta;
+        const respiracion =
+            Math.sin(
+                tiempo * 2.5
+            );
 
-        restaurarPose();
 
-        const spine =
-            porNombre.Spine_3;
+        // Cuerpo completo
+        columna(
+            respiracion *
+            0.025,
 
-        const headBone =
-            porNombre.Head;
+            0,
 
-        const leftArm =
-            porNombre.LeftArm;
+            respiracion *
+            0.008
+        );
 
-        const rightArm =
-            porNombre.RightArm;
 
-        const leftLeg =
-            porNombre.LeftLeg;
+        rotar(
+            "Hips",
+            0,
+            0,
+            respiracion *
+            0.012
+        );
 
-        const rightLeg =
-            porNombre.RightLeg;
 
-        if (
-            animacion ===
-            "idle"
-        ) {
+        rotar(
+            "Neck",
+            respiracion *
+            0.015,
+            0,
+            0
+        );
 
-            const respiracion =
+
+        rotar(
+            "Head",
+            0,
+            0,
+            Math.sin(
+                tiempo * 1.4
+            ) *
+            0.025
+        );
+
+
+        // Brazos relajados
+        rotar(
+            "LeftShoulder",
+            0,
+            0,
+            -0.035
+        );
+
+
+        rotar(
+            "RightShoulder",
+            0,
+            0,
+            0.035
+        );
+
+    }
+
+
+    // ====================================================
+    // CAMINAR
+    // ====================================================
+
+    if (
+        animacion ===
+        "caminar"
+    ) {
+
+        const paso =
+            Math.sin(
+                tiempo * 8
+            );
+
+
+        const cuerpo =
+            Math.sin(
+                tiempo * 8
+            );
+
+
+        // Cadera
+        rotar(
+            "Hips",
+            0,
+            0,
+            cuerpo *
+            0.045
+        );
+
+
+        // Columna completa
+        columna(
+            0,
+            0,
+            cuerpo *
+            0.035
+        );
+
+
+        // Pierna izquierda
+        rotar(
+            "LeftUpLeg",
+            paso *
+            0.38,
+            0,
+            0
+        );
+
+
+        rotar(
+            "LeftLeg",
+            -Math.max(
+                0,
+                -paso
+            ) *
+            0.22,
+            0,
+            0
+        );
+
+
+        // Pierna derecha
+        rotar(
+            "RightUpLeg",
+            -paso *
+            0.38,
+            0,
+            0
+        );
+
+
+        rotar(
+            "RightLeg",
+            Math.max(
+                0,
+                paso
+            ) *
+            0.22,
+            0,
+            0
+        );
+
+
+        // Brazos
+        rotar(
+            "LeftShoulder",
+            0,
+            0,
+            -paso *
+            0.12
+        );
+
+
+        rotar(
+            "RightShoulder",
+            0,
+            0,
+            paso *
+            0.12
+        );
+
+
+        rotar(
+            "LeftArm",
+            -paso *
+            0.28,
+            0,
+            0
+        );
+
+
+        rotar(
+            "RightArm",
+            paso *
+            0.28,
+            0,
+            0
+        );
+
+
+        // Antebrazos
+        rotar(
+            "LeftForeArm",
+            Math.max(
+                0,
+                paso
+            ) *
+            0.10,
+            0,
+            0
+        );
+
+
+        rotar(
+            "RightForeArm",
+            Math.max(
+                0,
+                -paso
+            ) *
+            0.10,
+            0,
+            0
+        );
+
+
+        // Cabeza
+        rotar(
+            "Head",
+            0,
+            0,
+            -cuerpo *
+            0.025
+        );
+
+    }
+
+
+    // ====================================================
+    // CORRER
+    // ====================================================
+
+    if (
+        animacion ===
+        "correr"
+    ) {
+
+        const paso =
+            Math.sin(
+                tiempo * 13
+            );
+
+
+        const rebote =
+            Math.abs(
                 Math.sin(
-                    tiempo * 3
-                );
+                    tiempo * 13
+                )
+            );
 
-            spine.rotation.x =
-                respiracion *
-                0.025;
 
-            headBone.rotation.z =
-                Math.sin(
-                    tiempo * 1.5
-                ) *
-                0.015;
+        // Cadera
+        rotar(
+            "Hips",
+            rebote *
+            0.035,
+            0,
+            paso *
+            0.07
+        );
 
-            leftArm.rotation.z =
-                -0.04;
 
-            rightArm.rotation.z =
-                0.04;
-        }
+        // Inclinación completa
+        columna(
+            -0.12,
+            0,
+            paso *
+            0.045
+        );
 
-        if (
-            animacion ===
-            "caminar"
-        ) {
 
-            const paso =
-                Math.sin(
-                    tiempo * 9
-                );
+        // Piernas
+        rotar(
+            "LeftUpLeg",
+            paso *
+            0.62,
+            0,
+            0
+        );
 
-            leftLeg.rotation.x =
-                paso *
-                0.45;
 
-            rightLeg.rotation.x =
-                -paso *
-                0.45;
+        rotar(
+            "RightUpLeg",
+            -paso *
+            0.62,
+            0,
+            0
+        );
 
-            leftArm.rotation.x =
-                -paso *
-                0.25;
 
-            rightArm.rotation.x =
-                paso *
-                0.25;
+        rotar(
+            "LeftLeg",
+            -Math.max(
+                0,
+                -paso
+            ) *
+            0.42,
+            0,
+            0
+        );
 
-            spine.rotation.z =
-                Math.sin(
-                    tiempo * 9
-                ) *
-                0.025;
-        }
 
-        if (
-            animacion ===
-            "correr"
-        ) {
+        rotar(
+            "RightLeg",
+            Math.max(
+                0,
+                paso
+            ) *
+            0.42,
+            0,
+            0
+        );
 
-            const paso =
-                Math.sin(
-                    tiempo * 14
-                );
 
-            leftLeg.rotation.x =
-                paso *
-                0.75;
+        // Hombros
+        rotar(
+            "LeftShoulder",
+            0,
+            0,
+            -paso *
+            0.20
+        );
 
-            rightLeg.rotation.x =
-                -paso *
-                0.75;
 
-            leftArm.rotation.x =
-                -paso *
-                0.55;
+        rotar(
+            "RightShoulder",
+            0,
+            0,
+            paso *
+            0.20
+        );
 
-            rightArm.rotation.x =
-                paso *
-                0.55;
 
-            spine.rotation.x =
-                -0.18;
-        }
+        // Brazos
+        rotar(
+            "LeftArm",
+            -paso *
+            0.48,
+            0,
+            0
+        );
 
-        if (
-            animacion ===
-            "saltar"
-        ) {
 
-            leftLeg.rotation.x =
-                -0.25;
+        rotar(
+            "RightArm",
+            paso *
+            0.48,
+            0,
+            0
+        );
 
-            rightLeg.rotation.x =
-                -0.25;
 
-            leftArm.rotation.z =
-                -0.5;
+        // Antebrazos
+        rotar(
+            "LeftForeArm",
+            Math.max(
+                0,
+                paso
+            ) *
+            0.22,
+            0,
+            0
+        );
 
-            rightArm.rotation.z =
-                0.5;
-        }
 
-        if (
-            animacion ===
-            "recolectar"
-        ) {
+        rotar(
+            "RightForeArm",
+            Math.max(
+                0,
+                -paso
+            ) *
+            0.22,
+            0,
+            0
+        );
 
-            spine.rotation.x =
-                0.3;
 
-            leftArm.rotation.x =
-                -0.7;
+        // Cabeza estabilizada
+        rotar(
+            "Neck",
+            0.04,
+            0,
+            -paso *
+            0.025
+        );
 
-            headBone.rotation.x =
-                0.15;
-        }
 
-        if (
-            animacion ===
-            "cavar"
-        ) {
+        rotar(
+            "Head",
+            -0.02,
+            0,
+            paso *
+            0.025
+        );
 
-            leftArm.rotation.x =
-                Math.sin(
-                    tiempo * 10
-                ) *
-                0.8;
+    }
 
-            spine.rotation.z =
-                0.15;
-        }
 
-        if (
-            animacion ===
-            "regar"
-        ) {
+    // ====================================================
+    // SALTAR
+    // ====================================================
 
-            rightArm.rotation.x =
-                Math.sin(
-                    tiempo * 5
-                ) *
-                0.45;
+    if (
+        animacion ===
+        "saltar"
+    ) {
 
-            spine.rotation.z =
-                Math.sin(
-                    tiempo * 5
-                ) *
-                0.08;
-        }
+        const salto =
+            Math.sin(
+                tiempo * 5
+            );
 
-        if (
-            animacion ===
-            "feliz"
-        ) {
 
-            spine.rotation.z =
-                Math.sin(
-                    tiempo * 6
-                ) *
-                0.08;
+        columna(
+            -0.08,
+            0,
+            salto *
+            0.025
+        );
 
-            leftArm.rotation.z =
-                -0.5;
 
-            rightArm.rotation.z =
-                0.5;
-        }
+        rotar(
+            "Hips",
+            -0.10,
+            0,
+            0
+        );
+
+
+        rotar(
+            "LeftUpLeg",
+            -0.35,
+            0,
+            0
+        );
+
+
+        rotar(
+            "RightUpLeg",
+            -0.35,
+            0,
+            0
+        );
+
+
+        rotar(
+            "LeftLeg",
+            0.25,
+            0,
+            0
+        );
+
+
+        rotar(
+            "RightLeg",
+            0.25,
+            0,
+            0
+        );
+
+
+        rotar(
+            "LeftShoulder",
+            0,
+            0,
+            -0.15
+        );
+
+
+        rotar(
+            "RightShoulder",
+            0,
+            0,
+            0.15
+        );
+
+
+        rotar(
+            "LeftArm",
+            -0.45,
+            0,
+            0
+        );
+
+
+        rotar(
+            "RightArm",
+            -0.45,
+            0,
+            0
+        );
+
+
+        rotar(
+            "Head",
+            -0.05,
+            0,
+            0
+        );
+
+    }
+
+
+    // ====================================================
+    // RECOLECTAR
+    // ====================================================
+
+    if (
+        animacion ===
+        "recolectar"
+    ) {
+
+        columna(
+            0.18,
+            0,
+            0
+        );
+
+
+        rotar(
+            "Hips",
+            0.08,
+            0,
+            0
+        );
+
+
+        rotar(
+            "LeftShoulder",
+            0,
+            0,
+            -0.15
+        );
+
+
+        rotar(
+            "RightShoulder",
+            0,
+            0,
+            0.15
+        );
+
+
+        rotar(
+            "LeftArm",
+            -0.65,
+            0,
+            0
+        );
+
+
+        rotar(
+            "RightArm",
+            -0.65,
+            0,
+            0
+        );
+
+
+        rotar(
+            "LeftForeArm",
+            -0.25,
+            0,
+            0
+        );
+
+
+        rotar(
+            "RightForeArm",
+            -0.25,
+            0,
+            0
+        );
+
+
+        rotar(
+            "Neck",
+            0.08,
+            0,
+            0
+        );
+
+
+        rotar(
+            "Head",
+            0.12,
+            0,
+            0
+        );
+
+    }
+
+
+    // ====================================================
+    // CAVAR
+    // ====================================================
+
+    if (
+        animacion ===
+        "cavar"
+    ) {
+
+        const golpe =
+            Math.sin(
+                tiempo * 9
+            );
+
+
+        columna(
+            0.16,
+            0,
+            golpe *
+            0.04
+        );
+
+
+        rotar(
+            "Hips",
+            0.08,
+            0,
+            0
+        );
+
+
+        rotar(
+            "LeftShoulder",
+            0,
+            0,
+            -0.15
+        );
+
+
+        rotar(
+            "LeftArm",
+            -0.55 -
+            golpe *
+            0.35,
+            0,
+            0
+        );
+
+
+        rotar(
+            "LeftForeArm",
+            -0.30 +
+            golpe *
+            0.20,
+            0,
+            0
+        );
+
+
+        rotar(
+            "RightShoulder",
+            0,
+            0,
+            0.10
+        );
+
+
+        rotar(
+            "RightArm",
+            -0.35,
+            0,
+            0
+        );
+
+
+        rotar(
+            "RightForeArm",
+            -0.20,
+            0,
+            0
+        );
+
+
+        rotar(
+            "Head",
+            0.10,
+            0,
+            0
+        );
+
+    }
+
+
+    // ====================================================
+    // REGAR
+    // ====================================================
+
+    if (
+        animacion ===
+        "regar"
+    ) {
+
+        const movimiento =
+            Math.sin(
+                tiempo * 5
+            );
+
+
+        columna(
+            0.05,
+            0,
+            movimiento *
+            0.025
+        );
+
+
+        rotar(
+            "Hips",
+            0,
+            0,
+            movimiento *
+            0.025
+        );
+
+
+        rotar(
+            "RightShoulder",
+            0,
+            0,
+            0.15
+        );
+
+
+        rotar(
+            "RightArm",
+            -0.55,
+            0,
+            0
+        );
+
+
+        rotar(
+            "RightForeArm",
+            movimiento *
+            0.30,
+            0,
+            0
+        );
+
+
+        rotar(
+            "LeftShoulder",
+            0,
+            0,
+            -0.10
+        );
+
+
+        rotar(
+            "LeftArm",
+            -0.30,
+            0,
+            0
+        );
+
+
+        rotar(
+            "Head",
+            0.05,
+            0,
+            0
+        );
+
+    }
+
+
+    // ====================================================
+    // FELIZ
+    // ====================================================
+
+    if (
+        animacion ===
+        "feliz"
+    ) {
+
+        const alegria =
+            Math.sin(
+                tiempo * 6
+            );
+
+
+        columna(
+            alegria *
+            0.04,
+            0,
+            alegria *
+            0.08
+        );
+
+
+        rotar(
+            "Hips",
+            0,
+            0,
+            alegria *
+            0.10
+        );
+
+
+        rotar(
+            "LeftShoulder",
+            0,
+            0,
+            -0.30
+        );
+
+
+        rotar(
+            "RightShoulder",
+            0,
+            0,
+            0.30
+        );
+
+
+        rotar(
+            "LeftArm",
+            -0.25,
+            0,
+            -0.25
+        );
+
+
+        rotar(
+            "RightArm",
+            -0.25,
+            0,
+            0.25
+        );
+
+
+        rotar(
+            "LeftForeArm",
+            alegria *
+            0.30,
+            0,
+            0
+        );
+
+
+        rotar(
+            "RightForeArm",
+            -alegria *
+            0.30,
+            0,
+            0
+        );
+
+
+        rotar(
+            "Head",
+            0,
+            0,
+            alegria *
+            0.05
+        );
+
+    }
+
     }
 
     // ========================================================
