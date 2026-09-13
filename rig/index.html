@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>GAMERPRO — Visualizador Micaela</title>
+<title>GAMERPRO — Visualizador de Personajes</title>
 
 <style>
 * {
@@ -28,63 +28,61 @@ body {
     position: relative;
 }
 
-#canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
+#visor {
+    position: fixed;
+    inset: 0;
 }
 
 #panel {
     position: fixed;
     top: 12px;
     left: 12px;
+
     width: min(340px, calc(100vw - 24px));
     max-height: calc(100vh - 24px);
+
     overflow-y: auto;
 
     padding: 14px;
 
-    background: rgba(15, 18, 24, 0.94);
-    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(15,18,24,.95);
+    border: 1px solid rgba(255,255,255,.12);
     border-radius: 14px;
 
-    box-shadow: 0 10px 35px rgba(0,0,0,0.45);
+    box-shadow: 0 10px 35px rgba(0,0,0,.45);
 
     z-index: 10;
 }
 
-#panel h1 {
-    margin: 0 0 4px;
+h1 {
+    margin: 0 0 5px;
     font-size: 20px;
 }
 
-#estado {
-    font-size: 13px;
+.estado {
+    font-size: 12px;
     color: #9fe6a0;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .seccion {
     margin-top: 14px;
     padding-top: 12px;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255,255,255,.1);
 }
 
 .seccion h2 {
-    margin: 0 0 8px;
+    margin: 0 0 7px;
     font-size: 14px;
 }
 
-button,
 select,
-input[type="range"] {
+button {
     width: 100%;
-}
 
-button,
-select {
     border: 0;
     border-radius: 9px;
+
     padding: 10px;
     margin-top: 6px;
 
@@ -95,43 +93,34 @@ select {
 }
 
 button:active {
-    transform: scale(0.98);
+    transform: scale(.98);
 }
 
 button.activo {
     background: #4d7cff;
 }
 
-label {
-    display: block;
-    font-size: 12px;
-    margin-top: 9px;
-    margin-bottom: 3px;
-    color: #bfc7d5;
-}
-
-#animacionInfo {
-    font-size: 12px;
-    color: #bfc7d5;
+.info {
     margin-top: 8px;
-    line-height: 1.4;
-}
 
-#huesosInfo {
     font-size: 12px;
-    color: #bfc7d5;
     line-height: 1.5;
+
+    color: #bfc7d5;
 }
 
 #mensaje {
     position: fixed;
-    left: 50%;
+
     bottom: 15px;
+    left: 50%;
+
     transform: translateX(-50%);
 
     padding: 9px 14px;
 
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,.7);
+
     border-radius: 10px;
 
     font-size: 12px;
@@ -146,10 +135,6 @@ label {
     font-size: 12px;
     line-height: 1.4;
 }
-
-.oculto {
-    display: none;
-}
 </style>
 </head>
 
@@ -157,165 +142,221 @@ label {
 
 <div id="app">
 
-<canvas id="canvas"></canvas>
+    <div id="visor"></div>
 
-<div id="panel">
+    <div id="panel">
 
-    <h1>🎮 GAMERPRO</h1>
-    <div id="estado">⏳ Cargando Micaela...</div>
+        <h1>🎮 GAMERPRO</h1>
 
-    <div class="seccion">
-
-        <h2>🧍 Personaje</h2>
-
-        <button id="resetCamara">
-            📷 Reiniciar cámara
-        </button>
-
-        <button id="toggleSkeleton">
-            🦴 Mostrar esqueleto
-        </button>
-
-    </div>
-
-    <div class="seccion">
-
-        <h2>🎞️ Animaciones</h2>
-
-        <select id="animaciones">
-            <option value="">Cargando...</option>
-        </select>
-
-        <button id="reproducir">
-            ▶️ Reproducir
-        </button>
-
-        <button id="pausar">
-            ⏸️ Pausar
-        </button>
-
-        <button id="detener">
-            ⏹️ Detener
-        </button>
-
-        <label for="velocidad">
-            Velocidad
-        </label>
-
-        <input
-            id="velocidad"
-            type="range"
-            min="0"
-            max="2"
-            step="0.05"
-            value="1"
+        <div
+            id="estado"
+            class="estado"
         >
-
-        <div id="velocidadTexto">
-            Velocidad: 1.00x
+            ⏳ Cargando...
         </div>
 
-        <div id="animacionInfo">
-            Sin animación seleccionada.
+
+        <!-- ========================================= -->
+        <!-- PERSONAJE -->
+        <!-- ========================================= -->
+
+        <div class="seccion">
+
+            <h2>🧍 Personaje</h2>
+
+            <select id="personajeSelect">
+
+                <option value="micaela">
+                    👧 Micaela
+                </option>
+
+                <option value="mike">
+                    👦 Mike
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- ANIMACIÓN -->
+        <!-- ========================================= -->
+
+        <div class="seccion">
+
+            <h2>🎞️ Animación</h2>
+
+            <select id="animacionSelect">
+
+                <option value="">
+                    Cargando...
+                </option>
+
+            </select>
+
+
+            <button id="play">
+                ▶️ Reproducir
+            </button>
+
+
+            <button id="pause">
+                ⏸️ Pausar
+            </button>
+
+
+            <button id="reset">
+                🔄 Reiniciar animación
+            </button>
+
+
+            <button id="skeleton">
+                🦴 Mostrar esqueleto
+            </button>
+
+
+            <button id="camera">
+                📷 Reiniciar cámara
+            </button>
+
+
+            <div
+                id="animacionInfo"
+                class="info"
+            >
+                Animación: —
+            </div>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- INFORMACIÓN -->
+        <!-- ========================================= -->
+
+        <div class="seccion">
+
+            <h2>📊 Estado</h2>
+
+            <div
+                id="info"
+                class="info"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- ERROR -->
+        <!-- ========================================= -->
+
+        <div class="seccion">
+
+            <div id="error"></div>
+
         </div>
 
     </div>
 
-    <div class="seccion">
 
-        <h2>🦴 Información del rig</h2>
-
-        <div id="huesosInfo">
-            Buscando esqueleto...
-        </div>
-
-    </div>
-
-    <div class="seccion">
-
-        <div id="error"></div>
-
+    <div id="mensaje">
+        Arrastra para girar · rueda para zoom
     </div>
 
 </div>
 
-<div id="mensaje">
-    Arrastra para girar · rueda para zoom
-</div>
-
-</div>
-
-<script type="importmap">
-{
-    "imports": {
-        "three": "https://unpkg.com/three@0.180.0/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.180.0/examples/jsm/"
-    }
-}
-</script>
 
 <script type="module">
 
-import * as THREE from "three";
+// =====================================================
+// IMPORTACIONES
+// =====================================================
 
-import { GLTFLoader } from
-    "three/addons/loaders/GLTFLoader.js";
+import * as THREE from
+    "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
 
 import { OrbitControls } from
-    "three/addons/controls/OrbitControls.js";
+    "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js";
 
+import { iniciarMicaelaRig } from
+    "../mecanicas/micaelaRig.js";
 
-// =====================================================
-// CONFIGURACIÓN
-// =====================================================
-
-const MODEL_URL =
-    "../3D/micaela.glb";
+import { iniciarMikeRig } from
+    "../mecanicas/mikeRig.js";
 
 
 // =====================================================
 // ELEMENTOS
 // =====================================================
 
-const canvas =
-    document.getElementById("canvas");
+const visor =
+    document.getElementById("visor");
 
 const estado =
     document.getElementById("estado");
 
-const error =
-    document.getElementById("error");
+const personajeSelect =
+    document.getElementById("personajeSelect");
 
-const animaciones =
-    document.getElementById("animaciones");
+const animacionSelect =
+    document.getElementById("animacionSelect");
 
 const animacionInfo =
     document.getElementById("animacionInfo");
 
-const huesosInfo =
-    document.getElementById("huesosInfo");
+const info =
+    document.getElementById("info");
 
-const velocidad =
-    document.getElementById("velocidad");
+const error =
+    document.getElementById("error");
 
-const velocidadTexto =
-    document.getElementById("velocidadTexto");
+const play =
+    document.getElementById("play");
 
-const toggleSkeleton =
-    document.getElementById("toggleSkeleton");
+const pause =
+    document.getElementById("pause");
 
-const resetCamara =
-    document.getElementById("resetCamara");
+const reset =
+    document.getElementById("reset");
+
+const skeleton =
+    document.getElementById("skeleton");
+
+const camera =
+    document.getElementById("camera");
 
 
 // =====================================================
-// ESCENA
+// VARIABLES DEL VISUALIZADOR
 // =====================================================
 
-const scene =
+let personajeActual = null;
+
+let nombreActual = "micaela";
+
+let animacionActual = "idle";
+
+let animando = true;
+
+let mostrarEsqueleto = false;
+
+let helpersEsqueleto = [];
+
+let reloj =
+    new THREE.Clock();
+
+
+// =====================================================
+// ESCENA DEL VISUALIZADOR
+// =====================================================
+
+const escena =
     new THREE.Scene();
 
-scene.background =
+escena.background =
     new THREE.Color(0x101216);
 
 
@@ -323,20 +364,13 @@ scene.background =
 // CÁMARA
 // =====================================================
 
-const camera =
+const camara =
     new THREE.PerspectiveCamera(
         45,
-        window.innerWidth /
-        window.innerHeight,
+        innerWidth / innerHeight,
         0.01,
         1000
     );
-
-camera.position.set(
-    2.8,
-    1.8,
-    3.5
-);
 
 
 // =====================================================
@@ -345,57 +379,60 @@ camera.position.set(
 
 const renderer =
     new THREE.WebGLRenderer({
-        canvas,
-        antialias: true,
-        alpha: false
+        antialias: true
     });
 
 renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio, 2)
+    Math.min(
+        devicePixelRatio,
+        2
+    )
 );
 
 renderer.setSize(
-    window.innerWidth,
-    window.innerHeight
+    innerWidth,
+    innerHeight
 );
 
 renderer.outputColorSpace =
     THREE.SRGBColorSpace;
 
-renderer.shadowMap.enabled = true;
+renderer.shadowMap.enabled =
+    true;
+
+visor.appendChild(
+    renderer.domElement
+);
 
 
 // =====================================================
-// CONTROLES DE CÁMARA
+// CONTROLES
 // =====================================================
 
 const controls =
     new OrbitControls(
-        camera,
+        camara,
         renderer.domElement
     );
 
-controls.enableDamping = true;
+controls.enableDamping =
+    true;
 
-controls.target.set(
-    0,
-    1,
-    0
-);
+controls.dampingFactor =
+    0.08;
 
 
 // =====================================================
 // LUCES
 // =====================================================
 
-const ambiente =
+escena.add(
     new THREE.HemisphereLight(
         0xffffff,
-        0x303030,
+        0x333333,
         2.2
-    );
-
-scene.add(ambiente);
+    )
+);
 
 
 const luz =
@@ -410,9 +447,12 @@ luz.position.set(
     5
 );
 
-luz.castShadow = true;
+luz.castShadow =
+    true;
 
-scene.add(luz);
+escena.add(
+    luz
+);
 
 
 // =====================================================
@@ -434,9 +474,12 @@ const suelo =
 suelo.rotation.x =
     -Math.PI / 2;
 
-suelo.receiveShadow = true;
+suelo.receiveShadow =
+    true;
 
-scene.add(suelo);
+escena.add(
+    suelo
+);
 
 
 // =====================================================
@@ -454,399 +497,373 @@ const grid =
 grid.position.y =
     0.002;
 
-scene.add(grid);
+escena.add(
+    grid
+);
 
 
 // =====================================================
-// VARIABLES
+// CARGAR PERSONAJE
 // =====================================================
 
-let modelo = null;
+async function cargarPersonaje(
+    nombre
+) {
 
-let mixer = null;
+    try {
 
-let clips = [];
+        estado.textContent =
+            `⏳ Cargando ${
+                nombre === "micaela"
+                    ? "Micaela"
+                    : "Mike"
+            }...`;
 
-let accionActual = null;
-
-let skeletonHelpers = [];
-
-let skeletonVisible = false;
-
-let reloj =
-    new THREE.Clock();
-
-
-// =====================================================
-// LOADER
-// =====================================================
-
-const loader =
-    new GLTFLoader();
-
-
-// =====================================================
-// CARGAR MICAELA
-// =====================================================
-
-estado.textContent =
-    "⏳ Cargando Micaela...";
-
-loader.load(
-
-    MODEL_URL,
-
-    function(gltf) {
-
-        modelo =
-            gltf.scene;
-
-        scene.add(modelo);
+        error.textContent =
+            "";
 
 
         // =============================================
-        // SOMBRAS
+        // LIMPIAR PERSONAJE ANTERIOR
         // =============================================
 
-        modelo.traverse(
-            function(objeto) {
+        if (
+            personajeActual
+        ) {
 
-                if (
-                    objeto.isMesh
-                ) {
-
-                    objeto.castShadow =
-                        true;
-
-                    objeto.receiveShadow =
-                        true;
-                }
-
-            }
-        );
-
-
-        // =============================================
-        // CENTRAR MODELO
-        // =============================================
-
-        const caja =
-            new THREE.Box3()
-                .setFromObject(modelo);
-
-        const centro =
-            caja.getCenter(
-                new THREE.Vector3()
+            escena.remove(
+                personajeActual
             );
 
-        modelo.position.x -=
-            centro.x;
-
-        modelo.position.z -=
-            centro.z;
-
-
-        // =============================================
-        // COLOCAR SOBRE EL SUELO
-        // =============================================
-
-        const caja2 =
-            new THREE.Box3()
-                .setFromObject(modelo);
-
-        const minY =
-            caja2.min.y;
-
-        modelo.position.y -=
-            minY;
-
-
-        // =============================================
-        // ENCONTRAR TAMAÑO
-        // =============================================
-
-        const caja3 =
-            new THREE.Box3()
-                .setFromObject(modelo);
-
-        const tamaño =
-            caja3.getSize(
-                new THREE.Vector3()
-            );
-
-
-        // =============================================
-        // AJUSTAR CÁMARA
-        // =============================================
-
-        const mayor =
-            Math.max(
-                tamaño.x,
-                tamaño.y,
-                tamaño.z
-            );
-
-        camera.position.set(
-            mayor * 1.8,
-            mayor * 1.0,
-            mayor * 2.0
-        );
-
-        controls.target.set(
-            0,
-            tamaño.y * 0.55,
-            0
-        );
-
-        controls.update();
-
-
-        // =============================================
-        // ANIMACIONES
-        // =============================================
-
-        clips =
-            gltf.animations || [];
-
-        mixer =
-            new THREE.AnimationMixer(
-                modelo
-            );
-
-
-        // =============================================
-        // CREAR LISTA
-        // =============================================
-
-        animaciones.innerHTML = "";
-
-        if (clips.length === 0) {
-
-            const opcion =
-                document.createElement("option");
-
-            opcion.textContent =
-                "No hay animaciones en el GLB";
-
-            opcion.value = "";
-
-            animaciones.appendChild(
-                opcion
-            );
-
-        } else {
-
-            clips.forEach(
-                function(clip, indice) {
-
-                    const opcion =
-                        document.createElement("option");
-
-                    opcion.value =
-                        indice;
-
-                    opcion.textContent =
-                        clip.name ||
-                        `Animación ${indice + 1}`;
-
-                    animaciones.appendChild(
-                        opcion
-                    );
-
-                }
-            );
+            personajeActual =
+                null;
 
         }
 
 
-        // =============================================
-        // ESQUELETOS
-        // =============================================
+        helpersEsqueleto
+            .forEach(
+                helper => {
 
-        modelo.traverse(
-            function(objeto) {
-
-                if (
-                    objeto.isSkinnedMesh &&
-                    objeto.skeleton
-                ) {
-
-                    const helper =
-                        new THREE.SkeletonHelper(
-                            objeto
-                        );
-
-                    helper.visible =
-                        false;
-
-                    scene.add(
-                        helper
-                    );
-
-                    skeletonHelpers.push(
+                    escena.remove(
                         helper
                     );
 
                 }
+            );
 
-            }
+        helpersEsqueleto =
+            [];
+
+
+        // =============================================
+        // CREAR CONTENEDOR DEL RIG
+        // =============================================
+
+        const contenedor =
+            document.createElement(
+                "div"
+            );
+
+        /*
+         * Los rigs existentes crean su propio
+         * renderer/cámara dentro del contenedor.
+         *
+         * Por eso aquí los usamos como fuente
+         * real del personaje y del rig.
+         */
+
+        contenedor.style.position =
+            "absolute";
+
+        contenedor.style.width =
+            "1px";
+
+        contenedor.style.height =
+            "1px";
+
+        contenedor.style.pointerEvents =
+            "none";
+
+        contenedor.style.opacity =
+            "0";
+
+        document.body.appendChild(
+            contenedor
         );
+
+
+        // =============================================
+        // LLAMAR AL RIG REAL
+        // =============================================
+
+        let resultado;
+
+
+        if (
+            nombre === "micaela"
+        ) {
+
+            resultado =
+                await iniciarMicaelaRig(
+                    contenedor
+                );
+
+        } else {
+
+            resultado =
+                await iniciarMikeRig(
+                    contenedor
+                );
+
+        }
+
+
+        /*
+         * El rig devuelve:
+         *
+         * personaje
+         * userData.rig
+         * userData.skeleton
+         * userData.bones
+         * userData.animar
+         */
+
+        personajeActual =
+            resultado;
+
+
+        // =============================================
+        // MOVER AL VISUALIZADOR
+        // =============================================
+
+        /*
+         * El rig ya creó su propia escena.
+         * Extraemos el personaje y lo colocamos
+         * en nuestra escena.
+         */
+
+        if (
+            personajeActual.parent
+        ) {
+
+            personajeActual.parent.remove(
+                personajeActual
+            );
+
+        }
+
+        escena.add(
+            personajeActual
+        );
+
+
+        personajeActual.visible =
+            true;
+
+
+        // =============================================
+        // ANIMACIÓN INICIAL
+        // =============================================
+
+        animacionActual =
+            "idle";
+
+        animando =
+            true;
+
+
+        if (
+            personajeActual.userData.animacion
+        ) {
+
+            personajeActual.userData.animacion(
+                "idle"
+            );
+
+        }
 
 
         // =============================================
         // INFORMACIÓN DEL RIG
         // =============================================
 
-        let huesos =
-            [];
-
-        modelo.traverse(
-            function(objeto) {
-
-                if (
-                    objeto.isBone
-                ) {
-
-                    huesos.push(
-                        objeto
-                    );
-
-                }
-
-            }
-        );
+        const huesos =
+            personajeActual
+                .userData
+                .bones || {};
 
 
-        const skinned =
-            [];
-
-        modelo.traverse(
-            function(objeto) {
-
-                if (
-                    objeto.isSkinnedMesh
-                ) {
-
-                    skinned.push(
-                        objeto
-                    );
-
-                }
-
-            }
-        );
+        const numeroHuesos =
+            Object.keys(
+                huesos
+            ).length;
 
 
-        huesosInfo.innerHTML =
+        info.innerHTML =
             `
-            🦴 Huesos encontrados: <b>${huesos.length}</b><br>
-            🧍 SkinnedMesh: <b>${skinned.length}</b><br>
-            🎞️ Animaciones: <b>${clips.length}</b>
+            🧍 Personaje:
+            <b>${
+                nombre === "micaela"
+                    ? "Micaela"
+                    : "Mike"
+            }</b>
+            <br>
+
+            🦴 Huesos:
+            <b>${numeroHuesos}</b>
+            <br>
+
+            🎞️ Animaciones:
+            <b>Procedurales</b>
             `;
 
 
         // =============================================
-        // ESTADO
+        // LISTA DE ANIMACIONES
         // =============================================
 
-        estado.textContent =
-            "✅ Micaela cargada correctamente";
-
-        if (clips.length > 0) {
-
-            seleccionarAnimacion(0);
-
-        }
-
-    },
-
-    function(progreso) {
-
-        if (
-            progreso.total
-        ) {
-
-            const porcentaje =
-                Math.round(
-                    progreso.loaded /
-                    progreso.total *
-                    100
-                );
-
-            estado.textContent =
-                `⏳ Cargando Micaela... ${porcentaje}%`;
-
-        }
-
-    },
-
-    function(err) {
-
-        console.error(err);
-
-        estado.textContent =
-            "❌ Error cargando Micaela";
-
-        error.textContent =
-            "No se pudo cargar:\n" +
-            MODEL_URL +
-            "\n\n" +
-            "Comprueba que micaela.glb exista en /3D/.";
-
-    }
-
-);
-
-
-// =====================================================
-// SELECCIONAR ANIMACIÓN
-// =====================================================
-
-function seleccionarAnimacion(indice) {
-
-    if (!mixer) {
-        return;
-    }
-
-    const clip =
-        clips[indice];
-
-    if (!clip) {
-        return;
-    }
-
-
-    if (accionActual) {
-
-        accionActual.stop();
-
-    }
-
-
-    accionActual =
-        mixer.clipAction(
-            clip
+        prepararAnimaciones(
+            nombre
         );
 
 
-    accionActual.reset();
+        // =============================================
+        // CENTRAR CÁMARA
+        // =============================================
 
-    accionActual.setLoop(
-        THREE.LoopRepeat,
-        Infinity
+        ajustarCamara();
+
+
+        // =============================================
+        // ESQUELETO
+        // =============================================
+
+        crearSkeletonHelper();
+
+
+        estado.textContent =
+            `✅ ${
+                nombre === "micaela"
+                    ? "Micaela"
+                    : "Mike"
+            } cargado`;
+
+        nombreActual =
+            nombre;
+
+
+        /*
+         * El renderer/canvas interno que crea
+         * el rig ya no lo necesitamos.
+         */
+
+        if (
+            contenedor.parentNode
+        ) {
+
+            contenedor.parentNode
+                .removeChild(
+                    contenedor
+                );
+
+        }
+
+    }
+
+    catch (
+        err
+    ) {
+
+        console.error(
+            err
+        );
+
+        estado.textContent =
+            "❌ Error cargando personaje";
+
+        error.textContent =
+            "No se pudo cargar el rig:\n\n" +
+            err.message;
+
+    }
+
+}
+
+
+// =====================================================
+// ANIMACIONES DISPONIBLES
+// =====================================================
+
+function prepararAnimaciones(
+    nombre
+) {
+
+    animacionSelect.innerHTML =
+        "";
+
+
+    const listaMicaela = [
+
+        "idle",
+        "caminar",
+        "correr",
+        "saltar",
+        "recolectar",
+        "cavar",
+        "regar",
+        "feliz"
+
+    ];
+
+
+    const listaMike = [
+
+        "idle",
+        "caminar",
+        "correr",
+        "saltar",
+        "recolectar",
+        "cavar",
+        "regar"
+
+    ];
+
+
+    const lista =
+        nombre === "micaela"
+            ? listaMicaela
+            : listaMike;
+
+
+    lista.forEach(
+        nombreAnimacion => {
+
+            const opcion =
+                document.createElement(
+                    "option"
+                );
+
+            opcion.value =
+                nombreAnimacion;
+
+            opcion.textContent =
+                nombreAnimacion;
+
+            animacionSelect
+                .appendChild(
+                    opcion
+                );
+
+        }
     );
 
-    accionActual.clampWhenFinished =
-        false;
 
-    accionActual.play();
+    animacionSelect.value =
+        animacionActual;
 
 
-    animacionInfo.innerHTML =
-        `
-        🎞️ <b>${clip.name || "Sin nombre"}</b><br>
-        Duración: ${clip.duration.toFixed(2)} s
-        `;
+    actualizarTextoAnimacion();
 
 }
 
@@ -855,147 +872,204 @@ function seleccionarAnimacion(indice) {
 // CAMBIAR ANIMACIÓN
 // =====================================================
 
-animaciones.addEventListener(
+animacionSelect.addEventListener(
     "change",
     function() {
 
-        const indice =
-            Number(
-                animaciones.value
-            );
+        animacionActual =
+            animacionSelect.value;
 
-        seleccionarAnimacion(
-            indice
-        );
+
+        if (
+            personajeActual &&
+            personajeActual
+                .userData
+                .animacion
+        ) {
+
+            personajeActual
+                .userData
+                .animacion(
+                    animacionActual
+                );
+
+        }
+
+
+        animando =
+            true;
+
+        actualizarTextoAnimacion();
 
     }
 );
 
 
 // =====================================================
-// REPRODUCIR
+// TEXTO ANIMACIÓN
 // =====================================================
 
-document
-    .getElementById("reproducir")
-    .addEventListener(
-        "click",
-        function() {
+function actualizarTextoAnimacion() {
 
-            if (
-                accionActual
-            ) {
+    animacionInfo.textContent =
+        `🎞️ Animación actual: ${animacionActual}`;
 
-                accionActual.paused =
-                    false;
-
-            }
-
-        }
-    );
+}
 
 
 // =====================================================
-// PAUSAR
+// PLAY
 // =====================================================
 
-document
-    .getElementById("pausar")
-    .addEventListener(
-        "click",
-        function() {
-
-            if (
-                accionActual
-            ) {
-
-                accionActual.paused =
-                    true;
-
-            }
-
-        }
-    );
-
-
-// =====================================================
-// DETENER
-// =====================================================
-
-document
-    .getElementById("detener")
-    .addEventListener(
-        "click",
-        function() {
-
-            if (
-                accionActual
-            ) {
-
-                accionActual.stop();
-
-                accionActual.reset();
-
-                accionActual.play();
-
-                accionActual.paused =
-                    true;
-
-            }
-
-        }
-    );
-
-
-// =====================================================
-// VELOCIDAD
-// =====================================================
-
-velocidad.addEventListener(
-    "input",
-    function() {
-
-        const valor =
-            Number(
-                velocidad.value
-            );
-
-        velocidadTexto.textContent =
-            `Velocidad: ${valor.toFixed(2)}x`;
-
-        if (mixer) {
-
-            mixer.timeScale =
-                valor;
-
-        }
-
-    }
-);
-
-
-// =====================================================
-// ESQUELETO
-// =====================================================
-
-toggleSkeleton.addEventListener(
+play.addEventListener(
     "click",
     function() {
 
-        skeletonVisible =
-            !skeletonVisible;
+        animando =
+            true;
 
-        skeletonHelpers.forEach(
-            function(helper) {
+    }
+);
 
-                helper.visible =
-                    skeletonVisible;
+
+// =====================================================
+// PAUSE
+// =====================================================
+
+pause.addEventListener(
+    "click",
+    function() {
+
+        animando =
+            false;
+
+    }
+);
+
+
+// =====================================================
+// RESET
+// =====================================================
+
+reset.addEventListener(
+    "click",
+    function() {
+
+        animando =
+            false;
+
+
+        if (
+            personajeActual &&
+            personajeActual
+                .userData
+                .animacion
+        ) {
+
+            personajeActual
+                .userData
+                .animacion(
+                    animacionActual
+                );
+
+        }
+
+
+        /*
+         * Dejamos un frame detenido
+         * para comprobar la deformación.
+         */
+
+    }
+);
+
+
+// =====================================================
+// CREAR ESQUELETO VISUAL
+// =====================================================
+
+function crearSkeletonHelper() {
+
+    helpersEsqueleto
+        .forEach(
+            helper => {
+
+                escena.remove(
+                    helper
+                );
 
             }
         );
 
-        toggleSkeleton.textContent =
-            skeletonVisible
+    helpersEsqueleto =
+        [];
+
+
+    if (
+        !personajeActual ||
+        !personajeActual
+            .userData
+            .skeleton
+    ) {
+
+        return;
+
+    }
+
+
+    const skeleton =
+        personajeActual
+            .userData
+            .skeleton;
+
+
+    const helper =
+        new THREE.SkeletonHelper(
+            personajeActual
+        );
+
+
+    helper.visible =
+        mostrarEsqueleto;
+
+
+    escena.add(
+        helper
+    );
+
+
+    helpersEsqueleto.push(
+        helper
+    );
+
+}
+
+
+// =====================================================
+// BOTÓN ESQUELETO
+// =====================================================
+
+skeleton.addEventListener(
+    "click",
+    function() {
+
+        mostrarEsqueleto =
+            !mostrarEsqueleto;
+
+
+        helpersEsqueleto
+            .forEach(
+                helper => {
+
+                    helper.visible =
+                        mostrarEsqueleto;
+
+                }
+            );
+
+
+        skeleton.textContent =
+            mostrarEsqueleto
                 ? "🦴 Ocultar esqueleto"
                 : "🦴 Mostrar esqueleto";
 
@@ -1004,46 +1078,91 @@ toggleSkeleton.addEventListener(
 
 
 // =====================================================
-// REINICIAR CÁMARA
+// CÁMARA
 // =====================================================
 
-resetCamara.addEventListener(
+function ajustarCamara() {
+
+    if (
+        !personajeActual
+    ) {
+
+        return;
+
+    }
+
+
+    const caja =
+        new THREE.Box3()
+            .setFromObject(
+                personajeActual
+            );
+
+
+    const tamaño =
+        caja.getSize(
+            new THREE.Vector3()
+        );
+
+
+    const centro =
+        caja.getCenter(
+            new THREE.Vector3()
+        );
+
+
+    const mayor =
+        Math.max(
+            tamaño.x,
+            tamaño.y,
+            tamaño.z
+        );
+
+
+    camara.position.set(
+        centro.x,
+        centro.y +
+            mayor * 0.15,
+        centro.z +
+            mayor * 2.4
+    );
+
+
+    controls.target.copy(
+        centro
+    );
+
+
+    controls.update();
+
+}
+
+
+// =====================================================
+// BOTÓN CÁMARA
+// =====================================================
+
+camera.addEventListener(
     "click",
     function() {
 
-        if (!modelo) {
-            return;
-        }
+        ajustarCamara();
 
-        const caja =
-            new THREE.Box3()
-                .setFromObject(modelo);
+    }
+);
 
-        const tamaño =
-            caja.getSize(
-                new THREE.Vector3()
-            );
 
-        const mayor =
-            Math.max(
-                tamaño.x,
-                tamaño.y,
-                tamaño.z
-            );
+// =====================================================
+// CAMBIO DE PERSONAJE
+// =====================================================
 
-        camera.position.set(
-            mayor * 1.8,
-            mayor * 1.0,
-            mayor * 2.0
+personajeSelect.addEventListener(
+    "change",
+    function() {
+
+        cargarPersonaje(
+            personajeSelect.value
         );
-
-        controls.target.set(
-            0,
-            tamaño.y * 0.55,
-            0
-        );
-
-        controls.update();
 
     }
 );
@@ -1057,15 +1176,15 @@ window.addEventListener(
     "resize",
     function() {
 
-        camera.aspect =
-            window.innerWidth /
-            window.innerHeight;
+        camara.aspect =
+            innerWidth /
+            innerHeight;
 
-        camera.updateProjectionMatrix();
+        camara.updateProjectionMatrix();
 
         renderer.setSize(
-            window.innerWidth,
-            window.innerHeight
+            innerWidth,
+            innerHeight
         );
 
     }
@@ -1073,38 +1192,64 @@ window.addEventListener(
 
 
 // =====================================================
-// LOOP
+// LOOP DEL VISUALIZADOR
 // =====================================================
 
-function animar() {
+function loop() {
 
     requestAnimationFrame(
-        animar
+        loop
     );
+
 
     const delta =
         reloj.getDelta();
 
-    if (mixer) {
 
-        mixer.update(
-            delta
-        );
+    /*
+     * El rig existente tiene su propia función
+     * animar(delta). La usamos directamente.
+     */
+
+    if (
+        personajeActual &&
+        animando &&
+        personajeActual
+            .userData
+            .animar
+    ) {
+
+        personajeActual
+            .userData
+            .animar(
+                delta
+            );
 
     }
 
+
     controls.update();
 
+
     renderer.render(
-        scene,
-        camera
+        escena,
+        camara
     );
 
 }
 
-animar();
+
+// =====================================================
+// INICIAR
+// =====================================================
+
+loop();
+
+cargarPersonaje(
+    "micaela"
+);
 
 </script>
 
 </body>
-        </html>
+</html>
