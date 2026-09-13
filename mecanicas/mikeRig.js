@@ -69,7 +69,7 @@ export async function iniciarMikeRig(contenedor) {
 
     const gltf =
         await loader.loadAsync(
-            "../3D/mike.glb"
+            "../3D/mike1.glb"
         );
 
     const modelo =
