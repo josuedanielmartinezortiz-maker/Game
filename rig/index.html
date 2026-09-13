@@ -1,676 +1,1017 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>GAMERPRO — Visualizador de Rig</title>
 
+
+    <!-- =====================================================
+         THREE.JS — IMPORT MAP
+         ===================================================== -->
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        }
+    }
+    </script>
+
+
+    <!-- =====================================================
+         ESTILOS
+         ===================================================== -->
+
     <style>
+
         * {
             box-sizing: border-box;
         }
 
+
         html,
         body {
+
             margin: 0;
+
             width: 100%;
             height: 100%;
+
             overflow: hidden;
+
             background: #111;
-            font-family: Arial, sans-serif;
+
+            font-family:
+                Arial,
+                sans-serif;
         }
+
+
+        /* =================================================
+           VISOR
+           ================================================= */
 
         #visor {
+
             position: fixed;
+
             inset: 0;
+
             overflow: hidden;
+
+            background: #111;
         }
 
+
+        #visor canvas {
+
+            display: block;
+
+            width: 100%;
+            height: 100%;
+        }
+
+
+        /* =================================================
+           PANEL
+           ================================================= */
+
         #panel {
+
             position: fixed;
+
             top: 12px;
             left: 12px;
+
             z-index: 20;
 
-            width: min(360px, calc(100vw - 24px));
+            width:
+                min(
+                    360px,
+                    calc(100vw - 24px)
+                );
 
             padding: 14px;
 
-            background: rgba(20, 20, 20, 0.92);
+            background:
+                rgba(
+                    20,
+                    20,
+                    20,
+                    0.94
+                );
+
             color: white;
 
             border-radius: 14px;
 
             box-shadow:
-                0 8px 30px rgba(0, 0, 0, 0.45);
+                0 8px 30px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.45
+                );
         }
 
+
         #titulo {
+
             font-size: 20px;
+
             font-weight: bold;
+
             margin-bottom: 10px;
         }
 
+
+        /* =================================================
+           ESTADO
+           ================================================= */
+
         #estado {
+
             padding: 10px;
+
             margin-bottom: 10px;
 
             background: #222;
+
             border-radius: 8px;
 
             font-size: 13px;
+
             line-height: 1.4;
         }
 
+
+        /* =================================================
+           ERROR
+           ================================================= */
+
         #error {
+
             display: none;
 
-            max-height: 180px;
+            max-height: 220px;
+
             overflow: auto;
 
             padding: 10px;
+
             margin-bottom: 10px;
 
-            background: #351515;
-            color: #ffb5b5;
+            background:
+                #351515;
+
+            color:
+                #ffb5b5;
 
             border-radius: 8px;
 
             font-size: 11px;
-            white-space: pre-wrap;
+
+            white-space:
+                pre-wrap;
+
+            word-break:
+                break-word;
         }
 
+
+        /* =================================================
+           CONTROLES
+           ================================================= */
+
         label {
+
             display: block;
+
             margin-top: 9px;
+
             margin-bottom: 4px;
 
             font-size: 12px;
+
             color: #bbb;
         }
 
+
         select,
         button {
+
             width: 100%;
 
             padding: 10px;
 
             border: 0;
+
             border-radius: 8px;
 
             font-size: 14px;
         }
 
+
         select {
+
             background: #333;
+
             color: white;
         }
 
+
         button {
+
             margin-top: 9px;
 
-            background: #4b7bec;
+            background:
+                #4b7bec;
+
             color: white;
 
             font-weight: bold;
         }
 
+
         button:active {
-            transform: scale(0.98);
+
+            transform:
+                scale(0.98);
         }
 
+
+        /* =================================================
+           INFORMACIÓN
+           ================================================= */
+
         #info {
+
             margin-top: 10px;
 
             font-size: 12px;
+
             line-height: 1.5;
 
             color: #ccc;
         }
 
+
         .ok {
-            color: #8cff9a;
+
+            color:
+                #8cff9a;
         }
+
 
         .warn {
-            color: #ffd36b;
+
+            color:
+                #ffd36b;
         }
 
+
         .bad {
-            color: #ff7d7d;
+
+            color:
+                #ff7d7d;
         }
+
     </style>
+
 </head>
+
 
 <body>
 
-<div id="visor"></div>
 
-<div id="panel">
+    <!-- =====================================================
+         VISOR
+         ===================================================== -->
 
-    <div id="titulo">
-        🎮 GAMERPRO — Visualizador
+    <div id="visor"></div>
+
+
+    <!-- =====================================================
+         PANEL
+         ===================================================== -->
+
+    <div id="panel">
+
+        <div id="titulo">
+            🎮 GAMERPRO — Visualizador
+        </div>
+
+
+        <div id="estado">
+            🟡 JavaScript iniciando...
+        </div>
+
+
+        <div id="error"></div>
+
+
+        <!-- PERSONAJE -->
+
+        <label for="personaje">
+            Personaje
+        </label>
+
+        <select id="personaje">
+
+            <option value="micaela">
+                Micaela
+            </option>
+
+            <option value="mike">
+                Mike
+            </option>
+
+        </select>
+
+
+        <!-- ANIMACIÓN -->
+
+        <label for="animacion">
+            Animación
+        </label>
+
+        <select id="animacion">
+
+            <option value="idle">
+                idle
+            </option>
+
+        </select>
+
+
+        <!-- BOTÓN -->
+
+        <button id="recargar">
+            🔄 Recargar personaje
+        </button>
+
+
+        <!-- INFORMACIÓN -->
+
+        <div id="info">
+            Esperando al rig...
+        </div>
+
     </div>
 
-    <div id="estado">
-        🟡 JavaScript iniciando...
-    </div>
-
-    <div id="error"></div>
-
-    <label for="personaje">
-        Personaje
-    </label>
-
-    <select id="personaje">
-        <option value="micaela">
-            Micaela
-        </option>
-
-        <option value="mike">
-            Mike
-        </option>
-    </select>
-
-    <label for="animacion">
-        Animación
-    </label>
-
-    <select id="animacion">
-        <option value="idle">
-            Idle
-        </option>
-    </select>
-
-    <button id="recargar">
-        🔄 Recargar personaje
-    </button>
-
-    <div id="info">
-        Esperando al rig...
-    </div>
-
-</div>
 
 
-<script type="module">
+    <!-- =====================================================
+         GAMERPRO — SCRIPT PRINCIPAL
+         ===================================================== -->
 
-    // =====================================================
-    // 🎮 GAMERPRO — VISUALIZADOR DE RIG
-    // =====================================================
+    <script type="module">
 
-    const visor =
-        document.getElementById("visor");
+        // =================================================
+        // ELEMENTOS
+        // =================================================
 
-    const estado =
-        document.getElementById("estado");
-
-    const errorBox =
-        document.getElementById("error");
-
-    const personajeSelect =
-        document.getElementById("personaje");
-
-    const animacionSelect =
-        document.getElementById("animacion");
-
-    const recargar =
-        document.getElementById("recargar");
-
-    const info =
-        document.getElementById("info");
-
-
-    // =====================================================
-    // ANIMACIONES DE MICAELA
-    // =====================================================
-
-    const animacionesMicaela = [
-        "idle",
-        "caminar",
-        "correr",
-        "saltar",
-        "recolectar",
-        "cavar",
-        "regar",
-        "feliz"
-    ];
-
-
-    // =====================================================
-    // ANIMACIONES DE MIKE
-    // =====================================================
-
-    const animacionesMike = [
-        "idle",
-        "caminar",
-        "correr",
-        "saltar",
-        "recolectar",
-        "cavar",
-        "regar"
-    ];
-
-
-    // =====================================================
-    // PERSONAJE ACTUAL
-    // =====================================================
-
-    let personajeActual = null;
-
-
-    // =====================================================
-    // MOSTRAR ERROR
-    // =====================================================
-
-    function mostrarError(error) {
-
-        console.error(error);
-
-        errorBox.style.display = "block";
-
-        errorBox.textContent =
-            "❌ ERROR\n\n" +
-            (
-                error?.stack ||
-                error?.message ||
-                String(error)
+        const visor =
+            document.getElementById(
+                "visor"
             );
 
-        estado.innerHTML =
-            '<span class="bad">❌ Error al cargar el rig.</span>';
-    }
 
-
-    // =====================================================
-    // ERRORES GLOBALES
-    // =====================================================
-
-    window.addEventListener(
-        "error",
-        (evento) => {
-
-            mostrarError(
-                evento.error ||
-                new Error(evento.message)
+        const estado =
+            document.getElementById(
+                "estado"
             );
 
-        }
-    );
 
-
-    window.addEventListener(
-        "unhandledrejection",
-        (evento) => {
-
-            mostrarError(
-                evento.reason
+        const errorBox =
+            document.getElementById(
+                "error"
             );
 
-        }
-    );
 
-
-    // =====================================================
-    // LIMPIAR VISOR
-    // =====================================================
-
-    function limpiarVisor() {
-
-        visor.innerHTML = "";
-
-        personajeActual = null;
-
-        errorBox.style.display = "none";
-
-        errorBox.textContent = "";
-
-    }
-
-
-    // =====================================================
-    // ACTUALIZAR LISTA DE ANIMACIONES
-    // =====================================================
-
-    function prepararAnimaciones(nombre) {
-
-        animacionSelect.innerHTML = "";
-
-        const lista =
-            nombre === "mike"
-                ? animacionesMike
-                : animacionesMicaela;
-
-
-        for (const animacion of lista) {
-
-            const opcion =
-                document.createElement("option");
-
-            opcion.value =
-                animacion;
-
-            opcion.textContent =
-                animacion;
-
-            animacionSelect.appendChild(
-                opcion
+        const personajeSelect =
+            document.getElementById(
+                "personaje"
             );
-        }
 
 
-        animacionSelect.value =
-            "idle";
-    }
+        const animacionSelect =
+            document.getElementById(
+                "animacion"
+            );
 
 
-    // =====================================================
-    // APLICAR ANIMACIÓN
-    // =====================================================
+        const recargar =
+            document.getElementById(
+                "recargar"
+            );
 
-    function aplicarAnimacion(nombre) {
 
-        if (!personajeActual) {
-            return;
-        }
+        const info =
+            document.getElementById(
+                "info"
+            );
 
-        if (
-            !personajeActual.userData ||
-            typeof personajeActual.userData.animacion !==
-            "function"
+
+        // =================================================
+        // ANIMACIONES MICAELA
+        // =================================================
+
+        const animacionesMicaela = [
+
+            "idle",
+
+            "caminar",
+
+            "correr",
+
+            "saltar",
+
+            "recolectar",
+
+            "cavar",
+
+            "regar",
+
+            "feliz"
+
+        ];
+
+
+        // =================================================
+        // ANIMACIONES MIKE
+        // =================================================
+
+        const animacionesMike = [
+
+            "idle",
+
+            "caminar",
+
+            "correr",
+
+            "saltar",
+
+            "recolectar",
+
+            "cavar",
+
+            "regar"
+
+        ];
+
+
+        // =================================================
+        // PERSONAJE ACTUAL
+        // =================================================
+
+        let personajeActual =
+            null;
+
+
+        // =================================================
+        // MOSTRAR ERROR
+        // =================================================
+
+        function mostrarError(
+            error
         ) {
 
-            info.textContent =
-                "⚠️ El rig no expone la función de animación.";
+            console.error(
+                error
+            );
 
-            return;
+
+            errorBox.style.display =
+                "block";
+
+
+            errorBox.textContent =
+                "❌ ERROR\n\n" +
+                (
+                    error?.stack ||
+                    error?.message ||
+                    String(error)
+                );
+
+
+            estado.innerHTML =
+                '<span class="bad">' +
+                '❌ Error al cargar el rig.' +
+                '</span>';
         }
 
 
-        personajeActual.userData.animacion(
-            nombre
-        );
+        // =================================================
+        // ERRORES GLOBALES
+        // =================================================
 
+        window.addEventListener(
+            "error",
+            (evento) => {
 
-        info.textContent =
-            "🎬 Animación actual: " +
-            nombre;
-    }
-
-
-    // =====================================================
-    // CARGAR MICAELA
-    // =====================================================
-
-    async function cargarMicaela() {
-
-        limpiarVisor();
-
-        prepararAnimaciones(
-            "micaela"
-        );
-
-
-        estado.innerHTML =
-            '<span class="warn">🟡 Preparando Micaela...</span>';
-
-        info.textContent =
-            "Cargando mecanica/micaelaRig.js...";
-
-
-        // Dejamos respirar al navegador para
-        // que pueda pintar el mensaje.
-        await new Promise(
-            requestAnimationFrame
-        );
-
-
-        try {
-
-            estado.innerHTML =
-                '<span class="warn">⏳ Importando rig de Micaela...</span>';
-
-
-            const modulo =
-                await import(
-                    "../mecanicas/micaelaRig.js?v=14"
+                mostrarError(
+                    evento.error ||
+                    new Error(
+                        evento.message
+                    )
                 );
-
-
-            estado.innerHTML =
-                '<span class="warn">⏳ Ejecutando rig de Micaela...</span>';
-
-
-            await new Promise(
-                requestAnimationFrame
-            );
-
-
-            personajeActual =
-                await modulo.iniciarMicaelaRig(
-                    visor
-                );
-
-
-            personajeActual.userData.animacion(
-                "idle"
-            );
-
-
-            const huesos =
-                personajeActual.userData.bones
-                    ? Object.keys(
-                        personajeActual.userData.bones
-                    ).length
-                    : 0;
-
-
-            estado.innerHTML =
-                '<span class="ok">✅ Micaela cargada.</span>';
-
-
-            info.innerHTML =
-                "👩 Micaela<br>" +
-                "🦴 Huesos detectados: " +
-                huesos +
-                "<br>" +
-                "🎬 Animación: idle";
-
-
-        } catch (error) {
-
-            mostrarError(error);
-
-        }
-
-    }
-
-
-    // =====================================================
-    // CARGAR MIKE
-    // =====================================================
-
-    async function cargarMike() {
-
-        limpiarVisor();
-
-        prepararAnimaciones(
-            "mike"
-        );
-
-
-        estado.innerHTML =
-            '<span class="warn">🟡 Preparando Mike...</span>';
-
-        info.textContent =
-            "Cargando mecanica/mikeRig.js...";
-
-
-        await new Promise(
-            requestAnimationFrame
-        );
-
-
-        try {
-
-            estado.innerHTML =
-                '<span class="warn">⏳ Importando rig de Mike...</span>';
-
-
-            const modulo =
-                await import(
-                    "../mecanicas/mikeRig.js?v=14"
-                );
-
-
-            estado.innerHTML =
-                '<span class="warn">⏳ Ejecutando rig de Mike...</span>';
-
-
-            await new Promise(
-                requestAnimationFrame
-            );
-
-
-            personajeActual =
-                await modulo.iniciarMikeRig(
-                    visor
-                );
-
-
-            personajeActual.userData.animacion(
-                "idle"
-            );
-
-
-            const huesos =
-                personajeActual.userData.bones
-                    ? Object.keys(
-                        personajeActual.userData.bones
-                    ).length
-                    : 0;
-
-
-            estado.innerHTML =
-                '<span class="ok">✅ Mike cargado.</span>';
-
-
-            info.innerHTML =
-                "👦 Mike<br>" +
-                "🦴 Huesos detectados: " +
-                huesos +
-                "<br>" +
-                "🎬 Animación: idle";
-
-
-        } catch (error) {
-
-            mostrarError(error);
-
-        }
-
-    }
-
-
-    // =====================================================
-    // SELECTOR DE PERSONAJE
-    // =====================================================
-
-    personajeSelect.addEventListener(
-        "change",
-        () => {
-
-            const elegido =
-                personajeSelect.value;
-
-
-            if (elegido === "mike") {
-
-                cargarMike();
-
-            } else {
-
-                cargarMicaela();
 
             }
+        );
 
+
+        window.addEventListener(
+            "unhandledrejection",
+            (evento) => {
+
+                mostrarError(
+                    evento.reason
+                );
+
+            }
+        );
+
+
+        // =================================================
+        // LIMPIAR VISOR
+        // =================================================
+
+        function limpiarVisor() {
+
+            visor.innerHTML =
+                "";
+
+            personajeActual =
+                null;
+
+            errorBox.style.display =
+                "none";
+
+            errorBox.textContent =
+                "";
         }
-    );
 
 
-    // =====================================================
-    // SELECTOR DE ANIMACIÓN
-    // =====================================================
+        // =================================================
+        // PREPARAR ANIMACIONES
+        // =================================================
 
-    animacionSelect.addEventListener(
-        "change",
-        () => {
+        function prepararAnimaciones(
+            nombre
+        ) {
 
-            aplicarAnimacion(
-                animacionSelect.value
-            );
-
-        }
-    );
+            animacionSelect.innerHTML =
+                "";
 
 
-    // =====================================================
-    // BOTÓN RECARGAR
-    // =====================================================
+            const lista =
+                nombre === "mike"
+                    ? animacionesMike
+                    : animacionesMicaela;
 
-    recargar.addEventListener(
-        "click",
-        () => {
 
-            if (
-                personajeSelect.value ===
-                "mike"
+            for (
+                const animacion
+                of lista
             ) {
 
-                cargarMike();
+                const opcion =
+                    document.createElement(
+                        "option"
+                    );
 
-            } else {
 
-                cargarMicaela();
+                opcion.value =
+                    animacion;
+
+
+                opcion.textContent =
+                    animacion;
+
+
+                animacionSelect.appendChild(
+                    opcion
+                );
+            }
+
+
+            animacionSelect.value =
+                "idle";
+        }
+
+
+        // =================================================
+        // APLICAR ANIMACIÓN
+        // =================================================
+
+        function aplicarAnimacion(
+            nombre
+        ) {
+
+            if (
+                !personajeActual
+            ) {
+
+                return;
+            }
+
+
+            if (
+                !personajeActual.userData ||
+                typeof
+                personajeActual
+                    .userData
+                    .animacion
+                !== "function"
+            ) {
+
+                info.textContent =
+                    "⚠️ El rig no expone " +
+                    "la función de animación.";
+
+                return;
+            }
+
+
+            personajeActual
+                .userData
+                .animacion(
+                    nombre
+                );
+
+
+            info.textContent =
+                "🎬 Animación actual: " +
+                nombre;
+        }
+
+
+        // =================================================
+        // CARGAR MICAELA
+        // =================================================
+
+        async function cargarMicaela() {
+
+            limpiarVisor();
+
+
+            prepararAnimaciones(
+                "micaela"
+            );
+
+
+            estado.innerHTML =
+                '<span class="warn">' +
+                '🟡 Preparando Micaela...' +
+                '</span>';
+
+
+            info.textContent =
+                "Cargando " +
+                "mecanicas/micaelaRig.js...";
+
+
+            // Permitir que el navegador
+            // pinte el mensaje.
+
+            await new Promise(
+                requestAnimationFrame
+            );
+
+
+            try {
+
+                estado.innerHTML =
+                    '<span class="warn">' +
+                    '⏳ Importando rig de Micaela...' +
+                    '</span>';
+
+
+                // =================================================
+                // IMPORTACIÓN DINÁMICA
+                // =================================================
+
+                const modulo =
+                    await import(
+                        "../mecanicas/micaelaRig.js?v=15"
+                    );
+
+
+                estado.innerHTML =
+                    '<span class="warn">' +
+                    '⏳ Ejecutando rig de Micaela...' +
+                    '</span>';
+
+
+                await new Promise(
+                    requestAnimationFrame
+                );
+
+
+                // =================================================
+                // INICIAR RIG REAL
+                // =================================================
+
+                personajeActual =
+                    await modulo
+                        .iniciarMicaelaRig(
+                            visor
+                        );
+
+
+                // =================================================
+                // IDLE
+                // =================================================
+
+                personajeActual
+                    .userData
+                    .animacion(
+                        "idle"
+                    );
+
+
+                // =================================================
+                // CONTAR HUESOS
+                // =================================================
+
+                const huesos =
+                    personajeActual
+                        .userData
+                        .bones
+                        ? Object.keys(
+                            personajeActual
+                                .userData
+                                .bones
+                        ).length
+                        : 0;
+
+
+                estado.innerHTML =
+                    '<span class="ok">' +
+                    '✅ Micaela cargada.' +
+                    '</span>';
+
+
+                info.innerHTML =
+                    "👩 Micaela<br>" +
+                    "🦴 Huesos detectados: " +
+                    huesos +
+                    "<br>" +
+                    "🎬 Animación: idle";
 
             }
 
+            catch (
+                error
+            ) {
+
+                mostrarError(
+                    error
+                );
+            }
+
         }
-    );
 
 
-    // =====================================================
-    // INICIO
-    // =====================================================
+        // =================================================
+        // CARGAR MIKE
+        // =================================================
 
-    estado.innerHTML =
-        '<span class="ok">🟢 JavaScript iniciado.</span>';
+        async function cargarMike() {
 
-    info.textContent =
-        "Iniciando visualizador...";
+            limpiarVisor();
 
 
-    await new Promise(
-        requestAnimationFrame
-    );
+            prepararAnimaciones(
+                "mike"
+            );
 
 
-    if (
-        personajeSelect.value ===
-        "mike"
-    ) {
+            estado.innerHTML =
+                '<span class="warn">' +
+                '🟡 Preparando Mike...' +
+                '</span>';
 
-        cargarMike();
 
-    } else {
+            info.textContent =
+                "Cargando " +
+                "mecanicas/mikeRig.js...";
 
-        cargarMicaela();
 
-    }
+            await new Promise(
+                requestAnimationFrame
+            );
 
-</script>
+
+            try {
+
+                estado.innerHTML =
+                    '<span class="warn">' +
+                    '⏳ Importando rig de Mike...' +
+                    '</span>';
+
+
+                // =================================================
+                // IMPORTACIÓN DINÁMICA
+                // =================================================
+
+                const modulo =
+                    await import(
+                        "../mecanicas/mikeRig.js?v=15"
+                    );
+
+
+                estado.innerHTML =
+                    '<span class="warn">' +
+                    '⏳ Ejecutando rig de Mike...' +
+                    '</span>';
+
+
+                await new Promise(
+                    requestAnimationFrame
+                );
+
+
+                // =================================================
+                // INICIAR RIG REAL
+                // =================================================
+
+                personajeActual =
+                    await modulo
+                        .iniciarMikeRig(
+                            visor
+                        );
+
+
+                // =================================================
+                // IDLE
+                // =================================================
+
+                personajeActual
+                    .userData
+                    .animacion(
+                        "idle"
+                    );
+
+
+                // =================================================
+                // CONTAR HUESOS
+                // =================================================
+
+                const huesos =
+                    personajeActual
+                        .userData
+                        .bones
+                        ? Object.keys(
+                            personajeActual
+                                .userData
+                                .bones
+                        ).length
+                        : 0;
+
+
+                estado.innerHTML =
+                    '<span class="ok">' +
+                    '✅ Mike cargado.' +
+                    '</span>';
+
+
+                info.innerHTML =
+                    "👦 Mike<br>" +
+                    "🦴 Huesos detectados: " +
+                    huesos +
+                    "<br>" +
+                    "🎬 Animación: idle";
+
+            }
+
+            catch (
+                error
+            ) {
+
+                mostrarError(
+                    error
+                );
+            }
+
+        }
+
+
+        // =================================================
+        // CAMBIAR PERSONAJE
+        // =================================================
+
+        personajeSelect.addEventListener(
+            "change",
+            () => {
+
+                if (
+                    personajeSelect.value ===
+                    "mike"
+                ) {
+
+                    cargarMike();
+
+                } else {
+
+                    cargarMicaela();
+
+                }
+
+            }
+        );
+
+
+        // =================================================
+        // CAMBIAR ANIMACIÓN
+        // =================================================
+
+        animacionSelect.addEventListener(
+            "change",
+            () => {
+
+                aplicarAnimacion(
+                    animacionSelect.value
+                );
+
+            }
+        );
+
+
+        // =================================================
+        // RECARGAR
+        // =================================================
+
+        recargar.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    personajeSelect.value ===
+                    "mike"
+                ) {
+
+                    cargarMike();
+
+                } else {
+
+                    cargarMicaela();
+
+                }
+
+            }
+        );
+
+
+        // =================================================
+        // INICIO
+        // =================================================
+
+        estado.innerHTML =
+            '<span class="ok">' +
+            '🟢 JavaScript iniciado.' +
+            '</span>';
+
+
+        info.textContent =
+            "Iniciando visualizador...";
+
+
+        await new Promise(
+            requestAnimationFrame
+        );
+
+
+        // =================================================
+        // CARGAR PERSONAJE INICIAL
+        // =================================================
+
+        if (
+            personajeSelect.value ===
+            "mike"
+        ) {
+
+            cargarMike();
+
+        } else {
+
+            cargarMicaela();
+
+        }
+
+    </script>
 
 </body>
-    </html>
+
+</html>
